@@ -14,22 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Lean
-        run: |
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
-          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-
-      - name: Resolve Lake dependencies
-        run: lake update
-
-      - name: Save generated Lake manifest
-        uses: actions/upload-artifact@v4
+      - uses: leanprover/lean-action@v1
         with:
-          name: lake-manifest
-          path: lake-manifest.json
-
-      - name: Download Mathlib cache
-        run: lake exe cache get
-
-      - name: Build
-        run: lake build
+          build: true
+          test: false
+          lint: false
