@@ -30,7 +30,7 @@ theorem bvEq_refl : ∀ x : BVSet 𝔹, bvEq x x = ⊤ := by
       simp only [bvEq, inf_eq_top_iff, iInf_eq_top]
       constructor
       all_goals intro i
-      all_goals rw [imp_top_iff_le]
+      all_goals rw [himp_eq_top_iff]
       all_goals
         exact le_iSup_of_le i (le_inf le_rfl (ih i ▸ le_top))
 
