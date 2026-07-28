@@ -9,9 +9,8 @@ import BooleanValuedAnalysis.Semantics
 /-!
 # Basic laws of Boolean-valued equality
 
-This file begins the development of the equality laws for Boolean-valued sets.
-The first result states that every Boolean-valued set is equal to itself with
-Boolean truth value `⊤`.
+This file develops the basic equality laws for Boolean-valued sets. It begins
+with reflexivity and symmetry.
 -/
 
 universe u
@@ -33,6 +32,18 @@ theorem bvEq_refl : ∀ x : BVSet 𝔹, bvEq x x = ⊤ := by
       all_goals rw [himp_eq_top_iff]
       all_goals
         exact le_iSup_of_le i (le_inf le_rfl (ih i ▸ le_top))
+
+/-- Boolean-valued equality is symmetric. -/
+theorem bvEq_symm : ∀ x y : BVSet 𝔹, bvEq x y = bvEq y x := by
+  intro x
+  induction x with
+  | mk ι A w ih =>
+      intro y
+      cases y with
+      | mk κ C v =>
+          simp only [bvEq]
+          simp_rw [ih]
+          exact inf_comm _ _
 
 end BVSet
 end BooleanValued
