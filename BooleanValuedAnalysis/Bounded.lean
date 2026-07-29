@@ -56,7 +56,7 @@ theorem boundedExists_eq_iSup_mem {x : BVSet 𝔹} {φ : BVSet 𝔹 → 𝔹}
     cases x with
     | mk ι A w =>
         simp only [boundedExists, mem, Index, weight, child]
-        rw [inf_iSup_eq]
+        rw [iSup_inf_eq]
         apply iSup_le
         intro i
         apply le_iSup_of_le i
