@@ -47,9 +47,9 @@ theorem bvEq_symm : ∀ x y : BVSet 𝔹, bvEq x y = bvEq y x := by
 
 /-- Compose two families of weighted Boolean witnesses through a common middle family. -/
 private theorem weightedWitness_trans
-    {κ λ : Type u}
-    (v : κ → 𝔹) (u : λ → 𝔹)
-    (r : κ → 𝔹) (s : κ → λ → 𝔹) (t : λ → 𝔹)
+    {κ μ : Type u}
+    (v : κ → 𝔹) (u : μ → 𝔹)
+    (r : κ → 𝔹) (s : κ → μ → 𝔹) (t : μ → 𝔹)
     (h : ∀ j k, r j ⊓ s j k ≤ t k) :
     (⨆ j, v j ⊓ r j) ⊓
         (⨅ j, v j ⇨ (⨆ k, u k ⊓ s j k)) ≤
@@ -88,7 +88,7 @@ theorem bvEq_trans : ∀ x y z : BVSet 𝔹,
       cases y with
       | mk κ C v =>
           cases z with
-          | mk λ D u =>
+          | mk μ D u =>
               simp only [bvEq]
               apply le_inf
               · apply le_iInf
