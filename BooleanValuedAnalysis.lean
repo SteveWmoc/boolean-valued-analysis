@@ -1,3 +1,4 @@
 import BooleanValuedAnalysis.Basic
 import BooleanValuedAnalysis.Semantics
 import BooleanValuedAnalysis.Equality
+import BooleanValuedAnalysis.Extensional
