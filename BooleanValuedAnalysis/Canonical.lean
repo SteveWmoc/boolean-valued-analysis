@@ -20,7 +20,7 @@ universe u
 namespace BooleanValued
 namespace BVSet
 
-variable {𝔹 : Type u} [OrderTop 𝔹]
+variable {𝔹 : Type u} [Top 𝔹]
 
 /-- The canonical Boolean-valued name of a ground-model pre-set. -/
 def check : PSet.{u} → BVSet 𝔹
