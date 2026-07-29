@@ -2,14 +2,29 @@
 
 Formalization of Boolean-valued sets, models, and analysis in Lean 4.
 
-## Initial goals
+## Current status
 
-1. Define raw Boolean-valued sets as well-founded weighted trees.
-2. Define Boolean-valued equality and membership.
-3. Prove reflexivity, symmetry, transitivity, and substitution.
-4. Define canonical names for ground-model sets.
-5. Develop mixing, ascent, descent, and transfer principles.
-6. Connect the framework with forcing and applications in Boolean-valued analysis.
+The project now includes:
+
+- raw Boolean-valued sets as well-founded weighted trees;
+- recursive Boolean-valued equality and membership;
+- reflexivity, symmetry, and transitivity of Boolean-valued equality;
+- substitution for equality and both arguments of membership;
+- extensional unary Boolean-valued predicates;
+- bounded existential and universal quantifiers, together with their
+  characterization as universe-wide quantifiers restricted by membership.
+
+Every pull request is checked by GitHub Actions with `lake build`.
+
+## Roadmap
+
+1. Define canonical names for ground-model sets and prove preservation of
+   equality and membership.
+2. Introduce first-order formula semantics and prove general substitution.
+3. Develop mixing and the maximum principle.
+4. Develop ascent, descent, and transfer principles.
+5. Connect the framework with forcing and applications in Boolean-valued
+   analysis.
 
 ## Building
 
