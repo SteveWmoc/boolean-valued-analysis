@@ -3,3 +3,4 @@ import BooleanValuedAnalysis.Semantics
 import BooleanValuedAnalysis.Equality
 import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
+import BooleanValuedAnalysis.Canonical
