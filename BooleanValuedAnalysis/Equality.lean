@@ -10,7 +10,8 @@ import BooleanValuedAnalysis.Semantics
 # Basic laws of Boolean-valued equality
 
 This file develops the basic equality laws for Boolean-valued sets: reflexivity,
-symmetry, and transitivity.
+symmetry, transitivity, and substitution for the atomic relations of equality
+and membership.
 -/
 
 universe u
@@ -151,6 +152,51 @@ theorem bvEq_trans : ∀ x y z : BVSet 𝔹,
                       (fun j i => by
                         rw [inf_comm]
                         exact ih i (C j) (D k))
+
+/-- Equality may be substituted in the left argument of Boolean-valued equality. -/
+theorem bvEq_subst_left (x y z : BVSet 𝔹) :
+    bvEq x y ⊓ bvEq x z ≤ bvEq y z := by
+  rw [bvEq_symm x y]
+  exact bvEq_trans y x z
+
+/-- Equal Boolean-valued sets have the same membership status as elements. -/
+theorem mem_congr_left (x y z : BVSet 𝔹) :
+    bvEq x y ⊓ mem x z ≤ mem y z := by
+  cases z with
+  | mk κ C v =>
+      simp only [mem]
+      rw [inf_iSup_eq]
+      apply iSup_le
+      intro k
+      apply le_iSup_of_le k
+      apply le_inf (inf_le_right.trans inf_le_left)
+      calc
+        bvEq x y ⊓ (v k ⊓ bvEq x (C k)) ≤
+            bvEq x y ⊓ bvEq x (C k) :=
+          le_inf inf_le_left (inf_le_right.trans inf_le_right)
+        _ ≤ bvEq y (C k) := bvEq_subst_left x y (C k)
+
+/-- Equality may be substituted in the set argument of Boolean-valued membership. -/
+theorem mem_congr_right (x y z : BVSet 𝔹) :
+    bvEq x y ⊓ mem z x ≤ mem z y := by
+  cases x with
+  | mk ι A w =>
+      cases y with
+      | mk κ C v =>
+          simp only [bvEq, mem]
+          calc
+            (((⨅ i, w i ⇨ (⨆ j, v j ⊓ bvEq (A i) (C j))) ⊓
+                  (⨅ j, v j ⇨ (⨆ i, w i ⊓ bvEq (A i) (C j)))) ⊓
+                (⨆ i, w i ⊓ bvEq z (A i))) ≤
+              (⨆ i, w i ⊓ bvEq z (A i)) ⊓
+                (⨅ i, w i ⇨ (⨆ j, v j ⊓ bvEq (A i) (C j))) := by
+              exact le_inf inf_le_right (inf_le_left.trans inf_le_left)
+            _ ≤ ⨆ j, v j ⊓ bvEq z (C j) :=
+              weightedWitness_trans w v
+                (fun i => bvEq z (A i))
+                (fun i j => bvEq (A i) (C j))
+                (fun j => bvEq z (C j))
+                (fun i j => bvEq_trans z (A i) (C j))
 
 end BVSet
 end BooleanValued
