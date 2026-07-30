@@ -1,6 +1,6 @@
 import BooleanValuedAnalysis.Basic
-import BooleanValuedAnalysis.Semantics
-import BooleanValuedAnalysis.Equality
-import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
 import BooleanValuedAnalysis.Canonical
+import BooleanValuedAnalysis.Equality
+import BooleanValuedAnalysis.Extensional
+import BooleanValuedAnalysis.Semantics
