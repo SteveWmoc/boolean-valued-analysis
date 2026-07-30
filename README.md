@@ -13,17 +13,18 @@ The project now includes:
 - extensional unary Boolean-valued predicates;
 - bounded existential and universal quantifiers, together with their
   characterization as universe-wide quantifiers restricted by membership;
-- canonical Boolean-valued names for ground-model pre-sets.
+- canonical Boolean-valued names for ground-model pre-sets;
+- preservation and reflection of ground-model extensional equality and
+  membership by canonical names.
 
 Every pull request is checked by GitHub Actions with `lake build`.
 
 ## Roadmap
 
-1. Prove that canonical names preserve ground-model equality and membership.
-2. Introduce first-order formula semantics and prove general substitution.
-3. Develop mixing and the maximum principle.
-4. Develop ascent, descent, and transfer principles.
-5. Connect the framework with forcing and applications in Boolean-valued
+1. Introduce first-order formula semantics and prove general substitution.
+2. Develop mixing and the maximum principle.
+3. Develop ascent, descent, and transfer principles.
+4. Connect the framework with forcing and applications in Boolean-valued
    analysis.
 
 ## Building
