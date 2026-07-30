@@ -28,7 +28,20 @@ jobs:
             exit 1
           fi
 
+      - name: Verify public module coverage
+        run: |
+          missing=0
+          while IFS= read -r file; do
+            module="${file%.lean}"
+            module="${module//\//.}"
+            if ! grep -Fxq "import ${module}" BooleanValuedAnalysis.lean; then
+              echo "Missing from BooleanValuedAnalysis.lean: ${module}"
+              missing=1
+            fi
+          done < <(find BooleanValuedAnalysis -type f -name '*.lean' | sort)
+          exit "${missing}"
+
       - uses: leanprover/lean-action@v1
         with:
+          auto-config: false
           build: true
-          mk_all-check: true
