@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata in this file."
+title: "Boolean-Valued Analysis"
+type: software
+authors:
+  - family-names: "Sabean"
+    given-names: "Steven"
+repository-code: "https://github.com/SteveWmoc/boolean-valued-analysis"
+license: "Apache-2.0"
+version: "0.1.0"
+keywords:
+  - "Lean 4"
+  - "formalized mathematics"
+  - "Boolean-valued analysis"
+  - "set theory"
+  - "forcing"
