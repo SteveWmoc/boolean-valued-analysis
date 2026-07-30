@@ -7,6 +7,13 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,8 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Reject unfinished proofs
+        run: |
+          if grep -RInE --include='*.lean' '(^|[^[:alnum:]_])(sorry|admit)([^[:alnum:]_]|$)' BooleanValuedAnalysis BooleanValuedAnalysis.lean; then
+            echo "Lean proof placeholders are not permitted."
+            exit 1
+          fi
+
       - uses: leanprover/lean-action@v1
         with:
           build: true
-          test: false
-          lint: false
+          mk_all-check: true
