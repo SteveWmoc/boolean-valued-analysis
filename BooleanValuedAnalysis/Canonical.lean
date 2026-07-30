@@ -105,7 +105,7 @@ theorem check_bvEq_top_of_equiv : ∀ {x y : PSet.{u}}, PSet.Equiv x y →
               ⊤ = bvEq (check (𝔹 := 𝔹) (A i)) (check (𝔹 := 𝔹) (C j)) :=
                 (ih i hij).symm
               _ ≤ ⨆ j, bvEq (check (𝔹 := 𝔹) (A i)) (check (𝔹 := 𝔹) (C j)) :=
-                le_iSup _ j
+                le_iSup_of_le j le_rfl
           · intro j
             obtain ⟨i, hij⟩ := h.2 j
             apply top_unique
@@ -113,7 +113,7 @@ theorem check_bvEq_top_of_equiv : ∀ {x y : PSet.{u}}, PSet.Equiv x y →
               ⊤ = bvEq (check (𝔹 := 𝔹) (A i)) (check (𝔹 := 𝔹) (C j)) :=
                 (ih i hij).symm
               _ ≤ ⨆ i, bvEq (check (𝔹 := 𝔹) (A i)) (check (𝔹 := 𝔹) (C j)) :=
-                le_iSup _ i
+                le_iSup_of_le i le_rfl
 
 /-- Non-equivalent ground-model pre-sets have Boolean equality value `⊥`
 between their canonical names. -/
@@ -174,7 +174,7 @@ theorem check_mem_top_of_mem {x y : PSet.{u}} (h : x ∈ y) :
         ⊤ = bvEq (check (𝔹 := 𝔹) x) (check (𝔹 := 𝔹) (C j)) :=
           (check_bvEq_top_of_equiv hj).symm
         _ ≤ ⨆ j, bvEq (check (𝔹 := 𝔹) x) (check (𝔹 := 𝔹) (C j)) :=
-          le_iSup _ j
+          le_iSup_of_le j le_rfl
 
 /-- Failure of ground-model membership has Boolean truth value `⊥` between
 canonical names. -/
