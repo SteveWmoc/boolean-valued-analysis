@@ -1,0 +1,49 @@
+name: Tau Ceti current compatibility audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-against-tauceti-current:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Tau Ceti's current Lean and Mathlib environment
+        shell: bash
+        run: |
+          printf '%s\n' 'leanprover/lean4:v4.33.0-rc1' > lean-toolchain
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('lakefile.toml')
+          text = path.read_text()
+          text = text.replace('rev = "v4.32.1"', 'rev = "d4519b399018129db0a28eda3488eddfed9f73c4"')
+          path.write_text(text)
+          PY
+          rm -f lake-manifest.json
+          echo 'Lean toolchain:'
+          cat lean-toolchain
+          echo 'Mathlib revision:'
+          grep -A3 '\[\[require\]\]' lakefile.toml
+
+      - name: Install Elan
+        shell: bash
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Resolve Tau Ceti dependencies
+        shell: bash
+        run: lake update
+
+      - name: Fetch Mathlib cache
+        shell: bash
+        run: lake exe cache get
+
+      - name: Build project
+        shell: bash
+        run: lake build
