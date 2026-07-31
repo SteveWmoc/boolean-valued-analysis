@@ -1,10 +1,6 @@
 name: Tau Ceti current compatibility audit
 
 on:
-  push:
-    branches: ["audit/tauceti-current"]
-  pull_request:
-    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -42,15 +38,12 @@ jobs:
 
       - name: Resolve Tau Ceti dependencies
         shell: bash
-        run: |
-          lake update
+        run: lake update
 
       - name: Fetch Mathlib cache
         shell: bash
-        run: |
-          lake exe cache get
+        run: lake exe cache get
 
       - name: Build project
         shell: bash
-        run: |
-          lake build
+        run: lake build
