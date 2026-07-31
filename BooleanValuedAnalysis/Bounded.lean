@@ -38,7 +38,10 @@ theorem weight_le_mem_child (x : BVSet 𝔹) (i : x.Index) :
     x.weight i ≤ mem (x.child i) x := by
   cases x with
   | mk ι A w =>
-      exact le_iSup_of_le i (le_inf le_rfl (by simp))
+      change w i ≤ ⨆ j : ι, w j ⊓ bvEq (A i) (A j)
+      apply le_iSup_of_le i
+      rw [bvEq_refl]
+      exact le_inf le_rfl le_top
 
 /-- Bounded existential quantification over weighted children agrees with
 universe-wide existential quantification restricted by membership. -/
