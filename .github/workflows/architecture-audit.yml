@@ -1,8 +1,6 @@
 name: Boolean-valued architecture audit
 
 on:
-  push:
-    branches: ["audit/architecture-reuse"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
