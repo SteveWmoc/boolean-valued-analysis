@@ -3,6 +3,8 @@ name: Tau Ceti current compatibility audit
 on:
   push:
     branches: ["audit/tauceti-current"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
