@@ -34,7 +34,23 @@ jobs:
           echo 'Mathlib revision:'
           grep -A3 '\[\[require\]\]' lakefile.toml
 
-      - uses: leanprover/lean-action@v1
-        with:
-          auto-config: false
-          build: true
+      - name: Install Elan
+        shell: bash
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Resolve Tau Ceti dependencies
+        shell: bash
+        run: |
+          lake update
+
+      - name: Fetch Mathlib cache
+        shell: bash
+        run: |
+          lake exe cache get
+
+      - name: Build project
+        shell: bash
+        run: |
+          lake build
