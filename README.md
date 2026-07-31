@@ -4,11 +4,11 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API is usable, but it may change as formula semantics, mixing, transfer, and applications are developed.
+> **Project status:** active research. The foundational API and first-order formula semantics are usable, but they may change as substitution, mixing, transfer, and applications are developed.
 
 ## Mathematical overview
 
-For a complete Boolean algebra `𝔹`, the project represents a Boolean-valued set as a well-founded tree whose immediate children carry coefficients in `𝔹`. It defines recursive Boolean truth values for equality and membership, proves their basic logical laws, and embeds Mathlib ground-model pre-sets as canonical names.
+For a complete Boolean algebra `𝔹`, the project represents a Boolean-valued set as a well-founded tree whose immediate children carry coefficients in `𝔹`. It defines recursive Boolean truth values for equality and membership, proves their basic logical laws, embeds Mathlib ground-model pre-sets as canonical names, and interprets first-order formulas in the language of set theory.
 
 The current development establishes that:
 
@@ -17,7 +17,8 @@ The current development establishes that:
 - unary Boolean-valued predicates can be packaged by an extensionality condition;
 - bounded existential and universal quantifiers agree with universe-wide quantification restricted by Boolean-valued membership;
 - canonical names preserve and, over a nontrivial Boolean algebra, reflect ground-model extensional equality and membership;
-- equality and membership between canonical names take only the classical values `⊤` and `⊥`.
+- equality and membership between canonical names take only the classical values `⊤` and `⊥`;
+- first-order set-theoretic formulas have Boolean truth values, with logical connectives and quantifiers interpreted by the corresponding complete Boolean-algebra operations.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -27,6 +28,7 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | --- | --- |
 | `BooleanValuedAnalysis.Basic` | Raw Boolean-valued pre-sets, projections, the empty name, and weighted singletons |
 | `BooleanValuedAnalysis.Semantics` | Recursive Boolean-valued equality and membership |
+| `BooleanValuedAnalysis.Formula` | First-order set-theoretic syntax and Boolean-valued formula semantics |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Bounded existential and universal quantification |
@@ -64,8 +66,8 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 
 ## Roadmap
 
-1. Introduce first-order formula syntax and semantics.
-2. Prove substitution for arbitrary formulas.
+1. Prove relabeling, syntactic substitution, and extensionality for arbitrary formulas.
+2. Add syntactic set-bounded quantifiers and identify their semantics with the weighted-child definitions.
 3. Develop the mixing lemma and maximum principle.
 4. Develop ascent, descent, and transfer principles.
 5. Connect the framework with forcing and applications in Boolean-valued analysis.
@@ -80,7 +82,7 @@ Focused contributions and mathematical corrections are welcome; see [CONTRIBUTIN
 
 The project is motivated by the work of A. G. Kusraev and S. S. Kutateladze on Boolean-valued analysis.
 
-It relies on [Mathlib](https://github.com/leanprover-community/mathlib4), especially its implementation of ground-model pre-sets in `Mathlib.SetTheory.ZFC.PSet`. The development has also benefited from comparison with the [Flypitch](https://github.com/ianklatzco/flypitch) formalization of forcing and Boolean-valued models.
+It relies on [Mathlib](https://github.com/leanprover-community/mathlib4), especially its implementations of first-order syntax and ground-model pre-sets. The development has also benefited from comparison with the [Flypitch](https://github.com/ianklatzco/flypitch) formalization of forcing and Boolean-valued models.
 
 ## Citation
 

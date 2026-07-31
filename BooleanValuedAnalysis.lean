@@ -6,6 +6,7 @@ Authors: Steven Sabean
 
 import BooleanValuedAnalysis.Basic
 import BooleanValuedAnalysis.Semantics
+import BooleanValuedAnalysis.Formula
 import BooleanValuedAnalysis.Equality
 import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
@@ -16,5 +17,6 @@ import BooleanValuedAnalysis.Canonical
 
 This is the main import file for the public Boolean-valued analysis development.
 It exports raw Boolean-valued pre-sets, their equality and membership semantics,
-extensional predicates, bounded quantifiers, and canonical ground-model names.
+first-order formula semantics, extensional predicates, bounded quantifiers, and
+canonical ground-model names.
 -/
