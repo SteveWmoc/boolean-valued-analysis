@@ -72,6 +72,20 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 4. Develop ascent, descent, and transfer principles.
 5. Connect the framework with forcing and applications in Boolean-valued analysis.
 
+The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
+
+## Development workflow
+
+Library-facing work follows a lightweight roadmap-and-rubric process:
+
+1. identify one roadmap milestone and its explicit non-goals;
+2. prototype important public signatures against the pinned Mathlib version;
+3. implement the focused change with acceptance examples;
+4. review mathematical correctness, representation, reuse, generality, API quality, and proof quality;
+5. merge only after the relevant CI and no-placeholder checks pass.
+
+The pull request template records this review without imposing the full process on exploratory branches.
+
 ## Development standards
 
 Every pull request is checked by GitHub Actions. CI builds the library, verifies that every module is exported by the main import file, and rejects unfinished `sorry` or `admit` placeholders.
