@@ -43,7 +43,11 @@ jobs:
         run: lake exe cache get
 
       - name: Compile independent-universe probe
-        run: lake env lean Audit/UniverseProbe.lean
+        shell: bash
+        run: |
+          mkdir -p .lake/build/lib/lean/Audit
+          lake env lean Audit/UniverseProbe.lean \
+            -o .lake/build/lib/lean/Audit/UniverseProbe.olean
 
       - name: Compile formula-substitution probe
         run: lake env lean Audit/FormulaSubstitutionProbe.lean
