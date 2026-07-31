@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  universe-probe:
+  architecture-probes:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,5 +42,8 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
-      - name: Compile universe-policy probe
+      - name: Compile independent-universe probe
         run: lake env lean Audit/UniverseProbe.lean
+
+      - name: Compile formula-substitution probe
+        run: lake env lean Audit/FormulaSubstitutionProbe.lean
