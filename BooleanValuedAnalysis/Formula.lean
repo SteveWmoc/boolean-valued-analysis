@@ -128,8 +128,9 @@ theorem truth_not
     (φ : BoundedFormula α n)
     (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
     truth φ.not assignment boundAssignment =
-      (truth φ assignment boundAssignment ⇨ ⊥) :=
-  rfl
+      (truth φ assignment boundAssignment)ᶜ := by
+  change (truth φ assignment boundAssignment ⇨ ⊥) = _
+  rw [himp_bot]
 
 @[simp]
 theorem truth_top
