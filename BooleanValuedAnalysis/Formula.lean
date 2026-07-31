@@ -160,7 +160,7 @@ theorem truth_sup
     ((truth φ assignment boundAssignment ⇨ ⊥) ⇨
         truth ψ assignment boundAssignment) =
       truth φ assignment boundAssignment ⊔ truth ψ assignment boundAssignment
-  simp
+  rw [himp_bot, himp_eq, compl_compl, sup_comm]
 
 @[simp]
 theorem truth_iff
