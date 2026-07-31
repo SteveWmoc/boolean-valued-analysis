@@ -25,7 +25,7 @@ theorem evalTerm_relabel
     evalTerm assignment (t.relabel g) = evalTerm (assignment ∘ g) t := by
   cases t with
   | var a => rfl
-  | func f _ => exact isEmptyElim f
+  | func f _ => nomatch f
 
 /-- Term evaluation commutes with Mathlib's term substitution. -/
 @[simp]
@@ -35,7 +35,7 @@ theorem evalTerm_subst
       evalTerm (fun a => evalTerm assignment (f a)) t := by
   cases t with
   | var a => rfl
-  | func g _ => exact isEmptyElim g
+  | func g _ => nomatch g
 
 /-- The term transformation used internally by `BoundedFormula.subst` has the expected
 semantics: free variables are interpreted through the substituted term assignment, while bound
@@ -74,21 +74,55 @@ theorem truth_subst :
       rfl
   | equal t₁ t₂ =>
       intro f assignment boundAssignment
-      simp only [BoundedFormula.subst, BoundedFormula.mapTermRel, truth]
+      change
+        Name.eqVal
+            (evalTerm (Sum.elim assignment boundAssignment)
+              (t₁.subst
+                (Sum.elim (Term.relabel Sum.inl ∘ f) (Term.var ∘ Sum.inr))))
+            (evalTerm (Sum.elim assignment boundAssignment)
+              (t₂.subst
+                (Sum.elim (Term.relabel Sum.inl ∘ f) (Term.var ∘ Sum.inr)))) =
+          Name.eqVal
+            (evalTerm
+              (Sum.elim (fun a => evalTerm assignment (f a)) boundAssignment) t₁)
+            (evalTerm
+              (Sum.elim (fun a => evalTerm assignment (f a)) boundAssignment) t₂)
       rw [evalTerm_substBounded, evalTerm_substBounded]
   | rel R terms =>
       intro f assignment boundAssignment
       cases R with
       | mem =>
-          simp only [BoundedFormula.subst, BoundedFormula.mapTermRel, truth]
+          change
+            Name.memVal
+                (evalTerm (Sum.elim assignment boundAssignment)
+                  ((terms 0).subst
+                    (Sum.elim (Term.relabel Sum.inl ∘ f) (Term.var ∘ Sum.inr))))
+                (evalTerm (Sum.elim assignment boundAssignment)
+                  ((terms 1).subst
+                    (Sum.elim (Term.relabel Sum.inl ∘ f) (Term.var ∘ Sum.inr)))) =
+              Name.memVal
+                (evalTerm
+                  (Sum.elim (fun a => evalTerm assignment (f a)) boundAssignment)
+                  (terms 0))
+                (evalTerm
+                  (Sum.elim (fun a => evalTerm assignment (f a)) boundAssignment)
+                  (terms 1))
           rw [evalTerm_substBounded, evalTerm_substBounded]
   | imp φ ψ ihφ ihψ =>
       intro f assignment boundAssignment
-      simp only [BoundedFormula.subst, BoundedFormula.mapTermRel, truth]
+      change
+        (truth (φ.subst f) assignment boundAssignment ⇨
+            truth (ψ.subst f) assignment boundAssignment) =
+          (truth φ (fun a => evalTerm assignment (f a)) boundAssignment ⇨
+            truth ψ (fun a => evalTerm assignment (f a)) boundAssignment)
       rw [ihφ f assignment boundAssignment, ihψ f assignment boundAssignment]
   | all φ ih =>
       intro f assignment boundAssignment
-      simp only [BoundedFormula.subst, BoundedFormula.mapTermRel, truth]
+      change
+        (⨅ y : Name.{u, v} 𝔹,
+            truth (φ.subst f) assignment (Fin.snoc boundAssignment y)) =
+          ⨅ y : Name.{u, v} 𝔹,
+            truth φ (fun a => evalTerm assignment (f a)) (Fin.snoc boundAssignment y)
       congr 1
       funext y
       exact ih f assignment (Fin.snoc boundAssignment y)
