@@ -30,14 +30,16 @@ theorem eqVal_unfold (x y : Name.{u, v} 𝔹) :
       (⨅ j : y.Index, y.weight j ⇨ memVal (y.child j) x) := by
   cases x
   cases y
-  rfl
+  simp only [eqVal, memVal, Index, child, weight]
 
 /-- Every immediate child belongs to its parent to at least the degree of its coefficient. -/
 theorem weight_le_memVal_child (x : Name.{u, v} 𝔹) (i : x.Index) :
     x.weight i ≤ memVal (x.child i) x := by
   cases x with
   | mk ι A z =>
-      exact le_iSup_of_le i (by simp [memVal, eqVal_refl])
+      change z i ≤ ⨆ j : ι, z j ⊓ eqVal (A i) (A j)
+      apply le_iSup_of_le i
+      simpa only [eqVal_refl, inf_top_eq]
 
 /-- Compose weighted Boolean witnesses through a common middle family. -/
 private theorem weightedWitness_trans_mixing
@@ -133,7 +135,8 @@ theorem coefficient_le_eqVal_mixture
     intro j
     rw [le_himp_iff]
     apply le_iSup_of_le ⟨i, j⟩
-    simp only [mixture, child, weight, eqVal_refl, inf_top_eq]
+    simp only [child, weight, eqVal_refl, inf_top_eq]
+    exact le_rfl
 
 /-- Existential packaging of the compile-tested mixing construction. -/
 theorem exists_mixture
