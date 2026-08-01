@@ -59,26 +59,28 @@ def bvSetStructure {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] :
     match R with
     | Relation.mem => BVSet.mem (terms 0) (terms 1)
 
-/-- Evaluate a set-theoretic term in the Boolean-valued universe. This is the
-set-theory specialization of generic Boolean-valued term realization. -/
-def evalTerm {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] {α : Type w}
-    (assignment : α → BVSet.{u, v} 𝔹) : Term α → BVSet.{u, v} 𝔹 :=
-  BooleanValued.FirstOrder.Term.realize (bvSetStructure (𝔹 := 𝔹)) assignment
+/-- Evaluate a set-theoretic term in the Boolean-valued universe. Since the
+language has no function symbols, every term is a variable. -/
+def evalTerm {𝔹 : Type v} {α : Type w}
+    (assignment : α → BVSet.{u, v} 𝔹) : Term α → BVSet.{u, v} 𝔹
+  | .var a => assignment a
+  | .func f _ => nomatch f
 
 @[simp]
-theorem evalTerm_var {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] {α : Type w}
+theorem evalTerm_var {𝔹 : Type v} {α : Type w}
     (assignment : α → BVSet.{u, v} 𝔹) (a : α) :
     evalTerm assignment (.var a) = assignment a :=
   rfl
 
-/-- Set-theoretic term evaluation agrees definitionally with the generic
-Boolean-valued realization. -/
+/-- Set-theoretic term evaluation agrees with generic valued realization. -/
 theorem evalTerm_eq_generic {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
     {α : Type w} (assignment : α → BVSet.{u, v} 𝔹) (t : Term α) :
     evalTerm assignment t =
       BooleanValued.FirstOrder.Term.realize
-        (bvSetStructure (𝔹 := 𝔹)) assignment t :=
-  rfl
+        (bvSetStructure (𝔹 := 𝔹)) assignment t := by
+  cases t with
+  | var => rfl
+  | func f _ => exact nomatch f
 
 /-- The Boolean truth value of a bounded set-theoretic formula. This is the
 set-theory specialization of generic Boolean-valued formula truth. -/
@@ -118,8 +120,16 @@ theorem truth_equal
     truth (.equal t₁ t₂) assignment boundAssignment =
       BVSet.bvEq
         (evalTerm (Sum.elim assignment boundAssignment) t₁)
-        (evalTerm (Sum.elim assignment boundAssignment) t₂) :=
-  rfl
+        (evalTerm (Sum.elim assignment boundAssignment) t₂) := by
+  change
+    BVSet.bvEq
+        (BooleanValued.FirstOrder.Term.realize
+          (bvSetStructure (𝔹 := 𝔹))
+          (Sum.elim assignment boundAssignment) t₁)
+        (BooleanValued.FirstOrder.Term.realize
+          (bvSetStructure (𝔹 := 𝔹))
+          (Sum.elim assignment boundAssignment) t₂) = _
+  rw [evalTerm_eq_generic, evalTerm_eq_generic]
 
 @[simp]
 theorem truth_mem
@@ -129,8 +139,16 @@ theorem truth_mem
     truth (.rel Relation.mem terms) assignment boundAssignment =
       BVSet.mem
         (evalTerm (Sum.elim assignment boundAssignment) (terms 0))
-        (evalTerm (Sum.elim assignment boundAssignment) (terms 1)) :=
-  rfl
+        (evalTerm (Sum.elim assignment boundAssignment) (terms 1)) := by
+  change
+    BVSet.mem
+        (BooleanValued.FirstOrder.Term.realize
+          (bvSetStructure (𝔹 := 𝔹))
+          (Sum.elim assignment boundAssignment) (terms 0))
+        (BooleanValued.FirstOrder.Term.realize
+          (bvSetStructure (𝔹 := 𝔹))
+          (Sum.elim assignment boundAssignment) (terms 1)) = _
+  rw [evalTerm_eq_generic, evalTerm_eq_generic]
 
 @[simp]
 theorem truth_imp
