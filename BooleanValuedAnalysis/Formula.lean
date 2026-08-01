@@ -191,12 +191,12 @@ def formulaTruth (φ : Formula α) (assignment : α → BVSet.{u, v} 𝔹) : �
 
 /-- The Boolean truth value of a closed first-order sentence. -/
 def sentenceTruth (φ : Sentence) : 𝔹 :=
-  formulaTruth (𝔹 := 𝔹) φ (fun x => nomatch x)
+  formulaTruth.{u, v, 0} (𝔹 := 𝔹) φ (fun x => nomatch x)
 
 /-- A closed sentence is true in the Boolean-valued universe when its Boolean
 truth value is `⊤`. -/
 def IsTrue (φ : Sentence) : Prop :=
-  sentenceTruth (𝔹 := 𝔹) φ = ⊤
+  sentenceTruth.{u, v} (𝔹 := 𝔹) φ = ⊤
 
 end SetTheory
 end BooleanValued
