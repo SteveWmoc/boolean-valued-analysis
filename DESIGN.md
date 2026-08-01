@@ -22,13 +22,12 @@ A raw Boolean-valued set is represented by the inductive type `BooleanValued.BVS
 
 ### Consequences
 
-- `BVSet 𝔹` lives one universe above the coefficient type used by the current definition.
+- `BVSet.{u, v} 𝔹` lives in `Type (max (u + 1) v)`, with child indices in `Type u` and coefficients in `Type v`.
 - The same extensional Boolean-valued set may have many raw tree representations.
 - Public downstream APIs should prefer semantic equality `=ᴮ` to Lean's constructor equality.
 
 ### Reconsider when
 
-- universe lifting blocks natural applications;
 - a rank-indexed hierarchy substantially simplifies recursion or size control;
 - quotient-based downstream structures require a different raw representation.
 
@@ -119,6 +118,29 @@ Atomic equality and membership, as currently stated, use arbitrary indexed infim
 
 - a coherent complete-Heyting-algebra semantics can reuse most of the development without duplicating APIs;
 - important finite or bounded fragments are blocked by an unnecessarily strong typeclass assumption.
+
+## D006 — Separate name-index and coefficient universes
+
+**Status:** accepted
+
+The universe of the index types occurring inside Boolean-valued names is independent of the universe of the coefficient algebra. Concretely, `BVSet.{u, v} 𝔹` uses index types in `Type u`, coefficients `𝔹 : Type v`, and lives in `Type (max (u + 1) v)`. Formula semantics additionally allows free-variable types in an independent universe.
+
+### Rationale
+
+- The independent-universe representation compiled through recursive equality and membership, the full equality calculus, canonical names, Mathlib-native formula substitution, and the compatibility form of the mixing lemma.
+- The same probes passed against the Lean and Mathlib environment used by Tau Ceti at the time of the audit.
+- No `ULift`, `PLift`, or equality between the index and coefficient universes was required.
+
+### Consequences
+
+- Ground-model `PSet` names and Boolean coefficients need not inhabit the same universe.
+- Closed-sentence semantics must still specify the name universe explicitly, because quantifiers range over `BVSet.{u, v} 𝔹` even when there are no free variables from which Lean could infer `u`.
+- This decision concerns universe placement only. It does not weaken `CompleteBooleanAlgebra 𝔹` or assert that the existing proofs already generalize to Heyting algebras, orthomodular lattices, or other truth-value structures.
+
+### Reconsider when
+
+- independent universes cause sustained inference or API friction in downstream constructions;
+- a more general hierarchy of name universes is required for internal model constructions.
 
 ## Open design questions
 
