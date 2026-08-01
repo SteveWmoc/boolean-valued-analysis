@@ -142,6 +142,32 @@ The universe of the index types occurring inside Boolean-valued names is indepen
 - independent universes cause sustained inference or API friction in downstream constructions;
 - a more general hierarchy of name universes is required for internal model constructions.
 
+## D007 — Use explicit Boolean-valued first-order structure objects
+
+**Status:** accepted for the generic semantic layer
+
+A Boolean-valued first-order structure is an explicit object containing an equality valuation, interpretations of function symbols, and Boolean-valued interpretations of relation symbols. Term realization and formula truth take this object as an explicit argument rather than recovering it through typeclass inference.
+
+### Rationale
+
+- The truth-value algebra cannot in general be inferred from the carrier and the result type of term realization.
+- An explicit object permits several Boolean-valued interpretations of the same language on the same carrier without type synonyms or local instance manipulation.
+- The design parallels ordinary mathematical model theory, where a structure is data that can be varied and compared.
+- It leaves room for future structures valued in different Lindenbaum–Tarski algebras without asserting uniqueness of the interpretation.
+
+### Consequences
+
+- Generic realization is written relative to a named structure object.
+- The set-theoretic evaluator is a specialization using `SetTheory.bvSetStructure`.
+- Interpretation data does not itself assert reflexivity, symmetry, transitivity, or congruence. Those properties belong in a future `LawfulStructure` layer used by formula extensionality and transfer.
+- The existing set-theory API remains available as a thin wrapper around the generic semantics.
+
+### Reconsider when
+
+- repeated explicit structure arguments materially damage downstream readability;
+- a canonical-instance mechanism can preserve support for multiple structures without ambiguous algebra inference;
+- Mathlib develops a standard algebra-valued semantic interface that should replace this local abstraction.
+
 ## Open design questions
 
 ### O001 — Formula substitution interface
