@@ -23,14 +23,16 @@ namespace Name
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-/-- Extensional equality unfolds into the two Boolean-valued subset conditions. -/
+/-- Extensional equality unfolds into its two directed containment conditions. The second
+condition keeps the recursive equality orientation used by the raw definition explicit. -/
 theorem eqVal_unfold (x y : Name.{u, v} 𝔹) :
     eqVal x y =
       (⨅ i : x.Index, x.weight i ⇨ memVal (x.child i) y) ⊓
-      (⨅ j : y.Index, y.weight j ⇨ memVal (y.child j) x) := by
+      (⨅ j : y.Index, y.weight j ⇨
+        ⨆ i : x.Index, x.weight i ⊓ eqVal (x.child i) (y.child j)) := by
   cases x
   cases y
-  simp only [eqVal, memVal, Index, child, weight]
+  rfl
 
 /-- Every immediate child belongs to its parent to at least the degree of its coefficient. -/
 theorem weight_le_memVal_child (x : Name.{u, v} 𝔹) (i : x.Index) :
@@ -39,7 +41,7 @@ theorem weight_le_memVal_child (x : Name.{u, v} 𝔹) (i : x.Index) :
   | mk ι A z =>
       change z i ≤ ⨆ j : ι, z j ⊓ eqVal (A i) (A j)
       apply le_iSup_of_le i
-      simpa only [eqVal_refl, inf_top_eq]
+      simpa only [eqVal_refl, inf_top_eq] using (le_rfl : z i ≤ z i)
 
 /-- Compose weighted Boolean witnesses through a common middle family. -/
 private theorem weightedWitness_trans_mixing
