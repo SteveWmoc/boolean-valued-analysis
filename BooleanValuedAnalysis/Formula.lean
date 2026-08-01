@@ -16,7 +16,7 @@ symbols and one binary relation symbol for membership. Formula syntax is reused
 from Mathlib, while realization takes values in a complete Boolean algebra.
 -/
 
-universe u v
+universe u v w
 
 namespace BooleanValued
 namespace SetTheory
@@ -50,21 +50,21 @@ abbrev Sentence :=
 
 /-- Evaluate a set-theoretic term in the Boolean-valued universe. Since the
 language has no function symbols, every term is a variable. -/
-def evalTerm {𝔹 : Type u} {α : Type v} (assignment : α → BVSet 𝔹) :
-    Term α → BVSet 𝔹
+def evalTerm {𝔹 : Type v} {α : Type w} (assignment : α → BVSet.{u, v} 𝔹) :
+    Term α → BVSet.{u, v} 𝔹
   | .var a => assignment a
   | .func f _ => nomatch f
 
 @[simp]
-theorem evalTerm_var {𝔹 : Type u} {α : Type v} (assignment : α → BVSet 𝔹) (a : α) :
+theorem evalTerm_var {𝔹 : Type v} {α : Type w} (assignment : α → BVSet.{u, v} 𝔹) (a : α) :
     evalTerm assignment (.var a) = assignment a :=
   rfl
 
 /-- The Boolean truth value of a bounded first-order formula under assignments
 to its free and bound variables. -/
-def truth {𝔹 : Type u} [CompleteBooleanAlgebra 𝔹] {α : Type v} :
+def truth {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] {α : Type w} :
     ∀ {n : ℕ}, BoundedFormula α n →
-      (α → BVSet 𝔹) → (Fin n → BVSet 𝔹) → 𝔹
+      (α → BVSet.{u, v} 𝔹) → (Fin n → BVSet.{u, v} 𝔹) → 𝔹
   | _, .falsum, _, _ => ⊥
   | _, .equal t₁ t₂, assignment, boundAssignment =>
       BVSet.bvEq
@@ -77,20 +77,20 @@ def truth {𝔹 : Type u} [CompleteBooleanAlgebra 𝔹] {α : Type v} :
   | _, .imp φ ψ, assignment, boundAssignment =>
       truth φ assignment boundAssignment ⇨ truth ψ assignment boundAssignment
   | _, .all φ, assignment, boundAssignment =>
-      ⨅ x : BVSet 𝔹, truth φ assignment (Fin.snoc boundAssignment x)
+      ⨅ x : BVSet.{u, v} 𝔹, truth φ assignment (Fin.snoc boundAssignment x)
 
-variable {𝔹 : Type u} [CompleteBooleanAlgebra 𝔹]
-variable {α : Type v} {n : ℕ}
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+variable {α : Type w} {n : ℕ}
 
 @[simp]
-theorem truth_falsum (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+theorem truth_falsum (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (.falsum : BoundedFormula α n) assignment boundAssignment = ⊥ :=
   rfl
 
 @[simp]
 theorem truth_equal
     (t₁ t₂ : Term (α ⊕ Fin n))
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (.equal t₁ t₂) assignment boundAssignment =
       BVSet.bvEq
         (evalTerm (Sum.elim assignment boundAssignment) t₁)
@@ -100,7 +100,7 @@ theorem truth_equal
 @[simp]
 theorem truth_mem
     (terms : Fin 2 → Term (α ⊕ Fin n))
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (.rel Relation.mem terms) assignment boundAssignment =
       BVSet.mem
         (evalTerm (Sum.elim assignment boundAssignment) (terms 0))
@@ -110,7 +110,7 @@ theorem truth_mem
 @[simp]
 theorem truth_imp
     (φ ψ : BoundedFormula α n)
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (.imp φ ψ) assignment boundAssignment =
       (truth φ assignment boundAssignment ⇨ truth ψ assignment boundAssignment) :=
   rfl
@@ -118,15 +118,15 @@ theorem truth_imp
 @[simp]
 theorem truth_all
     (φ : BoundedFormula α (n + 1))
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (.all φ) assignment boundAssignment =
-      ⨅ x : BVSet 𝔹, truth φ assignment (Fin.snoc boundAssignment x) :=
+      ⨅ x : BVSet.{u, v} 𝔹, truth φ assignment (Fin.snoc boundAssignment x) :=
   rfl
 
 @[simp]
 theorem truth_not
     (φ : BoundedFormula α n)
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth φ.not assignment boundAssignment =
       (truth φ assignment boundAssignment)ᶜ := by
   change (truth φ assignment boundAssignment ⇨ ⊥) = _
@@ -134,7 +134,7 @@ theorem truth_not
 
 @[simp]
 theorem truth_top
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (⊤ : BoundedFormula α n) assignment boundAssignment = ⊤ := by
   change ((⊥ : 𝔹) ⇨ ⊥) = ⊤
   simp
@@ -142,7 +142,7 @@ theorem truth_top
 @[simp]
 theorem truth_inf
     (φ ψ : BoundedFormula α n)
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (φ ⊓ ψ) assignment boundAssignment =
       truth φ assignment boundAssignment ⊓ truth ψ assignment boundAssignment := by
   change
@@ -154,7 +154,7 @@ theorem truth_inf
 @[simp]
 theorem truth_sup
     (φ ψ : BoundedFormula α n)
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (φ ⊔ ψ) assignment boundAssignment =
       truth φ assignment boundAssignment ⊔ truth ψ assignment boundAssignment := by
   change
@@ -166,7 +166,7 @@ theorem truth_sup
 @[simp]
 theorem truth_iff
     (φ ψ : BoundedFormula α n)
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth (FirstOrder.Language.BoundedFormula.iff φ ψ) assignment boundAssignment =
       (truth φ assignment boundAssignment ⇨ truth ψ assignment boundAssignment) ⊓
         (truth ψ assignment boundAssignment ⇨ truth φ assignment boundAssignment) := by
@@ -175,28 +175,28 @@ theorem truth_iff
 @[simp]
 theorem truth_ex
     (φ : BoundedFormula α (n + 1))
-    (assignment : α → BVSet 𝔹) (boundAssignment : Fin n → BVSet 𝔹) :
+    (assignment : α → BVSet.{u, v} 𝔹) (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
     truth φ.ex assignment boundAssignment =
-      ⨆ x : BVSet 𝔹, truth φ assignment (Fin.snoc boundAssignment x) := by
+      ⨆ x : BVSet.{u, v} 𝔹, truth φ assignment (Fin.snoc boundAssignment x) := by
   change
-    ((⨅ x : BVSet 𝔹,
+    ((⨅ x : BVSet.{u, v} 𝔹,
         truth φ assignment (Fin.snoc boundAssignment x) ⇨ ⊥) ⇨ ⊥) =
-      ⨆ x : BVSet 𝔹, truth φ assignment (Fin.snoc boundAssignment x)
+      ⨆ x : BVSet.{u, v} 𝔹, truth φ assignment (Fin.snoc boundAssignment x)
   simp only [himp_bot, compl_iInf, compl_compl]
 
 /-- The Boolean truth value of a formula under an assignment to its free
 variables. -/
-def formulaTruth (φ : Formula α) (assignment : α → BVSet 𝔹) : 𝔹 :=
+def formulaTruth (φ : Formula α) (assignment : α → BVSet.{u, v} 𝔹) : 𝔹 :=
   truth φ assignment (fun i => Fin.elim0 i)
 
 /-- The Boolean truth value of a closed first-order sentence. -/
 def sentenceTruth (φ : Sentence) : 𝔹 :=
-  formulaTruth (𝔹 := 𝔹) φ (fun x => nomatch x)
+  formulaTruth.{u, v, 0} (𝔹 := 𝔹) φ (fun x => nomatch x)
 
 /-- A closed sentence is true in the Boolean-valued universe when its Boolean
 truth value is `⊤`. -/
 def IsTrue (φ : Sentence) : Prop :=
-  sentenceTruth (𝔹 := 𝔹) φ = ⊤
+  sentenceTruth.{u, v} (𝔹 := 𝔹) φ = ⊤
 
 end SetTheory
 end BooleanValued

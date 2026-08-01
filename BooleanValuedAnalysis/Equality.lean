@@ -14,16 +14,16 @@ symmetry, transitivity, and substitution for the atomic relations of equality
 and membership.
 -/
 
-universe u
+universe u v
 
 namespace BooleanValued
 namespace BVSet
 
-variable {𝔹 : Type u} [CompleteBooleanAlgebra 𝔹]
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 /-- Boolean-valued equality is reflexive. -/
 @[simp]
-theorem bvEq_refl : ∀ x : BVSet 𝔹, bvEq x x = ⊤ := by
+theorem bvEq_refl : ∀ x : BVSet.{u, v} 𝔹, bvEq x x = ⊤ := by
   intro x
   induction x with
   | mk ι A w ih =>
@@ -35,7 +35,7 @@ theorem bvEq_refl : ∀ x : BVSet 𝔹, bvEq x x = ⊤ := by
         exact le_iSup_of_le i (le_inf le_rfl (ih i ▸ le_top))
 
 /-- Boolean-valued equality is symmetric. -/
-theorem bvEq_symm : ∀ x y : BVSet 𝔹, bvEq x y = bvEq y x := by
+theorem bvEq_symm : ∀ x y : BVSet.{u, v} 𝔹, bvEq x y = bvEq y x := by
   intro x
   induction x with
   | mk ι A w ih =>
@@ -80,7 +80,7 @@ private theorem weightedWitness_trans
         _ ≤ u k ⊓ t k := inf_le_inf_left _ (h j k)
 
 /-- Boolean-valued equality is transitive. -/
-theorem bvEq_trans : ∀ x y z : BVSet 𝔹,
+theorem bvEq_trans : ∀ x y z : BVSet.{u, v} 𝔹,
     bvEq x y ⊓ bvEq y z ≤ bvEq x z := by
   intro x
   induction x with
@@ -154,13 +154,13 @@ theorem bvEq_trans : ∀ x y z : BVSet 𝔹,
                         exact ih i (C j) (D k))
 
 /-- Equality may be substituted in the left argument of Boolean-valued equality. -/
-theorem bvEq_subst_left (x y z : BVSet 𝔹) :
+theorem bvEq_subst_left (x y z : BVSet.{u, v} 𝔹) :
     bvEq x y ⊓ bvEq x z ≤ bvEq y z := by
   rw [bvEq_symm x y]
   exact bvEq_trans y x z
 
 /-- Equal Boolean-valued sets have the same membership status as elements. -/
-theorem mem_congr_left (x y z : BVSet 𝔹) :
+theorem mem_congr_left (x y z : BVSet.{u, v} 𝔹) :
     bvEq x y ⊓ mem x z ≤ mem y z := by
   cases z with
   | mk κ C v =>
@@ -177,7 +177,7 @@ theorem mem_congr_left (x y z : BVSet 𝔹) :
         _ ≤ bvEq y (C k) := bvEq_subst_left x y (C k)
 
 /-- Equality may be substituted in the set argument of Boolean-valued membership. -/
-theorem mem_congr_right (x y z : BVSet 𝔹) :
+theorem mem_congr_right (x y z : BVSet.{u, v} 𝔹) :
     bvEq x y ⊓ mem z x ≤ mem z y := by
   cases x with
   | mk ι A w =>
