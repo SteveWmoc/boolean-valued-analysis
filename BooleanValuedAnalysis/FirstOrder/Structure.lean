@@ -11,8 +11,8 @@ import Mathlib.Order.CompleteBooleanAlgebra
 # Boolean-valued first-order structures
 
 This file defines first-order structures whose equality and relations take
-values in a complete Boolean algebra. It also interprets Mathlib first-order
-terms and bounded formulas in such a structure.
+values in a truth-value type. It also interprets Mathlib first-order terms and,
+when that type is a complete Boolean algebra, bounded formulas.
 
 The structure introduced here contains interpretation data only. Laws saying
 that the Boolean-valued equality is an equivalence relation and that functions
@@ -25,32 +25,29 @@ universe u₁ u₂ v w x
 namespace BooleanValued
 namespace FirstOrder
 
-/-- Interpretation data for a first-order language with truth values in a
-complete Boolean algebra.
+/-- Interpretation data for a first-order language with values in `𝔹`.
 
 Unlike `FirstOrder.Language.Structure`, equality is interpreted explicitly as
-a Boolean-valued relation rather than as Lean equality on the carrier. The
+a `𝔹`-valued relation rather than as Lean equality on the carrier. The
 structure is an explicit object so that the same carrier may support multiple
-Boolean-valued interpretations. -/
+valued interpretations. No algebraic laws on `𝔹` are needed merely to package
+the interpretation data. -/
 structure Structure
     (L : _root_.FirstOrder.Language.{u₁, u₂})
-    (𝔹 : Type v) [CompleteBooleanAlgebra 𝔹]
-    (M : Type w) where
-  /-- The Boolean truth value of equality of two carrier elements. -/
+    (𝔹 : Type v) (M : Type w) where
+  /-- The value of equality of two carrier elements. -/
   eqVal : M → M → 𝔹
   /-- Interpretation of function symbols. -/
   funMap : ∀ {n : ℕ}, L.Functions n → (Fin n → M) → M
-  /-- Boolean-valued interpretation of relation symbols. -/
+  /-- Valued interpretation of relation symbols. -/
   relMap : ∀ {n : ℕ}, L.Relations n → (Fin n → M) → 𝔹
 
 namespace Term
 
 variable {L : _root_.FirstOrder.Language.{u₁, u₂}}
-variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
-variable {M : Type w}
-variable {α : Type x}
+variable {𝔹 : Type v} {M : Type w} {α : Type x}
 
-/-- Evaluate a first-order term in a Boolean-valued structure. -/
+/-- Evaluate a first-order term in a valued structure. -/
 def realize (S : Structure L 𝔹 M) (assignment : α → M) : L.Term α → M
   | .var a => assignment a
   | .func f terms =>
@@ -75,8 +72,7 @@ namespace BoundedFormula
 
 variable {L : _root_.FirstOrder.Language.{u₁, u₂}}
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
-variable {M : Type w}
-variable {α : Type x}
+variable {M : Type w} {α : Type x}
 
 /-- The Boolean truth value of a bounded first-order formula under assignments
 to its free and bound variables. -/
@@ -224,8 +220,7 @@ namespace Formula
 
 variable {L : _root_.FirstOrder.Language.{u₁, u₂}}
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
-variable {M : Type w}
-variable {α : Type x}
+variable {M : Type w} {α : Type x}
 
 /-- The Boolean truth value of a formula under an assignment to its free
 variables. -/
