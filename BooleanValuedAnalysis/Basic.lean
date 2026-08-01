@@ -24,7 +24,7 @@ namespace BooleanValued
 where `w i` is the Boolean coefficient attached to the child `A i`.
 -/
 inductive BVSet (𝔹 : Type v) : Type (max (u + 1) v) where
-  | mk (ι : Type u) (A : ι → BVSet.{u, v} 𝔹) (w : ι → 𝔹) : BVSet.{u, v} 𝔹
+  | mk (ι : Type u) (A : ι → BVSet 𝔹) (w : ι → 𝔹) : BVSet 𝔹
 
 namespace BVSet
 
