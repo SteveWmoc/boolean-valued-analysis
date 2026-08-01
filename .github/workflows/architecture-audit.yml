@@ -49,3 +49,6 @@ jobs:
 
       - name: Compile formula-substitution probe
         run: lake env lean Audit/FormulaSubstitutionProbe.lean
+
+      - name: Compile independent-universe mixing probe
+        run: lake env lean Audit/MixingProbe.lean
