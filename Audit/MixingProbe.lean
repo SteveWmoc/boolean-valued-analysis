@@ -137,8 +137,12 @@ theorem coefficient_le_eqVal_mixture
     intro j
     rw [le_himp_iff]
     apply le_iSup_of_le ⟨i, j⟩
-    simp only [child, weight, eqVal_refl, inf_top_eq]
-    exact le_rfl
+    change
+      a i ⊓ (τ i).weight j ≤
+        (a i ⊓ (τ i).weight j) ⊓
+          eqVal ((τ i).child j) ((τ i).child j)
+    simpa only [eqVal_refl, inf_top_eq] using
+      (le_rfl : a i ⊓ (τ i).weight j ≤ a i ⊓ (τ i).weight j)
 
 /-- Existential packaging of the compile-tested mixing construction. -/
 theorem exists_mixture
