@@ -15,26 +15,26 @@ are shown to agree with quantification over the whole Boolean-valued universe
 restricted by Boolean-valued membership.
 -/
 
-universe u
+universe u v
 
 namespace BooleanValued
 namespace BVSet
 
-variable {𝔹 : Type u} [CompleteBooleanAlgebra 𝔹]
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 /-- The Boolean truth value of `∃ y ∈ x, φ y`, computed from the weighted
 children of `x`. -/
-def boundedExists (x : BVSet 𝔹) (φ : BVSet 𝔹 → 𝔹) : 𝔹 :=
+def boundedExists (x : BVSet.{u, v} 𝔹) (φ : BVSet.{u, v} 𝔹 → 𝔹) : 𝔹 :=
   ⨆ i : x.Index, x.weight i ⊓ φ (x.child i)
 
 /-- The Boolean truth value of `∀ y ∈ x, φ y`, computed from the weighted
 children of `x`. -/
-def boundedForall (x : BVSet 𝔹) (φ : BVSet 𝔹 → 𝔹) : 𝔹 :=
+def boundedForall (x : BVSet.{u, v} 𝔹) (φ : BVSet.{u, v} 𝔹 → 𝔹) : 𝔹 :=
   ⨅ i : x.Index, x.weight i ⇨ φ (x.child i)
 
 /-- The coefficient of a child is bounded by the truth value that the child
 belongs to its parent. -/
-theorem weight_le_mem_child (x : BVSet 𝔹) (i : x.Index) :
+theorem weight_le_mem_child (x : BVSet.{u, v} 𝔹) (i : x.Index) :
     x.weight i ≤ mem (x.child i) x := by
   cases x with
   | mk ι A w =>
@@ -45,9 +45,9 @@ theorem weight_le_mem_child (x : BVSet 𝔹) (i : x.Index) :
 
 /-- Bounded existential quantification over weighted children agrees with
 universe-wide existential quantification restricted by membership. -/
-theorem boundedExists_eq_iSup_mem {x : BVSet 𝔹} {φ : BVSet 𝔹 → 𝔹}
+theorem boundedExists_eq_iSup_mem {x : BVSet.{u, v} 𝔹} {φ : BVSet.{u, v} 𝔹 → 𝔹}
     (hφ : Extensional φ) :
-    boundedExists x φ = ⨆ y : BVSet 𝔹, mem y x ⊓ φ y := by
+    boundedExists x φ = ⨆ y : BVSet.{u, v} 𝔹, mem y x ⊓ φ y := by
   apply le_antisymm
   · unfold boundedExists
     apply iSup_le
@@ -71,9 +71,9 @@ theorem boundedExists_eq_iSup_mem {x : BVSet 𝔹} {φ : BVSet 𝔹 → 𝔹}
 
 /-- Bounded universal quantification over weighted children agrees with
 universe-wide universal quantification restricted by membership. -/
-theorem boundedForall_eq_iInf_mem {x : BVSet 𝔹} {φ : BVSet 𝔹 → 𝔹}
+theorem boundedForall_eq_iInf_mem {x : BVSet.{u, v} 𝔹} {φ : BVSet.{u, v} 𝔹 → 𝔹}
     (hφ : Extensional φ) :
-    boundedForall x φ = ⨅ y : BVSet 𝔹, mem y x ⇨ φ y := by
+    boundedForall x φ = ⨅ y : BVSet.{u, v} 𝔹, mem y x ⇨ φ y := by
   apply le_antisymm
   · apply le_iInf
     intro y
@@ -105,7 +105,7 @@ theorem boundedForall_eq_iInf_mem {x : BVSet 𝔹} {φ : BVSet 𝔹 → 𝔹}
     intro i
     rw [le_himp_iff]
     calc
-      (⨅ y : BVSet 𝔹, mem y x ⇨ φ y) ⊓ x.weight i ≤
+      (⨅ y : BVSet.{u, v} 𝔹, mem y x ⇨ φ y) ⊓ x.weight i ≤
           (mem (x.child i) x ⇨ φ (x.child i)) ⊓ mem (x.child i) x := by
         apply le_inf
         · exact inf_le_left.trans (iInf_le _ (x.child i))

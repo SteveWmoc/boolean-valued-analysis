@@ -18,17 +18,17 @@ It also proves that canonical names preserve and, over a nontrivial Boolean
 algebra, reflect ground-model extensional equality and membership.
 -/
 
-universe u
+universe u v
 
 namespace BooleanValued
 namespace BVSet
 
 section Definition
 
-variable {𝔹 : Type u} [Top 𝔹]
+variable {𝔹 : Type v} [Top 𝔹]
 
 /-- The canonical Boolean-valued name of a ground-model pre-set. -/
-def check : PSet.{u} → BVSet 𝔹
+def check : PSet.{u} → BVSet.{u, v} 𝔹
   | .mk ι A =>
       BVSet.mk ι (fun i => check (A i)) (fun _ => ⊤)
 
@@ -66,7 +66,7 @@ end Definition
 
 section Preservation
 
-variable {𝔹 : Type u} [CompleteBooleanAlgebra 𝔹]
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 /-- Failure of extensional equivalence is witnessed in one direction by a child
 having no equivalent child on the other side. -/
