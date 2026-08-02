@@ -76,7 +76,7 @@ theorem evalTerm_congr
     (assignment₁ assignment₂ : α → BVSet.{u, v} 𝔹) :
     (⨅ a, BVSet.bvEq (assignment₁ a) (assignment₂ a)) ≤
       BVSet.bvEq (evalTerm assignment₁ t) (evalTerm assignment₂ t) := by
-  simpa only [evalTerm_eq_generic] using
+  simpa [bvSetStructure, evalTerm_eq_generic] using
     BooleanValued.FirstOrder.Term.realize_congr
       (bvSetStructure (𝔹 := 𝔹))
       (bvSetStructure_lawful (𝔹 := 𝔹))
