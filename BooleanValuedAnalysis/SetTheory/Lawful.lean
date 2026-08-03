@@ -6,14 +6,14 @@ Authors: Steven Sabean
 
 import BooleanValuedAnalysis.Formula
 import BooleanValuedAnalysis.Equality
-import BooleanValuedAnalysis.FirstOrder.Lawful
+import BooleanValuedAnalysis.FirstOrder.Extensional
 
 /-!
 # Lawfulness of the Boolean-valued set-theory structure
 
 This file proves that the generic first-order structure on raw Boolean-valued
 sets satisfies the equality and congruence laws. It then specializes generic
-term extensionality to set-theoretic term evaluation.
+term and formula extensionality to the set-theoretic semantics.
 -/
 
 universe u v w
@@ -81,6 +81,40 @@ theorem evalTerm_congr
       (bvSetStructure (𝔹 := 𝔹))
       (bvSetStructure_lawful (𝔹 := 𝔹))
       t assignment₁ assignment₂
+
+variable {n : ℕ}
+
+/-- The meet of the pointwise equality values of two assignments lies below the
+Boolean equivalence of the corresponding bounded set-theoretic truth values. -/
+theorem truth_congr
+    (φ : BoundedFormula α n)
+    (assignment₁ assignment₂ : α → BVSet.{u, v} 𝔹)
+    (boundAssignment₁ boundAssignment₂ : Fin n → BVSet.{u, v} 𝔹) :
+    ((⨅ a, BVSet.bvEq (assignment₁ a) (assignment₂ a)) ⊓
+      (⨅ i, BVSet.bvEq (boundAssignment₁ i) (boundAssignment₂ i))) ≤
+      (truth φ assignment₁ boundAssignment₁ ⇨
+        truth φ assignment₂ boundAssignment₂) ⊓
+      (truth φ assignment₂ boundAssignment₂ ⇨
+        truth φ assignment₁ boundAssignment₁) := by
+  simpa only [truth, bvSetStructure] using
+    BooleanValued.FirstOrder.BoundedFormula.truth_congr
+      (bvSetStructure (𝔹 := 𝔹))
+      (bvSetStructure_lawful (𝔹 := 𝔹))
+      φ assignment₁ assignment₂ boundAssignment₁ boundAssignment₂
+
+/-- The meet of the pointwise equality values of two assignments lies below the
+Boolean equivalence of the corresponding set-theoretic formula truth values. -/
+theorem formulaTruth_congr
+    (φ : Formula α)
+    (assignment₁ assignment₂ : α → BVSet.{u, v} 𝔹) :
+    (⨅ a, BVSet.bvEq (assignment₁ a) (assignment₂ a)) ≤
+      (formulaTruth φ assignment₁ ⇨ formulaTruth φ assignment₂) ⊓
+      (formulaTruth φ assignment₂ ⇨ formulaTruth φ assignment₁) := by
+  simpa only [formulaTruth, bvSetStructure] using
+    BooleanValued.FirstOrder.Formula.truth_congr
+      (bvSetStructure (𝔹 := 𝔹))
+      (bvSetStructure_lawful (𝔹 := 𝔹))
+      φ assignment₁ assignment₂
 
 end SetTheory
 end BooleanValued
