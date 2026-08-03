@@ -159,10 +159,10 @@ theorem truth_transport_of_le
       rw [truth_all, truth_all]
       apply le_iInf
       intro z
-      have hboundSnoc : ∀ i,
+      have hboundSnoc : ∀ i : Fin (n + 1),
           b ≤ S.eqVal
-            (Fin.snoc boundAssignment₁ z i)
-            (Fin.snoc boundAssignment₂ z i) := by
+            ((Fin.snoc boundAssignment₁ z : Fin (n + 1) → M) i)
+            ((Fin.snoc boundAssignment₂ z : Fin (n + 1) → M) i) := by
         intro i
         refine Fin.lastCases ?_ (fun j => ?_) i
         · rw [Fin.snoc_last, Fin.snoc_last, hS.eq_refl]
