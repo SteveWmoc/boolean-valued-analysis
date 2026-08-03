@@ -68,10 +68,10 @@ theorem truth_transport_of_le
     (hbound : ∀ i, b ≤ S.eqVal (boundAssignment₁ i) (boundAssignment₂ i)) :
     b ⊓ truth S φ assignment₁ boundAssignment₁ ≤
       truth S φ assignment₂ boundAssignment₂ := by
-  induction φ generalizing assignment₁ assignment₂ boundAssignment₁ boundAssignment₂ b with
+  induction φ generalizing assignment₁ assignment₂ b with
   | falsum =>
       simp
-  | equal t₁ t₂ =>
+  | @equal n t₁ t₂ =>
       have hvars : ∀ z : α ⊕ Fin n,
           b ≤ S.eqVal
             (Sum.elim assignment₁ boundAssignment₁ z)
@@ -88,10 +88,10 @@ theorem truth_transport_of_le
         (Sum.elim assignment₂ boundAssignment₂) b hvars
       simpa only [truth_equal] using
         LawfulStructure.eqVal_congr_of_le S hS ht₁ ht₂
-  | rel R terms =>
-      let values₁ : Fin _ → M := fun i =>
+  | @rel n l R terms =>
+      let values₁ : Fin l → M := fun i =>
         Term.realize S (Sum.elim assignment₁ boundAssignment₁) (terms i)
-      let values₂ : Fin _ → M := fun i =>
+      let values₂ : Fin l → M := fun i =>
         Term.realize S (Sum.elim assignment₂ boundAssignment₂) (terms i)
       have hvars : ∀ z : α ⊕ Fin n,
           b ≤ S.eqVal
@@ -110,7 +110,7 @@ theorem truth_transport_of_le
       exact le_trans
         (le_inf (inf_le_left.trans (le_iInf hvalues)) inf_le_right)
         (hS.rel_congr R values₁ values₂)
-  | imp φ ψ ihφ ihψ =>
+  | @imp n φ ψ ihφ ihψ =>
       have hfree' : ∀ a, b ≤ S.eqVal (assignment₂ a) (assignment₁ a) := by
         intro a
         simpa only [hS.eq_symm (assignment₂ a) (assignment₁ a)] using hfree a
@@ -155,7 +155,7 @@ theorem truth_transport_of_le
             truth S ψ assignment₁ boundAssignment₁ :=
         (le_inf himp hφ₁).trans himp_inf_le
       exact (le_inf hb hψ₁).trans hψ
-  | all φ ih =>
+  | @all n φ ih =>
       rw [truth_all, truth_all]
       apply le_iInf
       intro z
