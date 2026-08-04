@@ -115,6 +115,9 @@ theorem truth_relabel
       truth S φ (assignment ∘ g) := by
   rw [truth, truth, _root_.FirstOrder.Language.Formula.relabel,
     BoundedFormula.truth_relabel]
+  congr 1
+  funext i
+  exact Fin.elim0 i
 
 /-- A relabeled formula is insensitive to changes in an assignment outside the
 image of the relabeling map. -/
