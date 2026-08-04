@@ -23,7 +23,7 @@ namespace BooleanValued
 namespace FirstOrder
 
 variable {L : _root_.FirstOrder.Language.{u₁, u₂}}
-variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+variable {𝔹 : Type v}
 variable {M : Type w} {α : Type x} {β : Type y}
 
 namespace Term
@@ -44,6 +44,8 @@ theorem realize_relabel
       exact ih i
 
 end Term
+
+variable [CompleteBooleanAlgebra 𝔹]
 
 namespace BoundedFormula
 
@@ -113,11 +115,6 @@ theorem truth_relabel
       truth S φ (assignment ∘ g) := by
   rw [truth, truth, _root_.FirstOrder.Language.Formula.relabel,
     BoundedFormula.truth_relabel]
-  congr 1
-  · funext a
-    rfl
-  · funext i
-    exact Fin.elim0 i
 
 /-- A relabeled formula is insensitive to changes in an assignment outside the
 image of the relabeling map. -/
