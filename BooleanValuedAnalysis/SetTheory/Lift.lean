@@ -84,7 +84,7 @@ truth value as the original formula. -/
 theorem formulaTruth_liftAt
     (φ : Formula α) (n' : ℕ)
     (assignment : α → BVSet.{u, v} 𝔹)
-    (boundAssignment : Fin n' → BVSet.{u, v} 𝔹) :
+    (boundAssignment : Fin (0 + n') → BVSet.{u, v} 𝔹) :
     truth (φ.liftAt n' 0) assignment boundAssignment =
       formulaTruth φ assignment := by
   simpa only [truth, formulaTruth] using
