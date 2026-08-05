@@ -86,14 +86,15 @@ theorem truth_liftAt
       simp [_root_.FirstOrder.Language.BoundedFormula.mapTermRel, truth,
         Sum.elim_comp_map]
   | imp _ _ ih₁ ih₂ =>
-      simp only [_root_.FirstOrder.Language.BoundedFormula.mapTermRel, truth,
-        ih₁ hmn, ih₂ hmn]
+      simp only [_root_.FirstOrder.Language.BoundedFormula.mapTermRel, truth]
+      rw [ih₁ boundAssignment hmn, ih₂ boundAssignment hmn]
   | @all k ψ ih =>
       have h : k + 1 + n' = k + n' + 1 := by
         omega
       simp only [_root_.FirstOrder.Language.BoundedFormula.mapTermRel, truth,
-        truth_castLE_of_eq S h, ih (hmn.trans k.le_succ)]
+        truth_castLE_of_eq S h]
       refine congrArg (fun f : M → 𝔹 => ⨅ x, f x) (funext fun x => ?_)
+      rw [ih (Fin.snoc boundAssignment x ∘ Fin.cast h) (hmn.trans k.le_succ)]
       refine congrArg (fun xs : Fin (k + 1) → M => truth S ψ assignment xs)
         (funext (Fin.lastCases ?_ fun i => ?_))
       · simp only [Function.comp_apply, Fin.val_last, Fin.snoc_last]
@@ -129,6 +130,7 @@ theorem truth_liftAt_one_self
   rw [truth_liftAt_one S φ assignment boundAssignment (le_refl n)]
   apply congrArg (truth S φ assignment)
   funext i
+  simp only [Function.comp_apply]
   rw [if_pos i.is_lt]
 
 end BoundedFormula
@@ -141,7 +143,7 @@ value as the original formula. -/
 theorem truth_liftAt
     (S : Structure L 𝔹 M)
     (φ : L.Formula α) (n' : ℕ)
-    (assignment : α → M) (boundAssignment : Fin n' → M) :
+    (assignment : α → M) (boundAssignment : Fin (0 + n') → M) :
     BoundedFormula.truth S (φ.liftAt n' 0) assignment boundAssignment =
       truth S φ assignment := by
   change
