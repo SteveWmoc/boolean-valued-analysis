@@ -102,14 +102,20 @@ theorem truth_subst
       exact Term.realize_substBounded S (terms i) f assignment boundAssignment
   | imp φ ψ ihφ ihψ =>
       intro f assignment boundAssignment
-      simp only [_root_.FirstOrder.Language.BoundedFormula.subst,
-        _root_.FirstOrder.Language.BoundedFormula.mapTermRel, truth]
+      change
+        (truth S (φ.subst f) assignment boundAssignment ⇨
+            truth S (ψ.subst f) assignment boundAssignment) =
+          (truth S φ (fun a => Term.realize S assignment (f a)) boundAssignment ⇨
+            truth S ψ (fun a => Term.realize S assignment (f a)) boundAssignment)
       rw [ihφ f assignment boundAssignment, ihψ f assignment boundAssignment]
   | all φ ih =>
       intro f assignment boundAssignment
-      simp only [_root_.FirstOrder.Language.BoundedFormula.subst,
-        _root_.FirstOrder.Language.BoundedFormula.mapTermRel, truth]
-      apply congrArg (fun g : M → 𝔹 => ⨅ x, g x)
+      change
+        (⨅ x : M, truth S (φ.subst f) assignment (Fin.snoc boundAssignment x)) =
+          ⨅ x : M,
+            truth S φ (fun a => Term.realize S assignment (f a))
+              (Fin.snoc boundAssignment x)
+      congr 1
       funext x
       exact ih f assignment (Fin.snoc boundAssignment x)
 
