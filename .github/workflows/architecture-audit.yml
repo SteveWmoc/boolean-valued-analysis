@@ -35,8 +35,7 @@ jobs:
           import json
           import sys
 
-          manifest_path = sys.argv[1]
-          with open(manifest_path, encoding="utf-8") as handle:
+          with open(sys.argv[1], encoding="utf-8") as handle:
               manifest = json.load(handle)
 
           matches = [pkg for pkg in manifest["packages"] if pkg["name"] == "mathlib"]
@@ -48,25 +47,37 @@ jobs:
 
           TAUCETI_MATHLIB_REV="$mathlib_rev" python3 - <<'PY'
           import os
-          import re
           from pathlib import Path
 
           path = Path("lakefile.toml")
-          text = path.read_text(encoding="utf-8")
+          lines = path.read_text(encoding="utf-8").splitlines()
           rev = os.environ["TAUCETI_MATHLIB_REV"]
-          pattern = re.compile(
-              r'(?ms)(\[\[require\]\]\s*.*?name\s*=\s*"mathlib".*?\nrev\s*=\s*")[^"]+(" )?'
-          )
-          match = pattern.search(text)
-          if match is None:
-              # Keep the replacement deliberately strict so dependency-layout changes fail loudly.
-              pattern = re.compile(
-                  r'(?ms)(\[\[require\]\]\s*.*?name\s*=\s*"mathlib".*?\nrev\s*=\s*")[^"]+(")'
+
+          in_require = False
+          mathlib_require = False
+          replacements = 0
+          for index, line in enumerate(lines):
+              stripped = line.strip()
+              if stripped == "[[require]]":
+                  in_require = True
+                  mathlib_require = False
+                  continue
+              if stripped.startswith("[[") and stripped != "[[require]]":
+                  in_require = False
+                  mathlib_require = False
+              if in_require and stripped == 'name = "mathlib"':
+                  mathlib_require = True
+                  continue
+              if in_require and mathlib_require and stripped.startswith("rev = "):
+                  lines[index] = f'rev = "{rev}"'
+                  replacements += 1
+                  mathlib_require = False
+
+          if replacements != 1:
+              raise SystemExit(
+                  f"expected to replace one mathlib rev in lakefile.toml, replaced {replacements}"
               )
-          text, count = pattern.subn(lambda m: f"{m.group(1)}{rev}{m.group(2)}", text, count=1)
-          if count != 1:
-              raise SystemExit("could not identify exactly one mathlib rev in lakefile.toml")
-          path.write_text(text, encoding="utf-8")
+          path.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
 
           rm -f lake-manifest.json
