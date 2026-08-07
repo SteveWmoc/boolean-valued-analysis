@@ -1,136 +1,162 @@
 # M001 — Relabeling, Substitution, and Formula Extensionality
 
-**Status:** proposed
+**Status:** complete  
+**Completed:** 2026-08-07
 
 ## Purpose
 
-The current formula semantics interprets Mathlib first-order formulas in the Boolean-valued universe. This milestone proves that the interpretation respects the structural operations already provided by Mathlib syntax.
+The formula semantics interprets Mathlib first-order formulas in Boolean-valued structures. This milestone proves that the interpretation respects the structural operations already provided by Mathlib syntax.
 
-The goal is not merely to accumulate simplification lemmas. It is to establish the semantic infrastructure needed for bounded quantifiers, axiom schemes, transfer arguments, and later forcing-style reasoning.
+The result is semantic infrastructure for bounded quantifiers, axiom schemes, transfer arguments, and later forcing-style reasoning rather than merely a collection of simplification lemmas.
 
-## Mathematical target
+## Mathematical result
 
-For a complete Boolean algebra `𝔹`, a formula should depend only on the values assigned to the variables that occur in it, and syntactic manipulation of variables should agree with the corresponding manipulation of assignments.
+For a complete Boolean algebra `𝔹`, formula truth now respects relabeling, lifting, syntactic substitution, and Boolean-valued equality of assignments. The strongest extensionality results are proved for bounded formulas, so free and bound variables remain explicit throughout quantifier induction.
 
-The milestone should establish four layers.
+The implementation separates two layers:
 
-### 1. Term relabeling
+- relabeling, lifting, and substitution require only the interpretation data in `BooleanValued.FirstOrder.Structure`;
+- Boolean-valued assignment extensionality requires `BooleanValued.FirstOrder.LawfulStructure`.
 
-Evaluation of a relabeled term agrees with evaluation under the relabeled assignment.
+The set-theoretic API is a thin specialization of these generic results through `SetTheory.bvSetStructure`.
 
-Mathematically, for a variable map `f : α → β`, assignment `ρ : β → BVSet 𝔹`, and term `t : Term α`,
+## Implemented API
 
-```text
-evalTerm ρ (t.relabel f) = evalTerm (ρ ∘ f) t.
-```
+### 1. Term and formula relabeling
 
-The exact Lean operation names must be checked against the pinned Mathlib version before implementation.
+Generic results include:
 
-### 2. Formula relabeling
+- `BooleanValued.FirstOrder.Term.realize_relabel`;
+- `BooleanValued.FirstOrder.BoundedFormula.truth_relabel`;
+- `BooleanValued.FirstOrder.Formula.truth_relabel`;
+- `BooleanValued.FirstOrder.Formula.truth_relabel_eq_of_comp_eq`.
 
-Truth of a relabeled formula agrees with truth under the corresponding assignment.
+Set-theoretic specializations include:
 
-The theorem should cover bounded formulas, including the interaction between free-variable relabeling and bound-variable assignments. Formula and sentence corollaries should be derived from the bounded-formula theorem.
+- `SetTheory.evalTerm_relabel`;
+- `SetTheory.truth_relabel`;
+- `SetTheory.formulaTruth_relabel`;
+- `SetTheory.formulaTruth_relabel_eq_of_comp_eq`.
+
+The last theorem gives the explicit irrelevant-variable consequence: changing an assignment outside the image of a relabeling map cannot change the relabeled formula's truth value.
+
+### 2. Lifting
+
+Implementation of substitution and quantifier bookkeeping exposed lifting as a useful public structural layer. The milestone therefore also provides:
+
+- `BooleanValued.FirstOrder.Term.realize_liftAt`;
+- `BooleanValued.FirstOrder.BoundedFormula.truth_liftAt`;
+- one-variable and top-of-scope lifting corollaries;
+- corresponding set-theory specializations.
+
+These theorems make the `Fin.castAdd`/`Fin.addNat` behavior of fresh bound variables explicit.
 
 ### 3. Syntactic substitution
 
-Semantic evaluation after syntactic substitution should agree with evaluation under the induced semantic assignment.
+Semantic evaluation after Mathlib-native capture-avoiding substitution agrees with evaluation under the induced semantic assignment.
 
-Because the language has no function symbols, term substitution ultimately selects assigned Boolean-valued sets. The theorem should nevertheless use Mathlib's general substitution interface rather than a project-specific imitation.
+Generic results include:
 
-The proof should isolate any bookkeeping involving sums of free and bound variables into reusable helper lemmas.
+- `BooleanValued.FirstOrder.Term.realize_subst`;
+- `BooleanValued.FirstOrder.Term.realize_substBounded`;
+- `BooleanValued.FirstOrder.BoundedFormula.truth_subst`;
+- `BooleanValued.FirstOrder.Formula.truth_subst`.
+
+Set-theoretic specializations include:
+
+- `SetTheory.evalTerm_subst`;
+- `SetTheory.evalTerm_substBounded`;
+- `SetTheory.truth_subst`;
+- `SetTheory.formulaTruth_subst`.
+
+The bounded-term helper isolates the locally nameless bookkeeping: substituted free variables are evaluated under the new assignment, while existing bound variables retain their values.
 
 ### 4. Formula extensionality
 
-Prove a Boolean-valued extensionality theorem for formula truth.
+The generic lawful layer proves the strong Boolean lower-bound form first:
 
-The preferred target is a strong lower-bound formulation. Informally, if a Boolean value `b` forces corresponding free and bound assignments to be equal pointwise, then `b` forces the two evaluations of the formula to be equivalent.
+- `BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le`;
+- `BooleanValued.FirstOrder.BoundedFormula.truth_congr_of_le`;
+- `BooleanValued.FirstOrder.BoundedFormula.truth_congr`;
+- `BooleanValued.FirstOrder.Formula.truth_congr`.
 
-A candidate mathematical shape is:
+The set-theoretic structure is proved lawful by `SetTheory.bvSetStructure_lawful`, yielding:
+
+- `SetTheory.evalTerm_congr`;
+- `SetTheory.truth_congr`;
+- `SetTheory.formulaTruth_congr`.
+
+The canonical bounded-formula theorem has the intended shape:
 
 ```text
-b ≤ (⨅ a, ρ a =ᴮ σ a)
-b ≤ (⨅ i, η i =ᴮ θ i)
---------------------------------
-b ≤ ((truth φ ρ η ⇨ truth φ σ θ) ⊓
+((⨅ a, ρ a =ᴮ σ a) ⊓ (⨅ i, η i =ᴮ θ i))
+  ≤ ((truth φ ρ η ⇨ truth φ σ θ) ⊓
      (truth φ σ θ ⇨ truth φ ρ η)).
 ```
 
-The final Lean statement may package the hypotheses differently, but it should imply ordinary invariance under pointwise Lean equality as an immediate corollary.
+Ordinary invariance under pointwise Lean equality is also available through:
+
+- `BooleanValued.FirstOrder.BoundedFormula.truth_eq_of_pointwise_eq`;
+- `BooleanValued.FirstOrder.Formula.truth_eq_of_pointwise_eq`;
+- `SetTheory.truth_eq_of_pointwise_eq`;
+- `SetTheory.formulaTruth_eq_of_pointwise_eq`.
 
 ## Dependencies
 
-Project modules:
+Project modules used by the milestone include:
 
-- `BooleanValuedAnalysis.Semantics`
-- `BooleanValuedAnalysis.Formula`
-- `BooleanValuedAnalysis.Equality`
-- `BooleanValuedAnalysis.Extensional`
+- `BooleanValuedAnalysis.Semantics`;
+- `BooleanValuedAnalysis.Formula`;
+- `BooleanValuedAnalysis.Equality`;
+- `BooleanValuedAnalysis.Extensional`.
 
-Mathlib areas to inspect before coding:
+The implementation deliberately reuses Mathlib's existing:
 
-- `FirstOrder.Language.Term` relabeling and substitution;
-- `FirstOrder.Language.BoundedFormula` relabeling, lifting, and substitution;
-- lemmas for `Fin.snoc`, `Sum.elim`, and variable bookkeeping;
-- complete Boolean-algebra identities for implication, infima, and suprema.
+- `FirstOrder.Language.Term.relabel`, `liftAt`, and `subst`;
+- `FirstOrder.Language.BoundedFormula.relabel`, `liftAt`, and `subst`;
+- locally nameless `Fin`/`Sum` variable bookkeeping.
 
-## Proposed module structure
+No parallel syntax or project-specific substitution operation was introduced.
 
-The milestone should normally produce one focused module:
+## Implemented module structure
 
-```text
-BooleanValuedAnalysis/Formula/Structural.lean
-```
-
-If the Mathlib bookkeeping becomes large, it may be split into:
+The proof naturally split into focused generic and set-theoretic modules:
 
 ```text
-BooleanValuedAnalysis/Formula/Relabel.lean
-BooleanValuedAnalysis/Formula/Substitution.lean
-BooleanValuedAnalysis/Formula/Extensional.lean
+BooleanValuedAnalysis/FirstOrder/Structure.lean
+BooleanValuedAnalysis/FirstOrder/Relabel.lean
+BooleanValuedAnalysis/FirstOrder/Lift.lean
+BooleanValuedAnalysis/FirstOrder/Substitution.lean
+BooleanValuedAnalysis/FirstOrder/Lawful.lean
+BooleanValuedAnalysis/FirstOrder/Extensional.lean
+BooleanValuedAnalysis/FirstOrder/Structural.lean
+
+BooleanValuedAnalysis/SetTheory/Relabel.lean
+BooleanValuedAnalysis/SetTheory/Lift.lean
+BooleanValuedAnalysis/SetTheory/Substitution.lean
+BooleanValuedAnalysis/SetTheory/Lawful.lean
+BooleanValuedAnalysis/SetTheory/Structural.lean
 ```
 
-A split is justified only when each module has a clear public purpose. It should not be used merely to distribute a single proof across files.
+The split reflects clear public purposes rather than distributing one proof arbitrarily across files.
 
-## Prototype requirement
+## Prototype history
 
-Before full proof implementation:
-
-1. identify the exact Mathlib operation names and imports;
-2. add a scratch file or draft commit containing the proposed public theorem signatures with `sorry`;
-3. confirm that all signatures elaborate against the pinned toolchain;
-4. review the signatures for generality and downstream usability;
-5. remove every placeholder before the milestone PR is marked ready for review.
-
-The prototype is a design tool, not mergeable library code.
+The exact Mathlib operations and universe behavior were first exercised in audit probes, especially `Audit/FormulaSubstitutionProbe.lean`, before being promoted into the public generic API. No prototype placeholders were merged into the library.
 
 ## Acceptance tests
 
-The milestone is not complete until the following consequences are demonstrated.
+`Audit/M001Acceptance.lean` is the executable milestone acceptance suite. CI compiles it on the repository's pinned Lean/Mathlib environment and the architecture audit also compiles it against the current Tau Ceti compatibility environment.
 
-### Atomic equality
+The suite exercises every acceptance category from the original specification:
 
-The extensionality theorem specializes to the existing substitution laws for Boolean-valued equality.
-
-### Atomic membership
-
-The theorem specializes to substitution in both arguments of Boolean-valued membership.
-
-### Connectives
-
-Relabeling and extensionality commute with falsum, implication, negation, conjunction, disjunction, and biconditional through the existing formula semantics.
-
-### Quantifiers
-
-The universal and existential cases correctly extend corresponding bound-variable assignments and do not silently exchange free and bound variables.
-
-### Irrelevant variables
-
-A formula relabeled into a larger variable type has the same truth value when the added variables are changed outside the image of the relabeling map.
-
-### Classical assignments
-
-For canonical names, relabeling and substitution reduce to the expected ground-model behavior when the relevant atomic truth values are `⊤` or `⊥`.
+- **Atomic equality:** `SetTheory.truth_congr` specializes to `.equal` formulas.
+- **Atomic membership:** `SetTheory.truth_congr` specializes to the binary membership relation.
+- **Connectives:** relabeling is exercised through implication, negation, conjunction, disjunction, and biconditional; Boolean extensionality is also specialized to a connective formula.
+- **Quantifiers:** substitution is exercised through both universal and existential formulas, verifying that bound-variable assignments remain correctly scoped.
+- **Irrelevant variables:** `SetTheory.formulaTruth_relabel_eq_of_comp_eq` is exercised directly.
+- **Ordinary assignments:** the pointwise Lean-equality corollary is exercised for bounded formulas.
+- **Classical assignments:** relabeling and substitution are exercised on canonical-name assignments, alongside the `check_bvEq_dichotomy` and `check_mem_dichotomy` classical atomic results.
 
 ## Non-goals
 
@@ -143,68 +169,35 @@ This milestone does not:
 - generalize the semantics to complete Heyting algebras;
 - redesign the existing atomic semantics.
 
-## Risks and failure modes
-
-### Wrong theorem level
-
-A theorem stated only for formulas with no bound variables will be too weak for quantifier induction. The main theorem should be proved for bounded formulas first.
-
-### Accidental use of Lean equality
-
-Pointwise Lean equality of assignments is a useful corollary but not the central Boolean-valued extensionality result.
-
-### Hidden variable bookkeeping
-
-A proof that succeeds only through large opaque simplification calls may conceal an incorrect treatment of variable embeddings. Critical `Sum` and `Fin` transformations should have named helper lemmas.
-
-### Duplicate syntax infrastructure
-
-The project should not define custom relabeling or substitution functions unless Mathlib demonstrably lacks the required operation.
-
-### Overgeneralization
-
-The theorem should not be abstracted away from the set-theoretic language so aggressively that the existing `truth`, `evalTerm`, and atomic substitution APIs become difficult to use.
-
-## Review rubric
+## Review outcome
 
 ### Mathematical correctness
 
-- Does syntactic substitution agree with the intended semantic assignment?
-- Are free and bound variables kept distinct in every quantifier case?
-- Does formula extensionality genuinely use Boolean-valued equality rather than merely Lean equality?
-- Could any conclusion be vacuous because an implication or infimum is oriented incorrectly?
+The main theorems are stated for bounded formulas, and the quantifier cases explicitly manipulate extended `Fin` assignments. The central extensionality theorem uses Boolean-valued equality, not Lean equality; the Lean-equality theorem is only a convenience corollary.
 
 ### Reuse
 
-- Are Mathlib's syntax operations used directly?
-- Are existing atomic substitution lemmas reused in the induction base cases?
-- Are helper lemmas general enough to eliminate repeated variable bookkeeping without recreating Mathlib APIs?
+Mathlib's relabeling, lifting, and substitution operations are used directly. The project adds semantic compatibility theorems rather than duplicate syntax infrastructure.
 
 ### Generality
 
-- Is the main theorem stated for bounded formulas and arbitrary free-variable types?
-- Are assumptions stronger than `CompleteBooleanAlgebra 𝔹` introduced without need?
-- Are convenient specialized corollaries derived from, rather than substituted for, the strongest natural theorem?
+Relabeling, lifting, and substitution are generic over arbitrary Boolean-valued `Structure`s. Equality-sensitive extensionality is isolated in `LawfulStructure`. Set theory is recovered by specialization rather than being baked into the generic proofs.
 
 ### API quality
 
-- Can later bounded-quantifier and transfer modules invoke the theorems without unfolding `truth`?
-- Are theorem names predictable from `evalTerm`, `truth`, `formulaTruth`, relabeling, and substitution?
-- Are implementation-only bookkeeping lemmas kept private unless they have clear downstream value?
+Downstream modules can use the structural theorems without unfolding `truth`. Named helpers expose the important free/bound-variable bookkeeping.
 
 ### Proof quality
 
-- Is the structural induction legible at each formula constructor?
-- Are quantifier proofs supported by explicit assignment-extension lemmas?
-- Are broad `simp` calls constrained enough that a change in unrelated simp lemmas is unlikely to alter the proof?
+The structural proofs use explicit induction over formula constructors. Quantifier cases expose the relevant `Fin.snoc`, `Fin.castAdd`, `Fin.natAdd`, and lifting behavior instead of hiding it behind an opaque simplification wall.
 
 ## Definition of done
 
-- all proposed public signatures compile on the pinned Lean and Mathlib versions;
-- all proofs are complete, with no `sorry` or `admit`;
-- the main import file exports the new module or modules;
-- acceptance tests are present in theorem or example form;
-- public declarations have docstrings;
-- CI passes, including the project's no-placeholder and export checks;
-- the PR description reports the rubric review and any deferred design questions;
-- this specification is updated if implementation reveals a materially different API.
+- [x] all public signatures compile on the pinned Lean and Mathlib versions;
+- [x] all proofs are complete, with no `sorry` or `admit`;
+- [x] all public modules are exported from `BooleanValuedAnalysis.lean`;
+- [x] acceptance tests are present and compiled in CI;
+- [x] public declarations have docstrings;
+- [x] the independent-universe and Tau Ceti compatibility probes pass;
+- [x] the implemented API and module structure are recorded here;
+- [x] the design questions about substitution and extensionality strength are resolved in `DESIGN.md`.
