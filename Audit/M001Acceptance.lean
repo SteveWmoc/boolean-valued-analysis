@@ -86,7 +86,8 @@ example
     (φ ψ : SetTheory.Formula α) (g : α → β)
     (assignment : β → BVSet.{u, v} 𝔹) :
     SetTheory.formulaTruth
-        ((_root_.FirstOrder.Language.BoundedFormula.iff φ ψ).relabel g)
+        ((show SetTheory.Formula α from
+          _root_.FirstOrder.Language.BoundedFormula.iff φ ψ).relabel g)
         assignment =
       SetTheory.formulaTruth
         (_root_.FirstOrder.Language.BoundedFormula.iff φ ψ)
