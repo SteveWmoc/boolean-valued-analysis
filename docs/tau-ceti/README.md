@@ -37,10 +37,16 @@ existing implementation.
 
 ### Mathlib version
 
-Tau Ceti Roadmap and Tau Ceti track Mathlib `master`. This repository currently pins
-Mathlib `v4.32.1`. Before any architecture can be regarded as Tau Ceti-ready, its important
-signatures and imports must be tested against a current Mathlib `master` checkout. A design
-that works only against the old pin is not a viable upstream plan.
+Tau Ceti Roadmap and Tau Ceti track Mathlib `master`, while Tau Ceti's committed
+`lake-manifest.json` records the exact Mathlib revision used by a reproducible build. This
+repository currently pins Mathlib `v4.32.1` for its own development environment.
+
+The repository's architecture audit does not hard-code a second Tau Ceti pin. At the start of
+each run it snapshots `TauCetiProject/TauCeti` `main`, copies the Lean toolchain from that
+snapshot, reads the exact Mathlib commit from the same snapshot's manifest, logs those
+revisions, and builds this project against them. Historical result documents in this directory
+retain the exact revisions used when those experiments were performed; those values are not
+claims about Tau Ceti's present environment.
 
 ### Authorship and provenance
 
@@ -96,13 +102,17 @@ made until it is.
 - [`BooleanValuedModels/Suggested.lean`](BooleanValuedModels/Suggested.lean): provisional
   target shapes tested against the current prototype. It is evidence for discussion, not a
   commitment to the current representation.
+- Historical compatibility and architecture reports in this directory record the environment
+  and conclusions at the time each experiment was run; the live workflow is the source of
+  current version-compatibility evidence.
 
 ## Exit criteria before considering an external proposal
 
 We should not approach Tau Ceti until all of the following hold:
 
 1. The existing-work and intentions audit is current and documented.
-2. The first milestones compile against Mathlib `master` in a clean environment.
+2. The first milestones compile against Tau Ceti's current Lean/Mathlib environment in a clean
+   build and remain compatible with relevant Mathlib `master` changes.
 3. The representation of names and the recursion principle have been compared with serious
    alternatives.
 4. Universe conventions are explicit and survive representative examples.

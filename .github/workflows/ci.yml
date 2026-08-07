@@ -23,8 +23,9 @@ jobs:
 
       - name: Reject unfinished proofs
         run: |
-          if grep -RInE --include='*.lean' '(^|[^[:alnum:]_])(sorry|admit)([^[:alnum:]_]|$)' BooleanValuedAnalysis BooleanValuedAnalysis.lean; then
-            echo "Lean proof placeholders are not permitted."
+          if grep -RInE --include='*.lean' '(^|[^[:alnum:]_])(sorry|admit)([^[:alnum:]_]|$)' \
+              BooleanValuedAnalysis BooleanValuedAnalysis.lean Audit; then
+            echo "Lean proof placeholders are not permitted in the public library or audit probes."
             exit 1
           fi
 

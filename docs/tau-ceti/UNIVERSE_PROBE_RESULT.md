@@ -1,8 +1,12 @@
 # Independent-universe architecture result
 
+> **Historical architecture result.** The revisions below are the Tau Ceti environment used
+> when this probe was established. They are retained for reproducibility, not as current pins.
+> The live architecture workflow now discovers Tau Ceti's environment at run time.
+
 ## Result
 
-**Passed** against Tau Ceti's current Lean and Mathlib environment:
+**Passed** against the Tau Ceti Lean and Mathlib environment used for the recorded probe:
 
 - Lean `v4.33.0-rc1`;
 - Mathlib `d4519b399018129db0a28eda3488eddfed9f73c4`.
@@ -49,8 +53,9 @@ example.
 
 ## Interpretation
 
-The shared universe used by the current `BVSet` and Flypitch's `bSet` is not required by Lean,
-by recursive equality proofs, by canonical names, or by Mathlib-based formula semantics.
+The shared universe used by the earlier `BVSet` prototype and Flypitch's `bSet` is not required
+by Lean, by recursive equality proofs, by canonical names, or by Mathlib-based formula
+semantics.
 
 More importantly, the additional generality did not require universe lifts or intrusive
 annotations inside the representative proofs. The theorem statements expose the intended
@@ -58,20 +63,19 @@ universes, while ordinary inference handles their use.
 
 ## Architecture recommendation
 
-The leading design for the next foundational implementation is therefore:
+The probe supported the following design:
 
 - retain the weighted well-founded tree representation;
 - separate the name-index universe from the Boolean-algebra universe;
 - allow formula-variable universes to remain independent through Mathlib syntax; and
 - retain weak algebraic assumptions theorem by theorem, adding nontriviality only where needed.
 
-This is a recommendation for the next implementation layer, not an instruction to mutate the
-current public prototype in place. Migration should occur through a dedicated refactor or new
-module after the public API and module placement have been specified.
+This recommendation was subsequently adopted by the public `BVSet` foundation and recorded as
+D006 in `DESIGN.md`.
 
-## Remaining stress test
+## Subsequent stress test
 
-A mixing construction is the last major downstream test of the universe choice. It may require
-smallness or universe-lifting decisions not exercised by equality and formula semantics.
-Nevertheless, the burden of proof has now shifted: independent universes should be retained
-unless mixing or the separated-model construction reveals a concrete usability cost.
+The representative mixing construction later passed with the same independent-universe policy;
+see `MIXING_PROBE_RESULT.md`. The public library has since carried this universe separation
+through generic first-order structures and M001 structural formula semantics. The probe remains
+a regression test and provenance record rather than an unfinished migration proposal.

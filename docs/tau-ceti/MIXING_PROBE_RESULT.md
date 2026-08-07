@@ -1,8 +1,13 @@
 # Independent-universe mixing probe result
 
+> **Historical architecture result.** This document records the reasoning and experiment that
+> established mixing as a stress test for the independent-universe design. The live architecture
+> workflow now discovers Tau Ceti's Lean/Mathlib environment at run time, and the public library
+> has since adopted the universe policy tested here.
+
 ## Result
 
-**Passed** against Tau Ceti's current Lean and Mathlib environment.
+**Passed** against the Tau Ceti Lean and Mathlib environment used at the time of this probe.
 
 The compile-only experiment in `Audit/MixingProbe.lean` carries the independent-universe
 Boolean-valued name candidate through a representative mixture construction and the
@@ -62,8 +67,8 @@ The proof exposed dependent projection bookkeeping but no universe obstruction.
 
 ## Architectural conclusion
 
-The final planned stress test for independent universes has succeeded. The project should now
-adopt the following baseline for the next public foundational implementation:
+The final planned stress test for independent universes succeeded. Together with the earlier
+universe and substitution probes, it supported the public design now recorded in `DESIGN.md`:
 
 ```lean
 inductive BVSet (𝔹 : Type v) : Type (max (u + 1) v) where
@@ -72,12 +77,10 @@ inductive BVSet (𝔹 : Type v) : Type (max (u + 1) v) where
       (weight : ι → 𝔹)
 ```
 
-This recommendation is supported through recursive atomic semantics, equality transitivity,
-canonical names, Mathlib-native formula substitution, and mixing.
-
-The next implementation PR should generalize the real `BVSet` foundation while adding no new
-mathematical layer. Existing theorem content should be ported and regression-tested before work
-begins on generic Boolean-valued structures.
+The subsequent public foundation adopted this universe policy, and generic Boolean-valued
+first-order structures plus M001 structural semantics have since been implemented. The actual
+mixing lemma remains roadmap work; this probe is architectural evidence, not the public R3
+implementation.
 
 ## Scope and attribution
 

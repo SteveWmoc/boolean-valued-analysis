@@ -1,8 +1,13 @@
-# Tau Ceti current-environment compatibility audit
+# Tau Ceti environment compatibility audit — 2026-07-31 snapshot
+
+> **Historical snapshot.** The Lean and Mathlib revisions below record the environment used by
+> Tau Ceti when this audit was performed. They are not repository pins and should not be read as
+> Tau Ceti's current environment. Live compatibility is checked by
+> `.github/workflows/architecture-audit.yml`, which snapshots `TauCetiProject/TauCeti` at run time.
 
 ## Status
 
-The existing Boolean-valued analysis prototype builds successfully against the Lean and Mathlib environment used by the Tau Ceti code repository at the time of this audit.
+The existing Boolean-valued analysis prototype built successfully against the Lean and Mathlib environment used by the Tau Ceti code repository at the time of this audit.
 
 This is an internal compatibility result. It does not imply that the current architecture, API, naming, placement, or proof style is suitable for eventual Tau Ceti integration.
 
@@ -14,7 +19,9 @@ This is an internal compatibility result. It does not imply that the current arc
 - Audit branch: `audit/tauceti-current`
 - Draft PR: `#15`
 
-The environment is selected only inside `.github/workflows/tauceti-current-audit.yml`. The dependency files committed on `main` are not changed by the audit.
+The dependency files committed on `main` were not changed by this audit. The original dedicated
+manual workflow has since been retired in favor of the stronger architecture audit, which
+selects Tau Ceti's environment dynamically and also runs the architectural probes.
 
 ## Baseline result
 
@@ -41,14 +48,14 @@ After that repair, both the ordinary repository CI and the Tau Ceti-pin audit bu
 
 ## Conclusions supported by this audit
 
-1. The current prototype is not tied to Lean 4.32.1 in any deep way.
-2. The raw name representation, atomic semantics, equality calculus, formula semantics, extensional predicates, bounded quantifiers, and canonical-name development all elaborate under Tau Ceti's current dependency environment.
-3. Version compatibility alone gives no reason to rewrite the repository from scratch.
-4. The existing code is useful implementation evidence for a future roadmap, even if its architecture is later replaced.
+1. The prototype was not tied to Lean 4.32.1 in any deep way.
+2. The raw name representation, atomic semantics, equality calculus, formula semantics, extensional predicates, bounded quantifiers, and canonical-name development all elaborated under Tau Ceti's dependency environment at the time of the audit.
+3. Version compatibility alone gave no reason to rewrite the repository from scratch.
+4. The existing code was useful implementation evidence for a future roadmap, even if its architecture were later replaced.
 
 ## Conclusions not supported by this audit
 
-This audit does **not** establish that the project meets Tau Ceti's library standards. In particular, it has not yet tested or resolved:
+This audit did **not** establish that the project met Tau Ceti's library standards. In particular, it had not yet tested or resolved:
 
 - Tau Ceti's required Lean module-system declarations;
 - Tau Ceti's `warningAsError` and Mathlib standard linter configuration;
@@ -61,8 +68,11 @@ This audit does **not** establish that the project meets Tau Ceti's library stan
 - naming, attribution, and documentation under the full Tau Ceti rubrics;
 - scalability to mixing, the maximum principle, separated models, forcing, ascent, and descent.
 
-## Next audit
+## Subsequent status
 
-The next phase is an architecture and reuse audit, not further theorem development. It should compare the present representation and API with Mathlib, Flypitch, and other active forcing work, then make an explicit retain/refactor/replace decision for `BVSet` and its universe policy.
-
-A separate policy-compatibility experiment should later apply Tau Ceti's module-system, linter, import, and axiom requirements. Those mechanical changes should not be confused with the deeper architecture decision.
+Later internal audits resolved several of the open architectural questions recorded above:
+independent name-index and coefficient universes were adopted, Mathlib-native structural formula
+semantics and generic Boolean-valued structures were implemented, the representative mixing
+probe succeeded, and M001 was completed. `DESIGN.md`, `ROADMAP.md`, and the other files in this
+directory record those later decisions. The live compatibility workflow remains an internal
+check and still does not imply Tau Ceti readiness or upstream coordination.

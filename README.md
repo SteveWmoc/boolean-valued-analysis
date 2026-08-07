@@ -99,7 +99,9 @@ The pull request template records this review without imposing the full process 
 
 ## Development standards
 
-Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders, and compiles the M001 structural-semantics acceptance probe. A separate architecture audit checks independent-universe and compatibility probes against the current Tau Ceti Lean/Mathlib environment.
+Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` probes, and compiles the M001 structural-semantics acceptance probe.
+
+A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds the complete public library in that environment, and then compiles the independent-universe, substitution, M001, and mixing probes. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
