@@ -40,6 +40,9 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
+      - name: Build public library
+        run: lake build
+
       - name: Compile independent-universe probe
         shell: bash
         run: |
