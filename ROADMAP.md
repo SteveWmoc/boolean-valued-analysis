@@ -14,7 +14,10 @@ The repository currently provides:
 - extensional unary Boolean-valued predicates;
 - bounded quantification over weighted children;
 - canonical names for Mathlib ground-model pre-sets;
-- first-order formula semantics for the language of pure set theory.
+- generic Boolean-valued first-order structures and a lawful equality-sensitive layer;
+- first-order formula semantics for the language of pure set theory;
+- structural semantics for Mathlib-native relabeling, lifting, and syntactic substitution;
+- Boolean-valued extensionality of bounded-formula and formula truth under free and bound assignments.
 
 These components form the foundation for the milestones below.
 
@@ -33,24 +36,28 @@ A milestone is complete when its public declarations are documented, its accepta
 
 ## R1. Structural formula semantics
 
-### M001 — Relabeling, substitution, and formula extensionality
+### M001 — Relabeling, substitution, and formula extensionality — complete
 
-Establish that Boolean truth is compatible with Mathlib's structural operations on terms and formulas.
+Completed 2026-08-07.
 
-Primary goals:
+Boolean truth is compatible with Mathlib's structural operations on terms and formulas:
 
 - evaluation commutes with relabeling of free variables;
 - truth is invariant under the corresponding relabeling of assignments;
+- lifting of locally nameless bound variables has explicit semantics;
 - syntactic substitution agrees with semantic substitution;
-- formula truth is extensional in free and bound assignments with respect to Boolean-valued equality.
+- formula truth is extensional in free and bound assignments with respect to Boolean-valued equality;
+- ordinary pointwise Lean equality is available as a convenience corollary.
 
-Specification: [`docs/milestones/001-formula-substitution.md`](docs/milestones/001-formula-substitution.md)
+The implementation is generic over explicit Boolean-valued first-order structures where possible and uses `LawfulStructure` only for equality-sensitive extensionality. The acceptance suite is `Audit/M001Acceptance.lean`.
+
+Specification and completion record: [`docs/milestones/001-formula-substitution.md`](docs/milestones/001-formula-substitution.md)
 
 ## R2. Syntactic set-bounded quantifiers
 
 Extend the set-theoretic syntax with convenient bounded quantifier constructions and prove that their formula semantics agrees with the weighted-child bounded quantifiers already defined in `BooleanValuedAnalysis.Bounded`.
 
-Acceptance criteria include both existential and universal bounded quantifiers and compatibility with substitution.
+Acceptance criteria include both existential and universal bounded quantifiers and compatibility with the M001 substitution API.
 
 ## R3. Mixing
 
@@ -81,7 +88,7 @@ The quotient design must be reviewed independently before broad downstream use.
 
 ## R6. Transfer and ZFC fragments
 
-Formalize substitution for arbitrary formulas, verify selected axioms or axiom schemes, and state transfer results at the strongest level justified by the preceding development.
+Use the structural formula semantics from M001 to verify selected axioms or axiom schemes and state transfer results at the strongest level justified by the preceding development.
 
 This stage should proceed axiom-by-axiom or fragment-by-fragment rather than beginning with an undifferentiated claim that the universe models all of ZFC.
 
