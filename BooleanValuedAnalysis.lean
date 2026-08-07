@@ -12,11 +12,13 @@ import BooleanValuedAnalysis.FirstOrder.Lift
 import BooleanValuedAnalysis.FirstOrder.Substitution
 import BooleanValuedAnalysis.FirstOrder.Lawful
 import BooleanValuedAnalysis.FirstOrder.Extensional
+import BooleanValuedAnalysis.FirstOrder.Structural
 import BooleanValuedAnalysis.Formula
 import BooleanValuedAnalysis.SetTheory.Relabel
 import BooleanValuedAnalysis.SetTheory.Lift
 import BooleanValuedAnalysis.SetTheory.Substitution
 import BooleanValuedAnalysis.SetTheory.Lawful
+import BooleanValuedAnalysis.SetTheory.Structural
 import BooleanValuedAnalysis.Equality
 import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
@@ -28,6 +30,7 @@ import BooleanValuedAnalysis.Canonical
 This is the main import file for the public Boolean-valued analysis development.
 It exports raw Boolean-valued pre-sets, their equality and membership semantics,
 generic Boolean-valued first-order structures, relabeling, lifting, substitution,
-lawfulness, and formula extensionality, set-theoretic formula semantics,
-extensional predicates, bounded quantifiers, and canonical ground-model names.
+lawfulness, formula extensionality and structural corollaries, set-theoretic
+formula semantics, extensional predicates, bounded quantifiers, and canonical
+ground-model names.
 -/

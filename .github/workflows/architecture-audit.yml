@@ -40,6 +40,9 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
+      - name: Build public library
+        run: lake build
+
       - name: Compile independent-universe probe
         shell: bash
         run: |
@@ -49,6 +52,9 @@ jobs:
 
       - name: Compile formula-substitution probe
         run: lake env lean Audit/FormulaSubstitutionProbe.lean
+
+      - name: Compile M001 acceptance probe
+        run: lake env lean Audit/M001Acceptance.lean
 
       - name: Compile independent-universe mixing probe
         run: lake env lean Audit/MixingProbe.lean

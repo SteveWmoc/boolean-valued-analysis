@@ -62,13 +62,13 @@ The language of pure set theory is defined using `FirstOrder.Language`, with equ
 ### Rationale
 
 - Reusing Mathlib avoids maintaining a parallel syntax and binding infrastructure.
-- Existing relabeling, lifting, and substitution operations can support later semantic theorems.
+- Existing relabeling, lifting, and substitution operations support the public structural-semantics theorems completed in M001.
 - The project remains interoperable with other Mathlib model-theory developments.
 
 ### Consequences
 
-- The next structural-semantics milestone should be phrased in terms of Mathlib's existing formula operations.
-- Proposed theorem signatures should be prototyped against the pinned Mathlib version before being treated as stable roadmap commitments.
+- Structural semantics is phrased directly in terms of Mathlib's `Term.relabel`, `Term.liftAt`, `Term.subst`, and the corresponding bounded-formula operations.
+- The project exposes semantic compatibility theorems rather than duplicate syntax transformations.
 - Project notation should remain a thin convenience layer rather than replacing standard syntax APIs.
 
 ### Reconsider when
@@ -144,7 +144,7 @@ The universe of the index types occurring inside Boolean-valued names is indepen
 
 ## D007 — Use explicit Boolean-valued first-order structure objects
 
-**Status:** accepted for the generic semantic layer
+**Status:** accepted
 
 A Boolean-valued first-order structure is an explicit object containing an equality valuation, interpretations of function symbols, and Boolean-valued interpretations of relation symbols. Term realization and formula truth take this object as an explicit argument rather than recovering it through typeclass inference.
 
@@ -159,7 +159,8 @@ A Boolean-valued first-order structure is an explicit object containing an equal
 
 - Generic realization is written relative to a named structure object.
 - The set-theoretic evaluator is a specialization using `SetTheory.bvSetStructure`.
-- Interpretation data does not itself assert reflexivity, symmetry, transitivity, or congruence. Those properties belong in a future `LawfulStructure` layer used by formula extensionality and transfer.
+- Interpretation data alone does not assert reflexivity, symmetry, transitivity, or congruence. These properties are packaged separately by the implemented `LawfulStructure` layer.
+- Relabeling, lifting, and syntactic substitution require only `Structure`; Boolean-valued assignment extensionality requires `LawfulStructure`.
 - The existing set-theory API remains available as a thin wrapper around the generic semantics.
 
 ### Reconsider when
@@ -168,21 +169,24 @@ A Boolean-valued first-order structure is an explicit object containing an equal
 - a canonical-instance mechanism can preserve support for multiple structures without ambiguous algebra inference;
 - Mathlib develops a standard algebra-valued semantic interface that should replace this local abstraction.
 
+## Resolved design questions
+
+### O001 — Formula substitution interface — resolved by M001
+
+M001 confirmed that Mathlib's native structural operations are sufficient. The public API uses:
+
+- `Term.relabel`, `Term.liftAt`, and `Term.subst`;
+- `BoundedFormula.relabel`, `BoundedFormula.liftAt`, and `BoundedFormula.subst`.
+
+The semantic interface is split into generic `FirstOrder` theorems and thin `SetTheory` specializations. The locally nameless bookkeeping needed by substitution is isolated in the public bounded-term helper `Term.realize_substBounded` / `SetTheory.evalTerm_substBounded`.
+
+### O002 — Extensionality strength for formulas — resolved by M001
+
+The strongest natural lower-bound formulation is the primary API. `BoundedFormula.truth_congr_of_le` transports truth under an arbitrary Boolean lower bound on pointwise valued equality, and `BoundedFormula.truth_congr` chooses the meet of all free- and bound-assignment equality values. `Formula.truth_congr` and the set-theoretic wrappers are derived from that layer.
+
+Ordinary invariance under pointwise Lean equality is retained only as a convenience corollary through `truth_eq_of_pointwise_eq` and `formulaTruth_eq_of_pointwise_eq`; it is not used as a substitute for Boolean-valued extensionality.
+
 ## Open design questions
-
-### O001 — Formula substitution interface
-
-Determine the exact Mathlib operations and theorem shapes for relabeling, lifting, and substitution before implementing M001. The milestone specification deliberately describes mathematical behavior more firmly than it fixes Lean names.
-
-### O002 — Extensionality strength for formulas
-
-Choose the most reusable formulation of formula extensionality. Candidates include:
-
-- equality of truth values under pointwise Lean-equal assignments;
-- a Boolean lower bound implying equivalence of truth values under pointwise Boolean-equal assignments;
-- a packaged extensional predicate for assignments.
-
-The strongest natural theorem should be proved first, with simpler corollaries derived from it.
 
 ### O003 — Separated universe
 
