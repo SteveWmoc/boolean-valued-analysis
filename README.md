@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API and first-order formula semantics are usable, but they may change as substitution, mixing, transfer, and applications are developed.
+> **Project status:** active research. The foundational API and structural first-order formula semantics are usable, but they may change as syntactic bounded quantifiers, mixing, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -18,7 +18,10 @@ The current development establishes that:
 - bounded existential and universal quantifiers agree with universe-wide quantification restricted by Boolean-valued membership;
 - canonical names preserve and, over a nontrivial Boolean algebra, reflect ground-model extensional equality and membership;
 - equality and membership between canonical names take only the classical values `⊤` and `⊥`;
-- first-order set-theoretic formulas have Boolean truth values, with logical connectives and quantifiers interpreted by the corresponding complete Boolean-algebra operations.
+- first-order set-theoretic formulas have Boolean truth values, with logical connectives and quantifiers interpreted by the corresponding complete Boolean-algebra operations;
+- Boolean-valued first-order semantics is generic over explicit structure objects, with equality-sensitive congruence isolated in `LawfulStructure`;
+- term and formula semantics commute with Mathlib-native relabeling, bound-variable lifting, and capture-avoiding syntactic substitution;
+- bounded-formula and formula truth are extensional under pointwise Boolean-valued equality of assignments, with ordinary pointwise Lean equality available as a simpler corollary.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -28,7 +31,15 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | --- | --- |
 | `BooleanValuedAnalysis.Basic` | Raw Boolean-valued pre-sets, projections, the empty name, and weighted singletons |
 | `BooleanValuedAnalysis.Semantics` | Recursive Boolean-valued equality and membership |
-| `BooleanValuedAnalysis.Formula` | First-order set-theoretic syntax and Boolean-valued formula semantics |
+| `BooleanValuedAnalysis.FirstOrder.Structure` | Generic Boolean-valued first-order structures and term/formula semantics |
+| `BooleanValuedAnalysis.FirstOrder.Relabel` | Generic relabeling semantics |
+| `BooleanValuedAnalysis.FirstOrder.Lift` | Generic locally nameless bound-variable lifting semantics |
+| `BooleanValuedAnalysis.FirstOrder.Substitution` | Generic syntactic substitution semantics |
+| `BooleanValuedAnalysis.FirstOrder.Lawful` | Equality and congruence laws for generic structures |
+| `BooleanValuedAnalysis.FirstOrder.Extensional` | Boolean-valued assignment extensionality for formula truth |
+| `BooleanValuedAnalysis.FirstOrder.Structural` | Structural convenience corollaries, including pointwise Lean equality |
+| `BooleanValuedAnalysis.Formula` | Pure set-theory language and Boolean-valued set-theoretic formula semantics |
+| `BooleanValuedAnalysis.SetTheory.*` | Set-theory specializations of relabeling, lifting, substitution, lawfulness, and structural corollaries |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Bounded existential and universal quantification |
@@ -66,13 +77,13 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 
 ## Roadmap
 
-1. Prove relabeling, syntactic substitution, and extensionality for arbitrary formulas.
+1. **Structural formula semantics (M001): complete.** Relabeling, lifting, syntactic substitution, and formula extensionality are in the public API and covered by an executable acceptance probe.
 2. Add syntactic set-bounded quantifiers and identify their semantics with the weighted-child definitions.
 3. Develop the mixing lemma and maximum principle.
 4. Develop ascent, descent, and transfer principles.
 5. Connect the framework with forcing and applications in Boolean-valued analysis.
 
-The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
+The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
 ## Development workflow
 
@@ -88,7 +99,7 @@ The pull request template records this review without imposing the full process 
 
 ## Development standards
 
-Every pull request is checked by GitHub Actions. CI builds the library, verifies that every module is exported by the main import file, and rejects unfinished `sorry` or `admit` placeholders.
+Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders, and compiles the M001 structural-semantics acceptance probe. A separate architecture audit checks independent-universe and compatibility probes against the current Tau Ceti Lean/Mathlib environment.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
