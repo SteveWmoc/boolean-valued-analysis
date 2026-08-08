@@ -55,9 +55,13 @@ Specification and completion record: [`docs/milestones/001-formula-substitution.
 
 ## R2. Syntactic set-bounded quantifiers
 
+### M002 — Set-bounded formula constructors and semantics — in progress
+
 Extend the set-theoretic syntax with convenient bounded quantifier constructions and prove that their formula semantics agrees with the weighted-child bounded quantifiers already defined in `BooleanValuedAnalysis.Bounded`.
 
-Acceptance criteria include both existential and universal bounded quantifiers and compatibility with the M001 substitution API.
+The first slice defines the constructors using Mathlib's existing locally nameless binders and proves their direct universe-wide restricted semantics. The completion slice will use M001 assignment extensionality to identify those truth values with `BVSet.boundedExists` and `BVSet.boundedForall`, then add substitution compatibility and executable acceptance tests.
+
+Specification: [`docs/milestones/002-set-bounded-quantifiers.md`](docs/milestones/002-set-bounded-quantifiers.md)
 
 ## R3. Mixing
 
