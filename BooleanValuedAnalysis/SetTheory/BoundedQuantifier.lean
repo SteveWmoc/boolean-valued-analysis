@@ -28,6 +28,11 @@ namespace BoundedFormula
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 variable {α : Type w} {n : ℕ}
 
+private theorem castAdd_one_eq_castSucc {n : ℕ} (i : Fin n) :
+    Fin.castAdd 1 i = Fin.castSucc i := by
+  apply Fin.ext
+  rfl
+
 /-- Atomic membership as a set-theoretic bounded formula. -/
 def mem (t₁ t₂ : Term (α ⊕ Fin n)) : BoundedFormula α n :=
   .rel Relation.mem ![t₁, t₂]
@@ -62,7 +67,7 @@ theorem truth_boundedExists
       | inl a =>
           simp [boundedExists, mem]
       | inr i =>
-          simp [boundedExists, mem]
+          simp [boundedExists, mem, castAdd_one_eq_castSucc i]
   | func f _ =>
       nomatch f
 
@@ -84,7 +89,7 @@ theorem truth_boundedForall
       | inl a =>
           simp [boundedForall, mem]
       | inr i =>
-          simp [boundedForall, mem]
+          simp [boundedForall, mem, castAdd_one_eq_castSucc i]
   | func f _ =>
       nomatch f
 
