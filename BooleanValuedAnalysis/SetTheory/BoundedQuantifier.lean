@@ -30,7 +30,7 @@ variable {α : Type w} {n : ℕ}
 
 /-- Atomic membership as a set-theoretic bounded formula. -/
 def mem (t₁ t₂ : Term (α ⊕ Fin n)) : BoundedFormula α n :=
-  Relation.mem.boundedFormula₂ t₁ t₂
+  _root_.FirstOrder.Language.Relations.boundedFormula₂ Relation.mem t₁ t₂
 
 /-- The formula `∃ y ∈ bound, body`, where the newly bound variable is the last
 locally nameless variable in `body`. -/
@@ -60,9 +60,9 @@ theorem truth_boundedExists
   | var z =>
       cases z with
       | inl a =>
-          simp [boundedExists, mem, evalTerm_liftAt, Function.comp_def]
+          simp [boundedExists, mem]
       | inr i =>
-          simp [boundedExists, mem, evalTerm_liftAt, Function.comp_def, i.is_lt]
+          simp [boundedExists, mem]
   | func f _ =>
       nomatch f
 
@@ -82,9 +82,9 @@ theorem truth_boundedForall
   | var z =>
       cases z with
       | inl a =>
-          simp [boundedForall, mem, evalTerm_liftAt, Function.comp_def]
+          simp [boundedForall, mem]
       | inr i =>
-          simp [boundedForall, mem, evalTerm_liftAt, Function.comp_def, i.is_lt]
+          simp [boundedForall, mem]
   | func f _ =>
       nomatch f
 
