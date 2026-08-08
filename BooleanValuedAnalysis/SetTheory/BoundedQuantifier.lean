@@ -30,7 +30,7 @@ variable {α : Type w} {n : ℕ}
 
 /-- Atomic membership as a set-theoretic bounded formula. -/
 def mem (t₁ t₂ : Term (α ⊕ Fin n)) : BoundedFormula α n :=
-  _root_.FirstOrder.Language.Relations.boundedFormula₂ Relation.mem t₁ t₂
+  .rel Relation.mem ![t₁, t₂]
 
 /-- The formula `∃ y ∈ bound, body`, where the newly bound variable is the last
 locally nameless variable in `body`. -/
