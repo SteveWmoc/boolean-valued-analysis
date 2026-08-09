@@ -53,11 +53,14 @@ theorem truth_snoc_extensional
         change
           BVSet.bvEq a b ≤
             BVSet.bvEq
-              ((Fin.snoc boundAssignment a) i)
-              ((Fin.snoc boundAssignment b) i)
+              ((Fin.snoc boundAssignment a :
+                Fin (n + 1) → BVSet.{u, v} 𝔹) i)
+              ((Fin.snoc boundAssignment b :
+                Fin (n + 1) → BVSet.{u, v} 𝔹) i)
         refine Fin.lastCases ?_ (fun j => ?_) i
-        · simp
-        · simp [BVSet.bvEq_refl])
+        · rw [Fin.snoc_last, Fin.snoc_last]
+        · rw [Fin.snoc_castSucc, Fin.snoc_castSucc, BVSet.bvEq_refl]
+          exact le_top)
 
 /-- Syntactic bounded existential quantification agrees with the existing
 weighted-child bounded existential quantifier. -/
