@@ -122,7 +122,7 @@ example (x y : PSet.{u}) (hxy : x ∈ y) :
   simp only [evalTerm_var, Sum.elim_inl, truth_top, inf_top_eq]
   apply top_unique
   refine le_iSup_of_le (BVSet.check (𝔹 := 𝔹) x) ?_
-  simpa only [BVSet.check_mem_top_of_mem (𝔹 := 𝔹) hxy]
+  exact le_of_eq (BVSet.check_mem_top_of_mem (𝔹 := 𝔹) hxy).symm
 
 end BoundedFormula
 end SetTheory
