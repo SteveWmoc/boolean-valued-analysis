@@ -45,10 +45,16 @@ theorem truth_snoc_extensional
       body assignment assignment
       (Fin.snoc boundAssignment a) (Fin.snoc boundAssignment b)
       (BVSet.bvEq a b)
-      (fun _ => by
+      (fun x => by
+        change BVSet.bvEq a b ≤ BVSet.bvEq (assignment x) (assignment x)
         rw [BVSet.bvEq_refl]
         exact le_top)
       (fun i => by
+        change
+          BVSet.bvEq a b ≤
+            BVSet.bvEq
+              ((Fin.snoc boundAssignment a) i)
+              ((Fin.snoc boundAssignment b) i)
         refine Fin.lastCases ?_ (fun j => ?_) i
         · simp
         · simp [BVSet.bvEq_refl])
