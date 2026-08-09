@@ -17,7 +17,8 @@ The repository currently provides:
 - generic Boolean-valued first-order structures and a lawful equality-sensitive layer;
 - first-order formula semantics for the language of pure set theory;
 - structural semantics for Mathlib-native relabeling, lifting, and syntactic substitution;
-- Boolean-valued extensionality of bounded-formula and formula truth under free and bound assignments.
+- Boolean-valued extensionality of bounded-formula and formula truth under free and bound assignments;
+- syntactic set-bounded existential and universal quantifiers whose truth agrees with the weighted-child semantics.
 
 These components form the foundation for the milestones below.
 
@@ -55,13 +56,15 @@ Specification and completion record: [`docs/milestones/001-formula-substitution.
 
 ## R2. Syntactic set-bounded quantifiers
 
-### M002 — Set-bounded formula constructors and semantics — in progress
+### M002 — Set-bounded formula constructors and semantics — complete
 
-Extend the set-theoretic syntax with convenient bounded quantifier constructions and prove that their formula semantics agrees with the weighted-child bounded quantifiers already defined in `BooleanValuedAnalysis.Bounded`.
+Completed 2026-08-08.
 
-The first slice defines the constructors using Mathlib's existing locally nameless binders and proves their direct universe-wide restricted semantics. The completion slice will use M001 assignment extensionality to identify those truth values with `BVSet.boundedExists` and `BVSet.boundedForall`, then add substitution compatibility and executable acceptance tests.
+The set-theoretic formula layer now provides syntactic bounded existential and universal quantifiers built directly from Mathlib's locally nameless binders. Their direct truth values are the standard universe-wide quantifiers restricted by Boolean-valued membership, and M001 assignment transport proves that the formula body is extensional in the fresh bound variable. Consequently, the syntactic truth values agree with the existing weighted-child `BVSet.boundedExists` and `BVSet.boundedForall` definitions.
 
-Specification: [`docs/milestones/002-set-bounded-quantifiers.md`](docs/milestones/002-set-bounded-quantifiers.md)
+Mathlib-native free-variable substitution is compatible with the bounded quantifiers at the weighted semantic level: after substitution, the original bound term and body are evaluated under the induced semantic assignment from M001. Binder bookkeeping for free and pre-existing bound variables is covered by the executable acceptance suite `Audit/M002Acceptance.lean`.
+
+Specification and completion record: [`docs/milestones/002-set-bounded-quantifiers.md`](docs/milestones/002-set-bounded-quantifiers.md)
 
 ## R3. Mixing
 
