@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API and structural first-order formula semantics are usable, but they may change as syntactic bounded quantifiers, mixing, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, and syntactic set-bounded quantifiers are usable, but they may change as mixing, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -21,7 +21,9 @@ The current development establishes that:
 - first-order set-theoretic formulas have Boolean truth values, with logical connectives and quantifiers interpreted by the corresponding complete Boolean-algebra operations;
 - Boolean-valued first-order semantics is generic over explicit structure objects, with equality-sensitive congruence isolated in `LawfulStructure`;
 - term and formula semantics commute with Mathlib-native relabeling, bound-variable lifting, and capture-avoiding syntactic substitution;
-- bounded-formula and formula truth are extensional under pointwise Boolean-valued equality of assignments, with ordinary pointwise Lean equality available as a simpler corollary.
+- bounded-formula and formula truth are extensional under pointwise Boolean-valued equality of assignments, with ordinary pointwise Lean equality available as a simpler corollary;
+- syntactic set-bounded existential and universal quantifiers use Mathlib's locally nameless binders, have the standard restricted Boolean semantics, and agree with the existing weighted-child bounded quantifiers;
+- free-variable substitution through syntactic set-bounded quantifiers agrees with M001 semantic substitution at the weighted-child level.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -39,10 +41,10 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.FirstOrder.Extensional` | Boolean-valued assignment extensionality for formula truth |
 | `BooleanValuedAnalysis.FirstOrder.Structural` | Structural convenience corollaries, including pointwise Lean equality |
 | `BooleanValuedAnalysis.Formula` | Pure set-theory language and Boolean-valued set-theoretic formula semantics |
-| `BooleanValuedAnalysis.SetTheory.*` | Set-theory specializations of relabeling, lifting, substitution, lawfulness, and structural corollaries |
+| `BooleanValuedAnalysis.SetTheory.*` | Set-theory specializations of structural semantics plus syntactic bounded quantifiers and their weighted semantics |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
-| `BooleanValuedAnalysis.Bounded` | Bounded existential and universal quantification |
+| `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
 | `BooleanValuedAnalysis.Canonical` | Canonical ground-model names and preservation/reflection theorems |
 | `BooleanValuedAnalysis` | Main import file exporting the complete public development |
 
@@ -78,7 +80,7 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 ## Roadmap
 
 1. **Structural formula semantics (M001): complete.** Relabeling, lifting, syntactic substitution, and formula extensionality are in the public API and covered by an executable acceptance probe.
-2. Add syntactic set-bounded quantifiers and identify their semantics with the weighted-child definitions.
+2. **Syntactic set-bounded quantifiers (M002): complete.** Bounded existential and universal formulas agree with the weighted-child semantics and are covered by an executable substitution/binder acceptance probe.
 3. Develop the mixing lemma and maximum principle.
 4. Develop ascent, descent, and transfer principles.
 5. Connect the framework with forcing and applications in Boolean-valued analysis.
@@ -99,9 +101,9 @@ The pull request template records this review without imposing the full process 
 
 ## Development standards
 
-Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` probes, and compiles the M001 structural-semantics acceptance probe.
+Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` probes, and compiles the M001 and M002 acceptance suites.
 
-A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds the complete public library in that environment, and then compiles the independent-universe, substitution, M001, and mixing probes. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
+A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds the complete public library in that environment, and then compiles the independent-universe, substitution, M001, M002, and mixing probes. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
