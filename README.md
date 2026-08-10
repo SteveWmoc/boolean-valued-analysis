@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, and syntactic set-bounded quantifiers are usable, but they may change as mixing, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, and syntactic set-bounded quantifiers are usable. Mixing is now under active development; the APIs may change as the maximum principle, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -23,7 +23,8 @@ The current development establishes that:
 - term and formula semantics commute with Mathlib-native relabeling, bound-variable lifting, and capture-avoiding syntactic substitution;
 - bounded-formula and formula truth are extensional under pointwise Boolean-valued equality of assignments, with ordinary pointwise Lean equality available as a simpler corollary;
 - syntactic set-bounded existential and universal quantifiers use Mathlib's locally nameless binders, have the standard restricted Boolean semantics, and agree with the existing weighted-child bounded quantifiers;
-- free-variable substitution through syntactic set-bounded quantifiers agrees with M001 semantic substitution at the weighted-child level.
+- free-variable substitution through syntactic set-bounded quantifiers agrees with M001 semantic substitution at the weighted-child level;
+- direct sigma-family mixtures are available, and overlap-compatible component coefficients force the mixture Boolean-equal to each corresponding component to at least that coefficient.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -46,6 +47,7 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
 | `BooleanValuedAnalysis.Canonical` | Canonical ground-model names and preservation/reflection theorems |
+| `BooleanValuedAnalysis.Mixing` | Direct sigma-family mixtures and overlap-compatibility coefficient theorem |
 | `BooleanValuedAnalysis` | Main import file exporting the complete public development |
 
 ## Quick start
@@ -81,9 +83,10 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 
 1. **Structural formula semantics (M001): complete.** Relabeling, lifting, syntactic substitution, and formula extensionality are in the public API and covered by an executable acceptance probe.
 2. **Syntactic set-bounded quantifiers (M002): complete.** Bounded existential and universal formulas agree with the weighted-child semantics and are covered by an executable substitution/binder acceptance probe.
-3. Develop the mixing lemma and maximum principle.
-4. Develop ascent, descent, and transfer principles.
-5. Connect the framework with forcing and applications in Boolean-valued analysis.
+3. **Mixing (M003): in progress.** The direct arbitrary-index mixture and overlap-compatibility theorem are public; partition-of-`b` and partition-of-unity forms remain to complete the milestone.
+4. Develop the maximum principle.
+5. Develop ascent, descent, and transfer principles.
+6. Connect the framework with forcing and applications in Boolean-valued analysis.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 

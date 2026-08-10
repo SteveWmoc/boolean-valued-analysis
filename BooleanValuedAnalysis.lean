@@ -25,6 +25,7 @@ import BooleanValuedAnalysis.Equality
 import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
 import BooleanValuedAnalysis.Canonical
+import BooleanValuedAnalysis.Mixing
 
 /-!
 # Boolean-Valued Analysis
@@ -35,5 +36,6 @@ generic Boolean-valued first-order structures, relabeling, lifting, substitution
 lawfulness, formula extensionality and structural corollaries, set-theoretic
 formula semantics including syntactic set-bounded quantifiers and their
 weighted-child semantics, extensional predicates, weighted-child bounded
-quantifiers, and canonical ground-model names.
+quantifiers, canonical ground-model names, and the core Boolean-valued mixture
+construction.
 -/
