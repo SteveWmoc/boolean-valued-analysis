@@ -68,14 +68,15 @@ Specification and completion record: [`docs/milestones/002-set-bounded-quantifie
 
 ## R3. Mixing
 
-Define mixtures along Boolean partitions of unity and prove the mixing lemma.
+### M003 — Direct mixtures and the mixing lemma — in progress
 
-This milestone must settle:
+The core construction uses the sigma-family of all immediate children of all components, cutting each child weight down by the Boolean coefficient of its component. The primitive theorem is intentionally stronger than the usual partition-of-unity statement: if coefficient overlaps force the corresponding components Boolean-equal, then each coefficient forces the direct mixture equal to that component.
 
-- the representation of indexed mixtures;
-- the exact disjointness and join hypotheses on coefficients;
-- the Boolean equality theorem characterizing each component;
-- finite and arbitrary forms, if both are useful.
+This separates two logically different roles of the coefficients. Pairwise disjointness is one way to guarantee overlap compatibility, while a join condition such as `⨆ i, a i = b` records how much Boolean value the coefficients cover but is not needed for the local coefficient estimate itself. The completion slice will package partitions of an arbitrary Boolean value `b`, derive the standard partition and partition-of-unity forms, and add an executable acceptance suite.
+
+The arbitrary-index construction subsumes finite mixtures by specialization to `Fin n`; a separate finite API will be added only if downstream use justifies it.
+
+Specification: [`docs/milestones/003-mixing.md`](docs/milestones/003-mixing.md)
 
 ## R4. Maximum principle
 
