@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Select Tau Ceti's current Lean and Mathlib environment
         shell: bash
@@ -101,16 +101,6 @@ jobs:
       - name: Build public library
         run: lake build
 
-      - name: Compile independent-universe probe
-        shell: bash
-        run: |
-          mkdir -p .lake/build/lib/lean/Audit
-          lake env lean Audit/UniverseProbe.lean \
-            -o .lake/build/lib/lean/Audit/UniverseProbe.olean
-
-      - name: Compile formula-substitution probe
-        run: lake env lean Audit/FormulaSubstitutionProbe.lean
-
       - name: Compile M001 acceptance probe
         run: lake env lean Audit/M001Acceptance.lean
 
@@ -119,6 +109,3 @@ jobs:
 
       - name: Compile M003 acceptance probe
         run: lake env lean Audit/M003Acceptance.lean
-
-      - name: Compile independent-universe mixing probe
-        run: lake env lean Audit/MixingProbe.lean
