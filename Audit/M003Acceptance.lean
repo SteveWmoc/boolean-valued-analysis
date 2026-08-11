@@ -81,16 +81,23 @@ example {ι : Type u} {a : ι → 𝔹}
 -- A single component with coefficient top is Boolean-equal to its direct
 -- mixture with truth value top.
 example (x : BVSet.{u, v} 𝔹) :
-    bvEq (mixture (fun _ : PUnit => (⊤ : 𝔹)) (fun _ => x)) x = ⊤ := by
+    bvEq
+        (mixture (fun _ : PUnit.{u} => (⊤ : 𝔹))
+          (fun _ : PUnit.{u} => x))
+        x = ⊤ := by
   apply top_unique
-  apply coefficient_le_bvEq_mixture
-    (fun _ : PUnit => (⊤ : 𝔹)) (fun _ => x)
-  intro i j
-  rw [bvEq_refl]
-  exact le_top
+  exact
+    coefficient_le_bvEq_mixture
+      (fun _ : PUnit.{u} => (⊤ : 𝔹))
+      (fun _ : PUnit.{u} => x)
+      (by
+        intro i j
+        rw [bvEq_refl]
+        exact le_top)
+      PUnit.unit
 
 -- The arbitrary-index theorem specializes directly to a finite family.
-example (a : Fin 2 → 𝔹) (τ : Fin 2 → BVSet.{u, v} 𝔹)
+example (a : Fin 2 → 𝔹) (τ : Fin 2 → BVSet.{0, v} 𝔹)
     (hdisjoint : ∀ i j, i ≠ j → a i ⊓ a j = ⊥) :
     ∀ i, a i ≤ bvEq (mixture a τ) (τ i) :=
   coefficient_le_bvEq_mixture a τ
