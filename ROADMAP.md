@@ -18,7 +18,8 @@ The repository currently provides:
 - first-order formula semantics for the language of pure set theory;
 - structural semantics for Mathlib-native relabeling, lifting, and syntactic substitution;
 - Boolean-valued extensionality of bounded-formula and formula truth under free and bound assignments;
-- syntactic set-bounded existential and universal quantifiers whose truth agrees with the weighted-child semantics.
+- syntactic set-bounded existential and universal quantifiers whose truth agrees with the weighted-child semantics;
+- arbitrary indexed mixtures, Boolean partitions of arbitrary covered values, and the mixing lemma.
 
 These components form the foundation for the milestones below.
 
@@ -68,15 +69,17 @@ Specification and completion record: [`docs/milestones/002-set-bounded-quantifie
 
 ## R3. Mixing
 
-### M003 — Direct mixtures and the mixing lemma — in progress
+### M003 — Direct mixtures and the mixing lemma — complete
 
-The core construction uses the sigma-family of all immediate children of all components, cutting each child weight down by the Boolean coefficient of its component. The primitive theorem is intentionally stronger than the usual partition-of-unity statement: if coefficient overlaps force the corresponding components Boolean-equal, then each coefficient forces the direct mixture equal to that component.
+Completed 2026-08-10.
 
-This separates two logically different roles of the coefficients. Pairwise disjointness is one way to guarantee overlap compatibility, while a join condition such as `⨆ i, a i = b` records how much Boolean value the coefficients cover but is not needed for the local coefficient estimate itself. The completion slice will package partitions of an arbitrary Boolean value `b`, derive the standard partition and partition-of-unity forms, and add an executable acceptance suite.
+The public API now provides arbitrary indexed direct mixtures of Boolean-valued sets. The primitive theorem uses the strongest natural local hypothesis: if coefficient overlaps force corresponding components Boolean-equal, then every coefficient forces the direct mixture equal to its component to at least that coefficient.
 
-The arbitrary-index construction subsumes finite mixtures by specialization to `Fin n`; a separate finite API will be added only if downstream use justifies it.
+A separate Boolean-algebraic predicate `IsPartitionOf a b` packages pairwise zero overlap together with the coverage equation `⨆ i, a i = b`; `IsPartitionOfUnity` is the case `b = ⊤`. Pairwise disjointness alone implies the primitive overlap compatibility, while the join condition records the Boolean region covered by the mixture. Consequently the standard mixing lemma is available both below an arbitrary Boolean value and in the textbook partition-of-unity form.
 
-Specification: [`docs/milestones/003-mixing.md`](docs/milestones/003-mixing.md)
+The arbitrary-index construction subsumes finite mixtures by specialization to `Fin n`. The executable acceptance suite is `Audit/M003Acceptance.lean`.
+
+Specification and completion record: [`docs/milestones/003-mixing.md`](docs/milestones/003-mixing.md)
 
 ## R4. Maximum principle
 
