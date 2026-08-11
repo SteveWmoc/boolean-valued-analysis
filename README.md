@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, and syntactic set-bounded quantifiers are usable. Mixing is now under active development; the APIs may change as the maximum principle, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, and mixing lemma are usable. The APIs may change as the maximum principle, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -24,7 +24,8 @@ The current development establishes that:
 - bounded-formula and formula truth are extensional under pointwise Boolean-valued equality of assignments, with ordinary pointwise Lean equality available as a simpler corollary;
 - syntactic set-bounded existential and universal quantifiers use Mathlib's locally nameless binders, have the standard restricted Boolean semantics, and agree with the existing weighted-child bounded quantifiers;
 - free-variable substitution through syntactic set-bounded quantifiers agrees with M001 semantic substitution at the weighted-child level;
-- direct sigma-family mixtures are available, and overlap-compatible component coefficients force the mixture Boolean-equal to each corresponding component to at least that coefficient.
+- direct sigma-family mixtures are available for arbitrary index types, with overlap-compatible coefficients forcing the expected component equalities;
+- Boolean partitions of arbitrary values `b` and partitions of unity give the standard mixing lemma, while coverage is kept logically separate from overlap compatibility.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -47,7 +48,7 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
 | `BooleanValuedAnalysis.Canonical` | Canonical ground-model names and preservation/reflection theorems |
-| `BooleanValuedAnalysis.Mixing` | Direct sigma-family mixtures and overlap-compatibility coefficient theorem |
+| `BooleanValuedAnalysis.Mixing` | Direct mixtures, Boolean partitions, compatibility estimates, and mixing lemmas |
 | `BooleanValuedAnalysis` | Main import file exporting the complete public development |
 
 ## Quick start
@@ -83,7 +84,7 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 
 1. **Structural formula semantics (M001): complete.** Relabeling, lifting, syntactic substitution, and formula extensionality are in the public API and covered by an executable acceptance probe.
 2. **Syntactic set-bounded quantifiers (M002): complete.** Bounded existential and universal formulas agree with the weighted-child semantics and are covered by an executable substitution/binder acceptance probe.
-3. **Mixing (M003): in progress.** The direct arbitrary-index mixture and overlap-compatibility theorem are public; partition-of-`b` and partition-of-unity forms remain to complete the milestone.
+3. **Mixing (M003): complete.** Arbitrary indexed mixtures, partitions of arbitrary Boolean values, and the partition-of-unity mixing lemma are public and covered by an executable acceptance suite.
 4. Develop the maximum principle.
 5. Develop ascent, descent, and transfer principles.
 6. Connect the framework with forcing and applications in Boolean-valued analysis.
@@ -104,9 +105,9 @@ The pull request template records this review without imposing the full process 
 
 ## Development standards
 
-Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` probes, and compiles the M001 and M002 acceptance suites.
+Every pull request is checked by GitHub Actions. CI builds the library, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` probes, and compiles the M001, M002, and M003 acceptance suites.
 
-A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds the complete public library in that environment, and then compiles the independent-universe, substitution, M001, M002, and mixing probes. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
+A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds the complete public library in that environment, and then compiles the independent-universe, substitution, M001, M002, M003, and independent-universe mixing probes. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
