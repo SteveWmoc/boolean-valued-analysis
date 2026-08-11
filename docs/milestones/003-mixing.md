@@ -87,7 +87,7 @@ Project dependencies:
 - `BooleanValuedAnalysis.Equality` for reflexivity, symmetry, and membership congruence;
 - `BooleanValuedAnalysis.Bounded` for `BVSet.weight_le_mem_child`.
 
-The earlier `Audit/MixingProbe.lean` remains an architecture experiment. The production implementation reuses the mature `BVSet` API rather than copying its probe-only equality and membership helper lemmas.
+The construction was originally explored in `Audit/MixingProbe.lean`. After the production `BVSet` implementation and the M003 acceptance suite subsumed that experiment, the parallel probe was retired in the pre-R004 housekeeping pass. The production implementation reuses the mature `BVSet` API rather than copying the probe-only equality and membership helper lemmas.
 
 ## Public API
 
@@ -149,7 +149,7 @@ PR #30 added partitions of arbitrary Boolean values, pairwise-disjoint compatibi
 7. the arbitrary-index theorem specializes directly to a finite `Fin 2` family;
 8. the family/child universe and Boolean-algebra universe remain independent.
 
-The suite is compiled by both repository CI and the live Tau Ceti architecture audit.
+The suite is compiled by both repository CI and the live Tau Ceti architecture audit. It is now the production-API compatibility test for mixing; no second `Name`-based mixing implementation is maintained under `Audit/`.
 
 ## Non-goals
 
