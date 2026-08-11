@@ -39,11 +39,7 @@ theorem realize_liftAt
       realize S
         (assignment ∘ Sum.map id fun i : Fin n =>
           if ↑i < m then Fin.castAdd n' i else Fin.addNat i n') t := by
-  simpa [_root_.FirstOrder.Language.Term.liftAt] using
-    realize_relabel S t
-      (Sum.map id fun i : Fin n =>
-        if ↑i < m then Fin.castAdd n' i else Fin.addNat i n')
-      assignment
+  simp [_root_.FirstOrder.Language.Term.liftAt]
 
 end Term
 
@@ -99,7 +95,7 @@ theorem truth_liftAt
         (funext (Fin.lastCases ?_ fun i => ?_))
       · simp only [Function.comp_apply, Fin.val_last, Fin.snoc_last]
         refine (congr rfl (Fin.ext ?_)).trans (Fin.snoc_last _ _)
-        split_ifs <;> dsimp <;> omega
+        split_ifs <;> (dsimp; omega)
       · simp only [Function.comp_apply, Fin.snoc_castSucc]
         refine (congr rfl (Fin.ext ?_)).trans (Fin.snoc_castSucc _ _ _)
         simp only [Fin.val_castSucc, Fin.val_cast]
