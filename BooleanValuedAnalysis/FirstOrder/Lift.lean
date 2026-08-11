@@ -95,7 +95,8 @@ theorem truth_liftAt
         (funext (Fin.lastCases ?_ fun i => ?_))
       · simp only [Function.comp_apply, Fin.val_last, Fin.snoc_last]
         refine (congr rfl (Fin.ext ?_)).trans (Fin.snoc_last _ _)
-        split_ifs <;> (dsimp; omega)
+        split_ifs <;> dsimp
+        omega
       · simp only [Function.comp_apply, Fin.snoc_castSucc]
         refine (congr rfl (Fin.ext ?_)).trans (Fin.snoc_castSucc _ _ _)
         simp only [Fin.val_castSucc, Fin.val_cast]
