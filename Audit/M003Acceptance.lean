@@ -82,14 +82,15 @@ example {ι : Type u} {a : ι → 𝔹}
 -- mixture with truth value top.
 example (x : BVSet.{u, v} 𝔹) :
     bvEq
-        (mixture (fun _ : PUnit.{u} => (⊤ : 𝔹))
-          (fun _ : PUnit.{u} => x))
+        (mixture
+          (show PUnit.{u} → 𝔹 from fun _ => ⊤)
+          (show PUnit.{u} → BVSet.{u, v} 𝔹 from fun _ => x))
         x = ⊤ := by
   apply top_unique
   exact
     coefficient_le_bvEq_mixture
-      (fun _ : PUnit.{u} => (⊤ : 𝔹))
-      (fun _ : PUnit.{u} => x)
+      (show PUnit.{u} → 𝔹 from fun _ => ⊤)
+      (show PUnit.{u} → BVSet.{u, v} 𝔹 from fun _ => x)
       (by
         intro i j
         rw [bvEq_refl]
