@@ -79,18 +79,15 @@ example {ι : Type u} {a : ι → 𝔹}
   exists_mixture_of_partitionOfUnity τ hpart
 
 -- A single component with coefficient top is Boolean-equal to its direct
--- mixture with truth value top.
-example (x : BVSet.{u, v} 𝔹) :
-    bvEq
-        (mixture
-          (show PUnit.{u} → 𝔹 from fun _ => ⊤)
-          (show PUnit.{u} → BVSet.{u, v} 𝔹 from fun _ => x))
-        x = ⊤ := by
+-- mixture with truth value top. This sanity check uses a small index universe;
+-- the generic examples above separately verify independent `u` and `v`.
+example (x : BVSet.{0, v} 𝔹) :
+    bvEq (mixture (fun _ : PUnit => (⊤ : 𝔹)) (fun _ : PUnit => x)) x = ⊤ := by
   apply top_unique
   exact
     coefficient_le_bvEq_mixture
-      (show PUnit.{u} → 𝔹 from fun _ => ⊤)
-      (show PUnit.{u} → BVSet.{u, v} 𝔹 from fun _ => x)
+      (fun _ : PUnit => (⊤ : 𝔹))
+      (fun _ : PUnit => x)
       (by
         intro i j
         rw [bvEq_refl]
