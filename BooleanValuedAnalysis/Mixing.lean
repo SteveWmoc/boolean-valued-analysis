@@ -17,14 +17,48 @@ The fundamental theorem is stated in compatibility form: component coefficients
 need not be disjoint, provided the overlap of any two coefficients forces the
 corresponding components to be Boolean-equal. Pairwise-disjoint partitions are
 therefore a special case rather than a prerequisite of the construction.
+
+For downstream use, especially the maximum principle, the file also packages a
+partition of an arbitrary Boolean value `b`. Coverage of `b` is kept separate
+from the overlap-compatibility hypothesis used by the core mixing proof.
 -/
 
 universe u v
 
 namespace BooleanValued
-namespace BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+
+/-- A family of Boolean coefficients is a partition of `b` when distinct
+coefficients have zero overlap and their supremum is exactly `b`. -/
+def IsPartitionOf {ι : Type u} (a : ι → 𝔹) (b : 𝔹) : Prop :=
+  (∀ i j, i ≠ j → a i ⊓ a j = ⊥) ∧ (⨆ i, a i) = b
+
+/-- A partition of unity is a partition of `⊤`. -/
+abbrev IsPartitionOfUnity {ι : Type u} (a : ι → 𝔹) : Prop :=
+  IsPartitionOf a ⊤
+
+namespace IsPartitionOf
+
+variable {ι : Type u} {a : ι → 𝔹} {b : 𝔹}
+
+/-- Distinct members of a partition have zero overlap. -/
+theorem pairwise_disjoint (h : IsPartitionOf a b) :
+    ∀ i j, i ≠ j → a i ⊓ a j = ⊥ :=
+  h.1
+
+/-- The supremum of the coefficients of a partition of `b` is `b`. -/
+theorem iSup_eq (h : IsPartitionOf a b) : (⨆ i, a i) = b :=
+  h.2
+
+/-- Every coefficient of a partition of `b` lies below `b`. -/
+theorem coefficient_le (h : IsPartitionOf a b) (i : ι) : a i ≤ b := by
+  rw [← h.iSup_eq]
+  exact le_iSup (fun j => a j) i
+
+end IsPartitionOf
+
+namespace BVSet
 
 /-- Boolean-valued equality unfolded into its two directed containment
 conditions. This helper keeps the recursive orientation of the raw definition
@@ -109,6 +143,46 @@ theorem exists_mixture
     (compatible : ∀ i j, a i ⊓ a j ≤ bvEq (τ i) (τ j)) :
     ∃ x : BVSet.{u, v} 𝔹, ∀ i, a i ≤ bvEq x (τ i) :=
   ⟨mixture a τ, coefficient_le_bvEq_mixture a τ compatible⟩
+
+/-- Pairwise-disjoint Boolean coefficients are automatically overlap-compatible
+with every family of Boolean-valued sets. No hypothesis on their supremum is
+needed. -/
+theorem coefficients_compatible_of_pairwise_disjoint
+    {ι : Type u} (a : ι → 𝔹) (τ : ι → BVSet.{u, v} 𝔹)
+    (hdisjoint : ∀ i j, i ≠ j → a i ⊓ a j = ⊥) :
+    ∀ i j, a i ⊓ a j ≤ bvEq (τ i) (τ j) := by
+  intro i j
+  by_cases hij : i = j
+  · subst j
+    rw [bvEq_refl]
+    exact le_top
+  · rw [hdisjoint i j hij]
+    exact bot_le
+
+/-- The direct mixture satisfies the standard component estimate for every
+partition of an arbitrary Boolean value `b`. The coverage equation itself is
+not needed by the coefficient estimate, but records the Boolean region on which
+the family is being mixed. -/
+theorem coefficient_le_bvEq_mixture_of_partition
+    {ι : Type u} {a : ι → 𝔹} {b : 𝔹}
+    (τ : ι → BVSet.{u, v} 𝔹) (hpart : IsPartitionOf a b) :
+    ∀ i, a i ≤ bvEq (mixture a τ) (τ i) :=
+  coefficient_le_bvEq_mixture a τ
+    (coefficients_compatible_of_pairwise_disjoint a τ hpart.pairwise_disjoint)
+
+/-- Mixing lemma for a partition of an arbitrary Boolean value `b`. -/
+theorem exists_mixture_of_partition
+    {ι : Type u} {a : ι → 𝔹} {b : 𝔹}
+    (τ : ι → BVSet.{u, v} 𝔹) (hpart : IsPartitionOf a b) :
+    ∃ x : BVSet.{u, v} 𝔹, ∀ i, a i ≤ bvEq x (τ i) :=
+  ⟨mixture a τ, coefficient_le_bvEq_mixture_of_partition τ hpart⟩
+
+/-- Textbook mixing lemma for a partition of unity. -/
+theorem exists_mixture_of_partitionOfUnity
+    {ι : Type u} {a : ι → 𝔹}
+    (τ : ι → BVSet.{u, v} 𝔹) (hpart : IsPartitionOfUnity a) :
+    ∃ x : BVSet.{u, v} 𝔹, ∀ i, a i ≤ bvEq x (τ i) :=
+  exists_mixture_of_partition τ hpart
 
 end BVSet
 end BooleanValued
