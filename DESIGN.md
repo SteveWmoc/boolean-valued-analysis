@@ -95,7 +95,7 @@ The current library works with raw names and Boolean-valued extensional equality
 
 ### Reconsider when
 
-- the mixing or ascent/descent developments make the quotient interface unavoidable;
+- the maximum-principle or ascent/descent developments make the quotient interface unavoidable;
 - repeated manual extensionality proofs indicate that the separation has been delayed too long.
 
 ## D005 — Require a complete Boolean algebra for full semantics
@@ -190,7 +190,7 @@ Ordinary invariance under pointwise Lean equality is retained only as a convenie
 
 ### O003 — Separated universe
 
-Decide whether the separated universe should be implemented as a quotient, a setoid-based interface, or another extensional wrapper. This decision should wait until the requirements of mixing and algebraic structure transport are explicit.
+Decide whether the separated universe should be implemented as a quotient, a setoid-based interface, or another extensional wrapper. M003 showed that the raw `BVSet` representation supports arbitrary mixing without first passing to a separated universe, so mixing itself does not force this decision. Defer the choice until the maximum-principle and ascent/descent developments make the required quotient interface clearer.
 
 ### O004 — Heyting-valued semantics
 

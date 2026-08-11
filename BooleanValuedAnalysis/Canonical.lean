@@ -80,10 +80,10 @@ private theorem not_equiv_cases {x y : PSet.{u}} (h : ¬ PSet.Equiv x y) :
     have hright : ¬ ∀ j : y.Type, ∃ i : x.Type, PSet.Equiv (x.Func i) (y.Func j) := by
       intro hright
       exact h ⟨hleft, hright⟩
-    push_neg at hright
+    push Not at hright
     exact hright
   · left
-    push_neg at hleft
+    push Not at hleft
     exact hleft
 
 /-- Ground-model extensional equivalence has Boolean truth value `⊤` between
