@@ -26,6 +26,7 @@ import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
 import BooleanValuedAnalysis.Canonical
 import BooleanValuedAnalysis.Mixing
+import BooleanValuedAnalysis.Maximum
 
 /-!
 # Boolean-Valued Analysis
@@ -36,6 +37,7 @@ generic Boolean-valued first-order structures, relabeling, lifting, substitution
 lawfulness, formula extensionality and structural corollaries, set-theoretic
 formula semantics including syntactic set-bounded quantifiers and their
 weighted-child semantics, extensional predicates, weighted-child bounded
-quantifiers, canonical ground-model names, and Boolean-valued mixtures with
-partition-based mixing lemmas.
+quantifiers, canonical ground-model names, Boolean-valued mixtures with
+partition-based mixing lemmas, and the core maximum principle for extensional
+Boolean-valued predicates.
 -/
