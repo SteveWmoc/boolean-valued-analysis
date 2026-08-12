@@ -277,8 +277,10 @@ theorem truth_snoc_extensional
           ((Fin.snoc boundAssignment y : Fin (n + 1) → BVSet.{u, v} 𝔹) i) := by
     intro i
     refine Fin.lastCases ?_ (fun j => ?_) i
-    · simpa only [Fin.snoc_last]
-    · simp only [Fin.snoc_castSucc, BVSet.bvEq_refl]
+    · simpa only [Fin.snoc_last] using
+        (show BVSet.bvEq x y ≤ BVSet.bvEq x y from le_rfl)
+    · simpa only [Fin.snoc_castSucc, BVSet.bvEq_refl] using
+        (show BVSet.bvEq x y ≤ (⊤ : 𝔹) from le_top)
   simpa only [truth] using
     BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le
       (bvSetStructure (𝔹 := 𝔹))
