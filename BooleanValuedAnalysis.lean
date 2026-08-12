@@ -38,6 +38,7 @@ lawfulness, formula extensionality and structural corollaries, set-theoretic
 formula semantics including syntactic set-bounded quantifiers and their
 weighted-child semantics, extensional predicates, weighted-child bounded
 quantifiers, canonical ground-model names, Boolean-valued mixtures with
-partition-based mixing lemmas, and the core maximum principle for extensional
-Boolean-valued predicates.
+partition-based mixing lemmas, small witness partitions, the maximum principle
+for extensional Boolean-valued predicates, and realization of existential
+formula truth by Boolean-valued witnesses.
 -/
