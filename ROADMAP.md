@@ -83,13 +83,15 @@ Specification and completion record: [`docs/milestones/003-mixing.md`](docs/mile
 
 ## R4. Maximum principle
 
-Use mixing to prove an appropriate maximum principle for existential truth values.
+### M004 — Maximum principle — in progress
 
-The theorem should clearly separate:
+The first R004 slice extracts a small disjoint witness partition from an arbitrary indexed Boolean supremum and uses M003 mixing to prove a maximum principle for extensional unary Boolean-valued predicates.
 
-- the Boolean value of an existential formula;
-- the hypotheses required to choose a witness realizing that value;
-- any use of classical choice in the metatheory.
+The implementation keeps two foundational assumptions visible rather than conflating them: `[Small.{u} 𝔹]` supplies the universe-size condition needed to reindex a selected witness antichain inside the `BVSet` immediate-child universe, while classical choice in Lean's metatheory supplies the maximal antichain through Zorn's lemma and the `Shrink` reindexing machinery.
+
+The next slice will specialize the predicate result to set-theoretic formula bodies and identify the realized supremum with the existing existential truth value.
+
+Specification and progress record: [`docs/milestones/004-maximum-principle.md`](docs/milestones/004-maximum-principle.md)
 
 ## R5. Separated universe, ascent, and descent
 
