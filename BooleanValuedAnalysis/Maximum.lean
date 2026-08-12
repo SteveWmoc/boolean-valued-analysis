@@ -96,7 +96,11 @@ theorem exists_partition_of_iSup {X : Type w} [Small.{u} 𝔹]
   have htarget_le_covered : target ≤ covered := by
     by_contra hnot
     have hremainder_ne : target \ covered ≠ ⊥ := by
-      simpa only [sdiff_eq_bot_iff] using hnot
+      intro hrem
+      have hdecomp : covered ⊔ target \ covered = target :=
+        sup_sdiff_cancel_right hcovered_le_target
+      rw [hrem, sup_bot_eq] at hdecomp
+      exact hnot hdecomp.ge
     let r : 𝔹 := target \ covered
     have hr_ne : r ≠ ⊥ := by
       simpa only [r] using hremainder_ne
@@ -151,7 +155,7 @@ theorem exists_partition_of_iSup {X : Type w} [Small.{u} 𝔹]
             exact hb_disjoint p hpA
           · exact hA.2 p hpA q hqA hpq
     have hinsert_eq : Set.insert z A = A :=
-      hAmax.eq_of_subset hinsert (Set.subset_insert z A)
+      (hAmax.eq_of_subset hinsert (Set.subset_insert z A)).symm
     have hzA : z ∈ A := by
       rw [← hinsert_eq]
       exact Set.mem_insert z A
