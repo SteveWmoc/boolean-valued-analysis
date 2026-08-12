@@ -30,11 +30,11 @@ example {X : Type w} [Small.{u} 𝔹] (f : X → 𝔹) :
 
 -- The partition theorem also handles the degenerate bottom-valued supremum.
 example [Small.{u} 𝔹] :
-    ∃ (ι : Type u) (a : ι → 𝔹) (x : ι → PUnit),
+    ∃ (ι : Type u) (a : ι → 𝔹) (x : ι → PUnit.{0}),
       IsPartitionOf a (⊥ : 𝔹) ∧ ∀ i, a i ≤ (⊥ : 𝔹) := by
   simpa using
     (exists_partition_of_iSup (𝔹 := 𝔹)
-      (fun _ : PUnit => (⊥ : 𝔹)))
+      (fun _ : PUnit.{0} => (⊥ : 𝔹)))
 
 namespace BVSet
 
@@ -51,7 +51,7 @@ example [Small.{u} 𝔹] :
       (⊥ : 𝔹) = ⨆ _ : BVSet.{u, v} 𝔹, (⊥ : 𝔹) := by
   apply exists_maximum_of_extensional
     (fun _ : BVSet.{u, v} 𝔹 => (⊥ : 𝔹))
-  intro x y
+  intro _ _
   simp
 
 end BVSet
