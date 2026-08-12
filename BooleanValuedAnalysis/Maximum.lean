@@ -6,17 +6,18 @@ Authors: Steven Sabean
 
 import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Mixing
+import BooleanValuedAnalysis.SetTheory.Lawful
 import Mathlib.Logic.Small.Basic
 import Mathlib.Order.Zorn
 
 /-!
 # Maximum principle for Boolean-valued predicates
 
-This file begins the maximum-principle layer.  The Boolean-algebraic core first
-extracts a small partition from an arbitrary indexed supremum.  Each partition
-coefficient lies below the value of a selected witness.  The construction uses
-Zorn's lemma to choose a maximal family of nonzero pairwise-disjoint witness
-pieces.
+This file proves the maximum principle for Boolean-valued truth.  The
+Boolean-algebraic core first extracts a small partition from an arbitrary
+indexed supremum.  Each partition coefficient lies below the value of a
+selected witness.  The construction uses Zorn's lemma to choose a maximal
+family of nonzero pairwise-disjoint witness pieces.
 
 The selected family can a priori live above the immediate-child universe of a
 `BVSet`.  We therefore keep the required size assumption explicit: if the
@@ -25,8 +26,11 @@ shows that the selected family is also `u`-small, and `Shrink` reindexes it in
 `Type u`.
 
 Mixing then turns the witness partition into a single maximizer for every
-extensional Boolean-valued predicate.  Classical choice is used only in the
-metatheory, through Zorn's lemma and the small-type reindexing machinery.
+extensional Boolean-valued predicate.  Formula extensionality specializes this
+to the body of an existential formula, yielding a witness whose body truth is
+exactly the Boolean truth value of the existential.  Classical choice is used
+only in the metatheory, through Zorn's lemma and the small-type reindexing
+machinery.
 -/
 
 universe u v w
@@ -245,4 +249,62 @@ theorem exists_maximum_of_extensional [Small.{u} 𝔹]
   exact (le_inf heq (hbelow i)).trans (hφ (τ i) x)
 
 end BVSet
+
+namespace SetTheory
+
+variable {α : Type w} {n : ℕ}
+
+/-- The truth value of a formula body is an extensional predicate in a freshly
+bound variable.  This is the M001 assignment-transport theorem specialized to
+two bound assignments that differ only in their final entry. -/
+theorem truth_snoc_extensional
+    (φ : BoundedFormula α (n + 1))
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
+    BVSet.Extensional
+      (fun x : BVSet.{u, v} 𝔹 =>
+        truth φ assignment (Fin.snoc boundAssignment x)) := by
+  intro x y
+  have hfree : ∀ a,
+      BVSet.bvEq x y ≤ BVSet.bvEq (assignment a) (assignment a) := by
+    intro a
+    rw [BVSet.bvEq_refl]
+    exact le_top
+  have hbound : ∀ i : Fin (n + 1),
+      BVSet.bvEq x y ≤
+        BVSet.bvEq
+          ((Fin.snoc boundAssignment x : Fin (n + 1) → BVSet.{u, v} 𝔹) i)
+          ((Fin.snoc boundAssignment y : Fin (n + 1) → BVSet.{u, v} 𝔹) i) := by
+    intro i
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · simpa only [Fin.snoc_last]
+    · simp only [Fin.snoc_castSucc, BVSet.bvEq_refl]
+  simpa only [truth] using
+    BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le
+      (bvSetStructure (𝔹 := 𝔹))
+      (bvSetStructure_lawful (𝔹 := 𝔹))
+      φ assignment assignment
+      (Fin.snoc boundAssignment x) (Fin.snoc boundAssignment y)
+      (BVSet.bvEq x y) hfree hbound
+
+/-- Maximum principle for set-theoretic existential truth.
+
+Some Boolean-valued set realizes the full Boolean truth value of the
+existential formula: the truth value of the body at the selected witness is
+exactly the truth value of `φ.ex`. -/
+theorem exists_maximum_truth [Small.{u} 𝔹]
+    (φ : BoundedFormula α (n + 1))
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
+    ∃ x : BVSet.{u, v} 𝔹,
+      truth φ assignment (Fin.snoc boundAssignment x) =
+        truth φ.ex assignment boundAssignment := by
+  obtain ⟨x, hx⟩ := BVSet.exists_maximum_of_extensional
+    (fun y : BVSet.{u, v} 𝔹 =>
+      truth φ assignment (Fin.snoc boundAssignment y))
+    (truth_snoc_extensional φ assignment boundAssignment)
+  refine ⟨x, ?_⟩
+  simpa only [truth_ex] using hx
+
+end SetTheory
 end BooleanValued
