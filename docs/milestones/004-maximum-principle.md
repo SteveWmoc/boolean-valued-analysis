@@ -1,14 +1,14 @@
 # M004 — Maximum principle
 
-**Status:** in progress
+**Status:** complete — 2026-08-12
 
 ## Purpose
 
 Use M003 mixing together with M001 extensionality to prove a maximum principle for Boolean-valued existential truth.
 
-The intended set-theoretic conclusion is that the Boolean value of an existential formula is not merely a supremum: under the required metatheoretic and universe-size hypotheses, some Boolean-valued set realizes that supremum exactly.
+The set-theoretic conclusion is that the Boolean value of an existential formula is not merely a supremum: under the required metatheoretic and universe-size hypotheses, some Boolean-valued set realizes that supremum exactly.
 
-This milestone deliberately separates three ingredients that are easy to conflate:
+This milestone separates three ingredients that are easy to conflate:
 
 1. the complete-Boolean-algebra supremum defining existential truth;
 2. a small disjoint family of local witnesses whose coefficients cover that supremum;
@@ -37,7 +37,7 @@ For `BVSet.{u,v} 𝔹`, the immediate-child index of every name lies in `Type u`
 
 M003 therefore mixes families indexed by `Type u`. A maximal witness antichain for an arbitrary predicate is naturally a subtype of a type containing both Boolean coefficients and witnesses, and is not automatically a `Type u` object.
 
-R004 must not erase this distinction by silently identifying universes. Instead the core maximum theorem assumes
+M004 does not erase this distinction by silently identifying universes. Instead the core maximum theorem assumes
 
 ```text
 [Small.{u} 𝔹]
@@ -51,13 +51,13 @@ This hypothesis is automatic when the Boolean algebra already lives in an approp
 
 The maximum principle is intentionally nonconstructive.
 
-The first implementation slice uses Mathlib's Zorn lemma to select a maximal family of nonzero pairwise-disjoint Boolean pieces, each lying below the value of a chosen witness. Reindexing that family through `Shrink` also uses Mathlib's classical small-type machinery.
+The implementation uses Mathlib's Zorn lemma to select a maximal family of nonzero pairwise-disjoint Boolean pieces, each lying below the value of a chosen witness. Reindexing that family through `Shrink` also uses Mathlib's classical small-type machinery.
 
 No new project axiom or choice field is introduced. The use of classical choice remains in the Lean metatheory and is documented here rather than hidden in the `BVSet` representation or formula semantics.
 
 ## Slice A — witness partitions and extensional predicates
 
-The first slice should expose a Boolean-algebraic witness-partition theorem of the form
+The public Boolean-algebraic witness-partition theorem is
 
 ```text
 exists_partition_of_iSup
@@ -67,7 +67,9 @@ exists_partition_of_iSup
       ∀ i, a i ≤ f (x i)
 ```
 
-and then derive the predicate-level maximum principle
+The proof chooses a maximal witness antichain by Zorn's lemma. If its coefficient supremum failed to cover `⨆ y, f y`, the nonzero Boolean remainder would meet some `f x` nontrivially and could be inserted as a new disjoint witness piece, contradicting maximality. Nonzero disjoint coefficients make projection to `𝔹` injective, so the family can be reindexed through `Shrink` in `Type u`.
+
+The predicate-level maximum principle is
 
 ```text
 BVSet.exists_maximum_of_extensional
@@ -77,31 +79,42 @@ BVSet.exists_maximum_of_extensional
     ∃ x, φ x = ⨆ y, φ y.
 ```
 
-The proof of the second theorem should use the M003 partition mixing theorem as a black box. If `a i` forces the mixture equal to witness `x i`, extensionality transports the local estimate `a i ≤ φ (x i)` to the mixture. Taking the supremum over the partition gives the required lower bound; the reverse inequality is immediate from the definition of the supremum.
+Its proof uses the M003 partition mixing theorem as a black box. If `a i` forces the mixture equal to witness `x i`, extensionality transports the local estimate `a i ≤ φ (x i)` to the mixture. Taking the supremum over the partition gives the required lower bound; the reverse inequality is immediate from the definition of the supremum.
 
 ## Slice B — formula-level maximum principle
 
-After the predicate theorem is stable, specialize it to set-theoretic formula bodies.
-
-For a bounded formula with one fresh bound variable, M001 truth transport should prove that
+`SetTheory.truth_snoc_extensional` specializes the M001 assignment-transport theorem to show that, for a bounded formula with one fresh bound variable,
 
 ```text
 x ↦ truth φ assignment (Fin.snoc boundAssignment x)
 ```
 
-is an extensional Boolean-valued predicate. Combining the predicate maximum principle with `truth_ex` should then produce a witness whose body truth is exactly the truth value of the existential formula.
+is an extensional Boolean-valued predicate.
 
-The final public theorem should expose the existential Boolean value directly, rather than forcing downstream users to unfold an indexed supremum.
+Combining that result with `BVSet.exists_maximum_of_extensional` and `truth_ex` yields the public formula theorem
+
+```text
+SetTheory.exists_maximum_truth
+    [Small.{u} 𝔹]
+    (φ : BoundedFormula α (n + 1))
+    (assignment : α → BVSet.{u,v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u,v} 𝔹) :
+    ∃ x,
+      truth φ assignment (Fin.snoc boundAssignment x) =
+        truth φ.ex assignment boundAssignment.
+```
+
+Thus downstream formula users see the standard existential maximum principle directly and do not need to unfold Zorn's lemma, `Shrink`, the witness antichain, or the indexed supremum implementation.
 
 ## Acceptance tests
 
-The completed milestone should verify at least:
+`Audit/M004Acceptance.lean` verifies:
 
 1. `exists_partition_of_iSup` returns pairwise-disjoint coefficients with the correct supremum;
 2. every selected coefficient lies below the Boolean value of its selected witness;
 3. an extensional predicate has a witness realizing its full indexed supremum;
 4. a set-theoretic existential formula has a witness whose body truth equals the existential truth value;
-5. the theorem works when the existential value is `⊥` as well as when it is nonzero;
+5. the maximum principle covers bottom-valued predicates and existential bodies as well as nonzero values;
 6. the universe-smallness assumption is explicit and no equality between `u` and `v` is imposed;
 7. no separated quotient is needed for the raw-name maximum principle;
 8. both repository CI and the live Tau Ceti architecture audit compile the M004 acceptance suite.
@@ -118,42 +131,42 @@ M004 does not:
 - claim a universe-polymorphic maximum theorem without the smallness needed by the current `BVSet` constructor;
 - introduce forcing applications.
 
-## Review prompts
+## Review record
 
 ### Mathematical correctness
 
-- Does the selected antichain really cover the entire supremum, or only a proper Boolean subvalue?
-- Is nonzeroness included where needed to make coefficient projection injective?
-- Does the mixing argument transport each local predicate value in the correct equality direction?
-- Is the final formula theorem exactly the standard maximum principle rather than a weaker approximation statement?
+- The selected maximal antichain covers the entire indexed supremum: a nonzero uncovered remainder would produce a strictly larger witness antichain.
+- Nonzeroness is part of the witness-antichain invariant and is used to make coefficient projection injective.
+- The mixing argument transports each local predicate estimate in the correct Boolean-equality direction via extensionality.
+- The final formula theorem realizes exactly `truth φ.ex ...`, not merely an approximation below it.
 
 ### Choice and foundations
 
-- Is every use of classical choice confined to maximal-family selection and small reindexing?
-- Are `Small.{u} 𝔹` and classical choice documented as different issues?
-- Does the theorem avoid adding a choice principle to the object-level Boolean-valued model?
+- Classical choice is confined to maximal-family selection through Zorn's lemma and small reindexing through `Shrink`/`equivShrink`.
+- `[Small.{u} 𝔹]` and classical choice are separate assumptions serving different purposes.
+- No choice principle is added to the object-level Boolean-valued model.
 
 ### Universe sanity
 
-- Does the family passed to `BVSet.mixture` genuinely have index type in `Type u`?
-- Is the selected family shown small by injection into the Boolean algebra rather than by assuming all `BVSet` witnesses are small?
-- Are the coefficient and Boolean-valued-set universes otherwise still independent?
+- The family passed to `BVSet.mixture` is genuinely reindexed in `Type u`.
+- Smallness of the selected family follows from its injective coefficient projection into `𝔹`; no smallness assumption is made on the whole type of `BVSet` witnesses.
+- The Boolean-algebra and name universes otherwise remain independent.
 
 ### Reuse and API quality
 
-- Does the proof reuse `IsPartitionOf` and the M003 mixing theorem without unfolding the mixture representation?
-- Is the Boolean witness-partition lemma useful independently of `BVSet`?
-- Can formula-level users invoke the final theorem without seeing Zorn, `Shrink`, or the antichain construction?
+- The proof reuses `IsPartitionOf` and the M003 mixing theorem rather than unfolding mixture internals.
+- `exists_partition_of_iSup` is independent of `BVSet` and reusable as a Boolean-algebraic witness-selection result.
+- Formula-level users can invoke `SetTheory.exists_maximum_truth` without seeing Zorn, `Shrink`, or the antichain construction.
 
 ## Definition of done
 
-- [ ] witness-partition theorem is public and documented;
-- [ ] predicate-level maximum principle is proved;
-- [ ] formula-body extensionality specialization is proved;
-- [ ] formula-level existential maximum principle is proved;
-- [ ] `Audit/M004Acceptance.lean` covers the acceptance categories above;
-- [ ] no `sorry` or `admit` is present;
-- [ ] every new public module is exported from `BooleanValuedAnalysis.lean`;
-- [ ] repository CI passes;
-- [ ] live Tau Ceti compatibility audit passes;
-- [ ] README/ROADMAP status is updated when M004 is completed.
+- [x] witness-partition theorem is public and documented;
+- [x] predicate-level maximum principle is proved;
+- [x] formula-body extensionality specialization is proved;
+- [x] formula-level existential maximum principle is proved;
+- [x] `Audit/M004Acceptance.lean` covers the acceptance categories above;
+- [x] no `sorry` or `admit` is present;
+- [x] every new public module is exported from `BooleanValuedAnalysis.lean`;
+- [x] repository CI passes;
+- [x] live Tau Ceti compatibility audit passes;
+- [x] README/ROADMAP status is updated when M004 is completed.
