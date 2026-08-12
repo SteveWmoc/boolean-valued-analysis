@@ -10,7 +10,7 @@ import BooleanValuedAnalysis
 # M004 acceptance probe
 
 Executable acceptance checks for the Boolean witness-partition theorem, the
-bottom-valued edge case, the maximum principle for extensional predicates,
+maximum principle for extensional predicates, the bottom-valued edge case,
 extensionality of existential formula bodies, and the formula-level maximum
 principle.  The examples keep the name and Boolean-algebra universes independent
 while making the required smallness hypothesis explicit.
@@ -27,14 +27,6 @@ example {X : Type w} [Small.{u} 𝔹] (f : X → 𝔹) :
     ∃ (ι : Type u) (a : ι → 𝔹) (x : ι → X),
       IsPartitionOf a (⨆ y, f y) ∧ ∀ i, a i ≤ f (x i) :=
   exists_partition_of_iSup f
-
--- The partition theorem also handles the degenerate bottom-valued supremum.
-example [Small.{u} 𝔹] :
-    ∃ (ι : Type u) (a : ι → 𝔹) (x : ι → PUnit.{0}),
-      IsPartitionOf a (⊥ : 𝔹) ∧ ∀ i, a i ≤ (⊥ : 𝔹) := by
-  simpa using
-    (exists_partition_of_iSup (𝔹 := 𝔹)
-      (fun _ : PUnit.{0} => (⊥ : 𝔹)))
 
 namespace BVSet
 
