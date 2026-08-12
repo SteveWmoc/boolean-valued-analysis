@@ -19,7 +19,8 @@ The repository currently provides:
 - structural semantics for Mathlib-native relabeling, lifting, and syntactic substitution;
 - Boolean-valued extensionality of bounded-formula and formula truth under free and bound assignments;
 - syntactic set-bounded existential and universal quantifiers whose truth agrees with the weighted-child semantics;
-- arbitrary indexed mixtures, Boolean partitions of arbitrary covered values, and the mixing lemma.
+- arbitrary indexed mixtures, Boolean partitions of arbitrary covered values, and the mixing lemma;
+- a maximum principle for extensional Boolean-valued predicates and existential formula truth under an explicit Boolean-algebra smallness hypothesis.
 
 These components form the foundation for the milestones below.
 
@@ -83,15 +84,17 @@ Specification and completion record: [`docs/milestones/003-mixing.md`](docs/mile
 
 ## R4. Maximum principle
 
-### M004 — Maximum principle — in progress
+### M004 — Maximum principle — complete
 
-The first R004 slice extracts a small disjoint witness partition from an arbitrary indexed Boolean supremum and uses M003 mixing to prove a maximum principle for extensional unary Boolean-valued predicates.
+Completed 2026-08-12.
 
-The implementation keeps two foundational assumptions visible rather than conflating them: `[Small.{u} 𝔹]` supplies the universe-size condition needed to reindex a selected witness antichain inside the `BVSet` immediate-child universe, while classical choice in Lean's metatheory supplies the maximal antichain through Zorn's lemma and the `Shrink` reindexing machinery.
+The public API now extracts a small disjoint witness partition from an arbitrary indexed Boolean supremum and uses M003 mixing to prove that every extensional unary Boolean-valued predicate attains its full supremum. M001 formula truth transport specializes formula bodies to such predicates, so `SetTheory.exists_maximum_truth` produces a Boolean-valued set whose body truth is exactly the truth value of the corresponding existential formula.
 
-The next slice will specialize the predicate result to set-theoretic formula bodies and identify the realized supremum with the existing existential truth value.
+The implementation keeps two foundational assumptions visible rather than conflating them: `[Small.{u} 𝔹]` supplies the universe-size condition needed to reindex a selected witness antichain inside the `BVSet` immediate-child universe, while classical choice in Lean's metatheory supplies the maximal antichain through Zorn's lemma and the `Shrink` reindexing machinery. No equality between the name and Boolean-algebra universes is imposed, and no object-level choice axiom is added to the Boolean-valued universe.
 
-Specification and progress record: [`docs/milestones/004-maximum-principle.md`](docs/milestones/004-maximum-principle.md)
+The executable acceptance suite is `Audit/M004Acceptance.lean` and includes the generic witness-partition API, predicate maximization, formula-body extensionality, existential maximization, and bottom-valued edge cases.
+
+Specification and completion record: [`docs/milestones/004-maximum-principle.md`](docs/milestones/004-maximum-principle.md)
 
 ## R5. Separated universe, ascent, and descent
 
