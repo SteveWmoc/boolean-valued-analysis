@@ -98,9 +98,21 @@ Specification and completion record: [`docs/milestones/004-maximum-principle.md`
 
 ## R5. Separated universe, ascent, and descent
 
-Develop the extensional quotient or separated universe needed for robust algebraic constructions, then define ascent and descent for suitable structures.
+### M005 — Separated Boolean-valued universe — design review
 
-The quotient design must be reviewed independently before broad downstream use.
+Specify and review the extensional quotient of raw names by top-valued Boolean equality before committing downstream APIs to it. The proposed representation is an ordinary Lean quotient by
+
+```text
+BVSet.bvEq x y = ⊤.
+```
+
+The full Boolean values of equality and membership must descend to the quotient, with ordinary Lean equality on separated elements corresponding exactly to descended Boolean equality value `⊤`. The design keeps the name and Boolean-algebra universes independent and does not inherit M004's smallness hypothesis or choice machinery.
+
+The implementation should reuse the existing equality and membership congruence theorems, preserve canonical-name results, and avoid formula semantics based on choosing quotient representatives. A later separated first-order structure should reuse the generic M001 semantics instead.
+
+Specification and design record: [`docs/milestones/005-separated-universe.md`](docs/milestones/005-separated-universe.md)
+
+After M005 is reviewed and implemented, define the minimal ascent/descent core needed for the path to Transfer. Broad algebraic structure development should wait until those interfaces are stable.
 
 ## R6. Transfer and ZFC fragments
 
