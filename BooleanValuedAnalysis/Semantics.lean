@@ -32,12 +32,14 @@ def bvEq : BVSet.{u, v} 𝔹 → BVSet.{u, v} 𝔹 → 𝔹
       (⨅ i : ι, w i ⇨ (⨆ j : κ, v j ⊓ bvEq (A i) (C j))) ⊓
       (⨅ j : κ, v j ⇨ (⨆ i : ι, w i ⊓ bvEq (A i) (C j)))
 
+/-- Scoped notation for Boolean-valued equality. -/
 scoped infix:50 " =ᴮ " => bvEq
 
 /-- The Boolean truth value of membership of one Boolean-valued set in another. -/
 def mem : BVSet.{u, v} 𝔹 → BVSet.{u, v} 𝔹 → 𝔹
   | x, .mk κ C v => ⨆ j : κ, v j ⊓ bvEq x (C j)
 
+/-- Scoped notation for Boolean-valued membership. -/
 scoped infix:50 " ∈ᴮ " => mem
 
 @[simp]
