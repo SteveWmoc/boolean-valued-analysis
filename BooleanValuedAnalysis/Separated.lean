@@ -107,8 +107,8 @@ theorem toSeparated_eq_iff (x y : BVSet.{u, v} 𝔹) :
 namespace Separated
 
 /-- Full Boolean equality descended to the separated universe. -/
-def bvEq : Separated.{u, v} 𝔹 → Separated.{u, v} 𝔹 → 𝔹 :=
-  Quotient.lift₂ BVSet.bvEq (by
+def bvEq (q₁ q₂ : Separated.{u, v} 𝔹) : 𝔹 :=
+  Quotient.liftOn₂' q₁ q₂ BVSet.bvEq (by
     intro x y x' y' hx hy
     change TopEq x x' at hx
     change TopEq y y' at hy
@@ -117,8 +117,8 @@ def bvEq : Separated.{u, v} 𝔹 → Separated.{u, v} 𝔹 → 𝔹 :=
       _ = BVSet.bvEq x' y' := BVSet.bvEq_eq_of_topEq_right hy)
 
 /-- Full Boolean membership descended to the separated universe. -/
-def mem : Separated.{u, v} 𝔹 → Separated.{u, v} 𝔹 → 𝔹 :=
-  Quotient.lift₂ BVSet.mem (by
+def mem (q₁ q₂ : Separated.{u, v} 𝔹) : 𝔹 :=
+  Quotient.liftOn₂' q₁ q₂ BVSet.mem (by
     intro x y x' y' hx hy
     change TopEq x x' at hx
     change TopEq y y' at hy
@@ -144,7 +144,7 @@ theorem mem_toSeparated (x y : BVSet.{u, v} 𝔹) :
 Boolean-valued equality. -/
 theorem eq_iff_bvEq_top (x y : Separated.{u, v} 𝔹) :
     x = y ↔ bvEq x y = ⊤ := by
-  refine Quotient.induction_on₂ x y ?_
+  refine Quotient.inductionOn₂' x y ?_
   intro x y
   simpa using (BVSet.toSeparated_eq_iff (𝔹 := 𝔹) x y)
 
@@ -156,14 +156,14 @@ theorem bvEq_refl (x : Separated.{u, v} 𝔹) :
 /-- Descended Boolean equality remains symmetric. -/
 theorem bvEq_symm (x y : Separated.{u, v} 𝔹) :
     bvEq x y = bvEq y x := by
-  refine Quotient.induction_on₂ x y ?_
+  refine Quotient.inductionOn₂' x y ?_
   intro x y
   exact BVSet.bvEq_symm x y
 
 /-- Descended Boolean equality remains transitive in the Boolean-valued sense. -/
 theorem bvEq_trans (x y z : Separated.{u, v} 𝔹) :
     bvEq x y ⊓ bvEq y z ≤ bvEq x z := by
-  refine Quotient.induction_on₃ x y z ?_
+  refine Quotient.inductionOn₃' x y z ?_
   intro x y z
   exact BVSet.bvEq_trans x y z
 
