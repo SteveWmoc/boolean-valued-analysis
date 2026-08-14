@@ -101,6 +101,9 @@ jobs:
       - name: Build public library
         run: lake build
 
+      - name: Run project linters
+        run: lake lint
+
       - name: Compile M001 acceptance probe
         run: lake env lean Audit/M001Acceptance.lean
 

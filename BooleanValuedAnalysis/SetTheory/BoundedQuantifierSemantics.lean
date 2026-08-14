@@ -63,8 +63,10 @@ theorem truth_snoc_extensional
           exact le_top)
 
 /-- Syntactic bounded existential quantification agrees with the existing
-weighted-child bounded existential quantifier. -/
-@[simp]
+weighted-child bounded existential quantifier.
+
+This bridge is intentionally not a `simp` lemma: direct formula truth already
+simplifies to its universe-wide `iSup` normal form. -/
 theorem truth_boundedExists_eq_boundedExists
     (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
     (assignment : α → BVSet.{u, v} 𝔹)
@@ -79,8 +81,10 @@ theorem truth_boundedExists_eq_boundedExists
     (truth_snoc_extensional body assignment boundAssignment)
 
 /-- Syntactic bounded universal quantification agrees with the existing
-weighted-child bounded universal quantifier. -/
-@[simp]
+weighted-child bounded universal quantifier.
+
+This bridge is intentionally not a `simp` lemma: direct formula truth already
+simplifies to its universe-wide `iInf` normal form. -/
 theorem truth_boundedForall_eq_boundedForall
     (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
     (assignment : α → BVSet.{u, v} 𝔹)
@@ -96,8 +100,10 @@ theorem truth_boundedForall_eq_boundedForall
 
 /-- After Mathlib-native substitution of free variables, a syntactic bounded
 existential quantifier has the weighted-child semantics obtained from the
-induced semantic assignment. -/
-@[simp]
+induced semantic assignment.
+
+This theorem is an explicit semantic bridge rather than a `simp` rule, since
+the substituted formula already simplifies to the direct `iSup` semantics. -/
 theorem truth_boundedExists_subst
     (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
     (f : α → Term β)
@@ -116,8 +122,10 @@ theorem truth_boundedExists_subst
 
 /-- After Mathlib-native substitution of free variables, a syntactic bounded
 universal quantifier has the weighted-child semantics obtained from the
-induced semantic assignment. -/
-@[simp]
+induced semantic assignment.
+
+This theorem is an explicit semantic bridge rather than a `simp` rule, since
+the substituted formula already simplifies to the direct `iInf` semantics. -/
 theorem truth_boundedForall_subst
     (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
     (f : α → Term β)
