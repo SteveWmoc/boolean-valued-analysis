@@ -101,8 +101,11 @@ representatives. -/
 @[simp]
 theorem toSeparated_eq_iff (x y : BVSet.{u, v} 𝔹) :
     toSeparated x = toSeparated y ↔ bvEq x y = ⊤ := by
-  simpa [toSeparated, topEqSetoid, TopEq] using
-    (Quotient.eq (r := topEqSetoid (𝔹 := 𝔹)) (x := x) (y := y))
+  change
+    Quotient.mk (topEqSetoid (𝔹 := 𝔹)) x =
+        Quotient.mk (topEqSetoid (𝔹 := 𝔹)) y ↔
+      TopEq x y
+  exact Quotient.eq
 
 namespace Separated
 
@@ -146,7 +149,10 @@ theorem eq_iff_bvEq_top (x y : Separated.{u, v} 𝔹) :
     x = y ↔ bvEq x y = ⊤ := by
   refine Quotient.inductionOn₂' x y ?_
   intro x y
-  simpa using (BVSet.toSeparated_eq_iff (𝔹 := 𝔹) x y)
+  change
+    BVSet.toSeparated x = BVSet.toSeparated y ↔
+      BVSet.bvEq x y = ⊤
+  exact BVSet.toSeparated_eq_iff x y
 
 @[simp]
 theorem bvEq_refl (x : Separated.{u, v} 𝔹) :
@@ -180,6 +186,10 @@ pre-sets. -/
 @[simp]
 theorem checkSeparated_eq_iff [Nontrivial 𝔹] {x y : PSet.{u}} :
     checkSeparated (𝔹 := 𝔹) x = checkSeparated (𝔹 := 𝔹) y ↔ PSet.Equiv x y := by
+  change
+    toSeparated (check (𝔹 := 𝔹) x) =
+        toSeparated (check (𝔹 := 𝔹) y) ↔
+      PSet.Equiv x y
   rw [toSeparated_eq_iff]
   exact (check_bvEq_iff (𝔹 := 𝔹)).symm
 
