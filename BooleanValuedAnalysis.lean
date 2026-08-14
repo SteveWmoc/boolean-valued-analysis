@@ -27,6 +27,7 @@ import BooleanValuedAnalysis.Bounded
 import BooleanValuedAnalysis.Canonical
 import BooleanValuedAnalysis.Mixing
 import BooleanValuedAnalysis.Maximum
+import BooleanValuedAnalysis.Separated
 
 /-!
 # Boolean-Valued Analysis
@@ -39,6 +40,7 @@ formula semantics including syntactic set-bounded quantifiers and their
 weighted-child semantics, extensional predicates, weighted-child bounded
 quantifiers, canonical ground-model names, Boolean-valued mixtures with
 partition-based mixing lemmas, small witness partitions, the maximum principle
-for extensional Boolean-valued predicates, and realization of existential
-formula truth by Boolean-valued witnesses.
+for extensional Boolean-valued predicates, realization of existential formula
+truth by Boolean-valued witnesses, and the separated Boolean-valued universe
+with full Boolean equality and membership descended to top-equality classes.
 -/
