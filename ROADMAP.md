@@ -20,7 +20,8 @@ The repository currently provides:
 - Boolean-valued extensionality of bounded-formula and formula truth under free and bound assignments;
 - syntactic set-bounded existential and universal quantifiers whose truth agrees with the weighted-child semantics;
 - arbitrary indexed mixtures, Boolean partitions of arbitrary covered values, and the mixing lemma;
-- a maximum principle for extensional Boolean-valued predicates and existential formula truth under an explicit Boolean-algebra smallness hypothesis.
+- a maximum principle for extensional Boolean-valued predicates and existential formula truth under an explicit Boolean-algebra smallness hypothesis;
+- a separated Boolean-valued universe obtained by quotienting raw names by top-valued equality, with the full Boolean values of equality and membership descended to the quotient.
 
 These components form the foundation for the milestones below.
 
@@ -98,21 +99,31 @@ Specification and completion record: [`docs/milestones/004-maximum-principle.md`
 
 ## R5. Separated universe, ascent, and descent
 
-### M005 — Separated Boolean-valued universe — design review
+### M005 — Separated Boolean-valued universe — complete
 
-Specify and review the extensional quotient of raw names by top-valued Boolean equality before committing downstream APIs to it. The proposed representation is an ordinary Lean quotient by
+Completed 2026-08-14.
+
+The public API now provides the extensional quotient of raw names by top-valued Boolean equality:
 
 ```text
-BVSet.bvEq x y = ⊤.
+BVSet.TopEq x y  :↔  BVSet.bvEq x y = ⊤.
 ```
 
-The full Boolean values of equality and membership must descend to the quotient, with ordinary Lean equality on separated elements corresponding exactly to descended Boolean equality value `⊤`. The design keeps the name and Boolean-algebra universes independent and does not inherit M004's smallness hypothesis or choice machinery.
+`BVSet.Separated` is an ordinary Lean quotient by this relation. Exact representative-invariance theorems show that the full Boolean values of equality and membership are unchanged by top-equal replacement, so both relations descend to the quotient without collapsing intermediate truth values. Ordinary Lean equality on separated elements is characterized exactly by descended Boolean equality having value `⊤`.
 
-The implementation should reuse the existing equality and membership congruence theorems, preserve canonical-name results, and avoid formula semantics based on choosing quotient representatives. A later separated first-order structure should reuse the generic M001 semantics instead.
+Canonical ground-model names pass through the quotient by `BVSet.checkSeparated`, preserving and reflecting the existing extensional equality and membership results. Raw `BVSet` remains the recursive implementation layer; the quotient exposes no chosen representatives.
 
-Specification and design record: [`docs/milestones/005-separated-universe.md`](docs/milestones/005-separated-universe.md)
+The implementation keeps the name and Boolean-algebra universes independent, adds no `[Small.{u} 𝔹]` assumption, and introduces no Zorn, `Shrink`, or representative-choice machinery. `Audit/M005Acceptance.lean` is compiled by both pinned CI and the live Tau Ceti architecture audit.
 
-After M005 is reviewed and implemented, define the minimal ascent/descent core needed for the path to Transfer. Broad algebraic structure development should wait until those interfaces are stable.
+Specification and completion record: [`docs/milestones/005-separated-universe.md`](docs/milestones/005-separated-universe.md)
+
+### M006 — Ascent/descent core and separated semantics bridge
+
+Develop only the minimal ascent/descent interface needed for the path to Transfer. The first step should be a Boolean-valued first-order structure on `BVSet.Separated` using the descended equality and membership relations, reusing the generic M001 semantics rather than selecting raw representatives.
+
+Then define the smallest useful ascent and descent operations and prove their interaction with canonical names and separated equality. Broad algebraic structure development should wait until these interfaces have been tested against the first transfer-facing statements.
+
+The goal of M006 is not to build a comprehensive theory of Boolean-valued algebraic systems. It is to remove the final structural obstacles to beginning R6.
 
 ## R6. Transfer and ZFC fragments
 
