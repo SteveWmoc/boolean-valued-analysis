@@ -117,13 +117,20 @@ The implementation keeps the name and Boolean-algebra universes independent, add
 
 Specification and completion record: [`docs/milestones/005-separated-universe.md`](docs/milestones/005-separated-universe.md)
 
-### M006 — Ascent/descent core and separated semantics bridge
+### M006 — Ascent/descent core and separated semantics bridge — design review
 
-Develop only the minimal ascent/descent interface needed for the path to Transfer. The first step should be a Boolean-valued first-order structure on `BVSet.Separated` using the descended equality and membership relations, reusing the generic M001 semantics rather than selecting raw representatives.
+M006 turns the M005 quotient into the extensional semantic carrier needed by R6 while keeping recursive set construction on raw `BVSet` names.
 
-Then define the smallest useful ascent and descent operations and prove their interaction with canonical names and separated equality. Broad algebraic structure development should wait until these interfaces have been tested against the first transfer-facing statements.
+The milestone is deliberately split into small tests:
 
-The goal of M006 is not to build a comprehensive theory of Boolean-valued algebraic systems. It is to remove the final structural obstacles to beginning R6.
+1. instantiate the existing generic Boolean-valued first-order structure on `BVSet.Separated` using descended equality and membership, and prove it lawful;
+2. prove that applying `BVSet.toSeparated` pointwise to an assignment preserves the **entire Boolean truth value** of bounded formulas, formulas, and sentences, including quantifiers over the quotient carrier;
+3. define the elementary descent of a separated name by top-valued membership and reuse `BVSet.checkSeparated` as the current ground-set ascent;
+4. test these interfaces against the first Transfer-facing statements before designing generalized ascent or algebraic-system functors.
+
+A general ascent of arbitrary external families of separated elements is intentionally not part of the initial core: constructing a raw internal name from quotient elements raises representative-selection and size questions that should not be answered speculatively. The initial separated semantics bridge and descent should require no `Small` hypothesis and no chosen quotient representatives.
+
+Specification and design record: [`docs/milestones/006-ascent-descent.md`](docs/milestones/006-ascent-descent.md)
 
 ## R6. Transfer and ZFC fragments
 

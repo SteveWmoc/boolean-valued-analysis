@@ -76,27 +76,36 @@ The language of pure set theory is defined using `FirstOrder.Language`, with equ
 - an essential set-theoretic construction cannot be expressed cleanly through the existing syntax;
 - a richer language becomes necessary for applications and cannot be embedded without pervasive friction.
 
-## D004 — Keep raw names separate from the future separated universe
+## D004 — Keep raw names as the recursive layer and use a separated quotient downstream
 
-**Status:** provisional
+**Status:** accepted by M005
 
-The current library works with raw names and Boolean-valued extensional equality. It does not identify semantically equal names by Lean equality.
+Raw `BVSet` names remain the implementation layer for recursive constructions. The stable extensional carrier is
+
+```text
+BVSet.Separated 𝔹 := BVSet 𝔹 / (x ~ y ↔ BVSet.bvEq x y = ⊤).
+```
+
+M005 proved that the **full** Boolean values of equality and membership are invariant under top-equal replacement and therefore descend exactly to this quotient. Lean equality on separated elements is precisely the top fiber of descended Boolean equality.
 
 ### Rationale
 
-- Raw names are convenient for recursion and canonical-name constructions.
-- Delaying the quotient prevents early commitment to a quotient API before mixing, ascent, and descent reveal the required interface.
+- Raw weighted trees are convenient for recursion, canonical names, mixing, and the maximum principle.
+- Downstream ascent/descent, algebraic structures, and Transfer need an extensional carrier on which top-valued equality is ordinary equality.
+- Exact-value descent preserves intermediate Boolean truth rather than collapsing the semantics to a two-valued quotient.
+- Ordinary `Quotient` exposes no chosen representative and lets quotient induction prove well-definedness locally.
 
 ### Consequences
 
-- Algebraic structures should not be bundled directly on raw names unless their operations are proved extensional.
-- A future quotient or separated-universe milestone requires an independent design review.
-- The raw API should provide enough congruence theorems that later quotient lifting does not require unfolding semantics.
+- Recursive definitions continue to live on raw `BVSet` unless there is a concrete reason to move them.
+- Downstream public APIs may use `BVSet.Separated` without carrying a setoid argument or manually quotienting by top equality.
+- Formula evaluation on separated names must use descended atomic relations intrinsically; it must not select raw representatives merely to reuse the raw evaluator.
+- The raw/separated semantic comparison belongs in M006 and should preserve complete Boolean truth values.
 
 ### Reconsider when
 
-- the maximum-principle or ascent/descent developments make the quotient interface unavoidable;
-- repeated manual extensionality proofs indicate that the separation has been delayed too long.
+- the quotient creates sustained obstruction to a mathematically necessary ascent/descent or algebraic construction;
+- a standard Mathlib quotient-like abstraction provides materially better interoperability without weakening the exact-value semantics.
 
 ## D005 — Require a complete Boolean algebra for full semantics
 
@@ -186,12 +195,22 @@ The strongest natural lower-bound formulation is the primary API. `BoundedFormul
 
 Ordinary invariance under pointwise Lean equality is retained only as a convenience corollary through `truth_eq_of_pointwise_eq` and `formulaTruth_eq_of_pointwise_eq`; it is not used as a substitute for Boolean-valued extensionality.
 
+### O003 — Separated universe — resolved by M005
+
+M005 chose an ordinary Lean quotient of raw names by top-valued Boolean equality. Exact representative-invariance lemmas for equality and membership show that the complete Boolean values descend to the quotient. No global setoid instance is installed on raw names, and no chosen representative is exposed.
+
+The resulting policy is recorded in D004: raw names remain the recursive layer, while `BVSet.Separated` is the extensional downstream carrier. M006 is responsible for proving that generic formula semantics can be instantiated intrinsically on that carrier and compared exactly with the raw semantics.
+
 ## Open design questions
-
-### O003 — Separated universe
-
-Decide whether the separated universe should be implemented as a quotient, a setoid-based interface, or another extensional wrapper. M003 showed that the raw `BVSet` representation supports arbitrary mixing without first passing to a separated universe, so mixing itself does not force this decision. Defer the choice until the maximum-principle and ascent/descent developments make the required quotient interface clearer.
 
 ### O004 — Heyting-valued semantics
 
 Track which definitions and proofs depend only on complete Heyting-algebra structure and which use Boolean complementation or classical identities. This is a research direction, not a requirement for the immediate Boolean-valued roadmap.
+
+### O005 — General ascent of external separated families
+
+The first M006 core uses `checkSeparated` for ground-set ascent and defines descent by top-valued membership. A general ascent from an external family of separated elements is intentionally left open until a Transfer-facing or algebraic-system construction needs it.
+
+The formal issue is representation-sensitive: an external family contains quotient elements, while raw `BVSet.mk` requires raw children. A direct implementation may therefore require representative selection and an explicit small indexing type. M006 should not add global representatives, `Small`, or universe coupling merely to mimic the textbook construction before its downstream interface is known.
+
+Resolve this question when the first concrete use specifies the necessary domain, size assumptions, functorial behavior, and interaction with mixing.
