@@ -307,5 +307,50 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
               (assignment := assignment)
               (boundAssignment := Fin.snoc boundAssignment x)).symm
 
+/-- Passage to separated assignments preserves the complete Boolean truth value
+of every ordinary formula. -/
+theorem separatedFormulaTruth_toSeparated {α : Type w}
+    (φ : Formula α) (assignment : α → BVSet.{u, v} 𝔹) :
+    separatedFormulaTruth φ (fun a => BVSet.toSeparated (assignment a)) =
+      formulaTruth φ assignment := by
+  change
+    separatedTruth φ
+        (fun a => BVSet.toSeparated (assignment a))
+        ((fun i : Fin 0 => Fin.elim0 i) :
+          Fin 0 → BVSet.Separated.{u, v} 𝔹) =
+      truth φ assignment
+        ((fun i : Fin 0 => Fin.elim0 i) : Fin 0 → BVSet.{u, v} 𝔹)
+  have hbound :
+      ((fun i : Fin 0 => Fin.elim0 i) :
+          Fin 0 → BVSet.Separated.{u, v} 𝔹) =
+        fun i => BVSet.toSeparated
+          (((fun j : Fin 0 => Fin.elim0 j) :
+            Fin 0 → BVSet.{u, v} 𝔹) i) := by
+    funext i
+    exact Fin.elim0 i
+  rw [hbound]
+  exact separatedTruth_toSeparated φ assignment
+    ((fun i : Fin 0 => Fin.elim0 i) : Fin 0 → BVSet.{u, v} 𝔹)
+
+/-- Raw and separated interpretations assign the same complete Boolean truth
+value to every closed sentence. -/
+theorem separatedSentenceTruth_eq_sentenceTruth (φ : Sentence) :
+    separatedSentenceTruth.{u, v} (𝔹 := 𝔹) φ =
+      sentenceTruth.{u, v} (𝔹 := 𝔹) φ := by
+  let rawAssignment : Empty → BVSet.{u, v} 𝔹 := fun x => nomatch x
+  change
+    separatedFormulaTruth φ
+        ((fun x : Empty => nomatch x) :
+          Empty → BVSet.Separated.{u, v} 𝔹) =
+      formulaTruth φ rawAssignment
+  have hfree :
+      ((fun x : Empty => nomatch x) :
+          Empty → BVSet.Separated.{u, v} 𝔹) =
+        fun x => BVSet.toSeparated (rawAssignment x) := by
+    funext x
+    exact nomatch x
+  rw [hfree]
+  exact separatedFormulaTruth_toSeparated φ rawAssignment
+
 end SetTheory
 end BooleanValued
