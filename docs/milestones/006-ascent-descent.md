@@ -1,6 +1,6 @@
 # M006 — Ascent/descent core and separated semantics bridge
 
-**Status:** design review
+**Status:** in progress
 
 ## Purpose
 
@@ -15,7 +15,7 @@ The central architectural requirement is that formulas on separated names are ev
 
 ## Dependencies
 
-M006 should reuse the existing public API:
+M006 reuses the existing public API:
 
 - `BVSet.Separated.bvEq` and `BVSet.Separated.mem` from M005;
 - `BVSet.Separated.eq_iff_bvEq_top`, `bvEq_refl`, `bvEq_symm`, and `bvEq_trans`;
@@ -25,11 +25,37 @@ M006 should reuse the existing public API:
 - generic term realization, bounded-formula truth, formula truth, sentence truth, and the M001 structural/extensional semantics;
 - the existing raw set-theory specialization `SetTheory.bvSetStructure`, `SetTheory.truth`, and `SetTheory.formulaTruth`.
 
-The separated semantics bridge itself should require neither M004's `[Small.{u} 𝔹]` hypothesis nor a new choice principle. Quotient induction is acceptable in proofs; global representative selection is not part of the public construction.
+The separated semantics bridge itself requires neither M004's `[Small.{u} 𝔹]` hypothesis nor a new choice principle. Quotient induction is used in proofs; global representative selection is not part of the public construction.
+
+## Implementation status
+
+PR #37 implements Slices A and B in `BooleanValuedAnalysis.SetTheory.SeparatedSemantics`.
+
+The public API now includes:
+
+```text
+BVSet.Separated.mem_congr_left
+BVSet.Separated.mem_congr_right
+BVSet.Separated.iInf_eq_iInf_toSeparated
+
+SetTheory.separatedStructure
+SetTheory.separatedStructure_lawful
+SetTheory.separatedEvalTerm
+SetTheory.separatedEvalTerm_toSeparated
+SetTheory.separatedTruth
+SetTheory.separatedFormulaTruth
+SetTheory.separatedSentenceTruth
+SetTheory.SeparatedIsTrue
+SetTheory.separatedTruth_toSeparated
+SetTheory.separatedFormulaTruth_toSeparated
+SetTheory.separatedSentenceTruth_eq_sentenceTruth
+```
+
+`Audit/M006Acceptance.lean` currently covers the separated structure, its atomic interpretations, lawfulness, reuse of M001 formula extensionality, term comparison, bounded-formula comparison including universal quantification, ordinary-formula comparison, and closed-sentence comparison. The suite will be extended rather than replaced when Slice C adds descent.
 
 ## Slice A — separated first-order semantics
 
-The first implementation slice should define the set-theory structure on the separated carrier:
+The set-theory structure on the separated carrier is:
 
 ```text
 SetTheory.separatedStructure :
@@ -44,9 +70,9 @@ separatedStructure.eqVal = BVSet.Separated.bvEq
 separatedStructure.relMap Relation.mem = BVSet.Separated.mem.
 ```
 
-No second syntax tree and no second recursive formula evaluator should be introduced. The generic `FirstOrder` semantics from M001 is the implementation.
+No second syntax tree and no second recursive formula evaluator are introduced. The generic `FirstOrder` semantics from M001 is the implementation.
 
-The structure should also be proved lawful:
+The structure is lawful:
 
 ```text
 SetTheory.separatedStructure_lawful :
@@ -54,31 +80,13 @@ SetTheory.separatedStructure_lawful :
     (SetTheory.separatedStructure (𝔹 := 𝔹))
 ```
 
-If useful for that proof and downstream APIs, M006 may add the separated atomic congruence lemmas obtained by quotient induction from the raw laws, for example
+The proof transports the raw membership substitution laws to separated names by quotient induction and then reuses the same two-coordinate relation argument as the raw set-theory structure. Consequently M001's generic formula-extensionality theorems apply directly to separated assignments.
 
-```text
-BVSet.Separated.mem_congr_left
-BVSet.Separated.mem_congr_right.
-```
-
-These should preserve the Boolean-valued form of substitution rather than replacing it with ordinary Lean equality.
-
-Thin set-theoretic wrappers may be added for ergonomics, provisionally:
-
-```text
-SetTheory.separatedTruth
-SetTheory.separatedFormulaTruth
-SetTheory.separatedSentenceTruth
-SetTheory.SeparatedIsTrue
-```
-
-The wrappers should remain definitionally or transparently reducible to the generic `FirstOrder` semantics. M006 should not duplicate the existing connective and quantifier proofs merely to populate a parallel API; generic equations should be reused whenever they are adequate.
+Thin set-theoretic wrappers expose term, bounded-formula, formula, and sentence truth on separated names while remaining definitions over the generic `FirstOrder` evaluator.
 
 ## Slice B — exact raw/separated truth comparison
 
-The critical bridge theorem should say that quotienting assignments preserves the **entire Boolean truth value** of every formula, not merely whether it is `⊤`.
-
-The target shape is:
+The critical bridge theorem says that quotienting assignments preserves the **entire Boolean truth value** of every formula, not merely whether it is `⊤`:
 
 ```text
 SetTheory.separatedTruth_toSeparated
@@ -93,11 +101,26 @@ SetTheory.separatedTruth_toSeparated
 
 with ordinary-formula and sentence corollaries.
 
-Atomic cases should reduce to M005's exact-value descent equations. The quantifier case is the important test: the separated quantifier ranges over the quotient carrier, while the raw quantifier ranges over raw names. Equality of the indexed infima/suprema should be proved from surjectivity of `toSeparated` via quotient induction, not by defining a representative-selection function.
+Atomic cases reduce to M005's exact-value descent equations. Implication uses the induction hypotheses. The universal-quantifier case compares the separated and raw indexing domains using
+
+```text
+BVSet.Separated.iInf_eq_iInf_toSeparated
+```
+
+which proves
+
+```text
+(⨅ q : BVSet.Separated 𝔹, f q)
+  = ⨅ x : BVSet 𝔹, f (BVSet.toSeparated x)
+```
+
+from the two order inequalities. The reverse inequality applies `Quotient.inductionOn'` to an arbitrary separated name; no representative-selection function is defined.
 
 This theorem is the semantic reason the quotient is safe as the Transfer-facing carrier. Existing recursive semantics, mixing, and maximum-principle proofs may remain on raw names while separated formulas receive exactly the same Boolean truth values.
 
 ## Slice C — minimal descent and ground ascent
+
+This slice remains to be implemented.
 
 For the first Transfer-facing layer, the standard-name map already supplies the ground-set ascent:
 
@@ -144,35 +167,34 @@ This is a scope decision, not a claim that general ascent is unimportant. It is 
 
 ## Universe and foundational policy
 
-M006 should preserve the independent name-index and Boolean-algebra universes established in D006.
+M006 preserves the independent name-index and Boolean-algebra universes established in D006.
 
-The separated semantics bridge and elementary descent should compile without
+The implemented separated semantics bridge compiles without
 
 ```text
 [Small.{u} 𝔹].
 ```
 
-No equality `u = v`, `Shrink`, Zorn argument, or global representative selector should be introduced in these slices.
+It introduces no equality `u = v`, `Shrink`, Zorn argument, or global representative selector.
 
 If a later generalized ascent genuinely needs a small external indexing type or classical representative choice, that assumption must appear explicitly in the theorem/definition boundary and receive a separate design review.
 
 ## Acceptance tests
 
-`Audit/M006Acceptance.lean` should eventually verify at least:
+`Audit/M006Acceptance.lean` is being built incrementally with the milestone. The current slice verifies:
 
 1. the separated set-theory structure uses descended Boolean equality and membership as its atomic interpretations;
 2. the structure is `LawfulStructure`;
-3. generic equality and membership formulas compute to `BVSet.Separated.bvEq` and `BVSet.Separated.mem`;
-4. M001 Boolean-valued assignment extensionality is reusable on the separated structure without a new formula induction;
+3. M001 Boolean-valued assignment extensionality is reusable on the separated structure without a new formula induction;
+4. term evaluation commutes exactly with `BVSet.toSeparated`;
 5. raw and separated bounded-formula truth agree exactly after applying `BVSet.toSeparated` pointwise to free and bound assignments;
-6. the same exact comparison holds for ordinary formulas and closed sentences;
-7. the quantifier comparison genuinely ranges over the quotient carrier and does not rely on a chosen representative function;
-8. `Separated.descent x` has membership exactly when `Separated.mem _ x = ⊤`;
-9. checked ground-model membership agrees with membership in the descent of a checked set;
-10. independent universes remain supported and no `Small` hypothesis is required;
-11. `lake lint` remains clean with no milestone-specific `nolint` exemptions.
+6. the same exact comparison holds in the universal-quantifier case, for ordinary formulas, and for closed sentences;
+7. independent universes remain supported and no `Small` hypothesis is required;
+8. `lake lint` remains part of both validation tracks with no M006-specific `nolint` exemptions.
 
-The pinned CI and live Tau Ceti architecture audit should compile the complete public library, run `lake lint`, and compile the M001–M006 acceptance sequence.
+Slice C will extend the same file to verify descent membership and checked-name compatibility.
+
+The pinned CI and live Tau Ceti architecture audit compile the complete public library, run `lake lint`, and compile the M001–M006 acceptance sequence.
 
 ## Non-goals
 
@@ -223,15 +245,15 @@ M006 does not:
 
 M006 is complete when:
 
-- [ ] the separated set-theory `Structure` is public and lawful;
-- [ ] separated formula semantics is available through the generic M001 evaluator;
-- [ ] exact raw/separated truth comparison is proved for bounded formulas, formulas, and sentences;
+- [x] the separated set-theory `Structure` is public and lawful;
+- [x] separated formula semantics is available through the generic M001 evaluator;
+- [x] exact raw/separated truth comparison is proved for bounded formulas, formulas, and sentences;
 - [ ] the minimal descent operation is public;
 - [ ] checked ground ascent and descent satisfy the intended membership compatibility;
-- [ ] no representative-selection API leaks into formula evaluation;
-- [ ] no unexpected smallness or choice assumption is introduced;
-- [ ] `Audit/M006Acceptance.lean` covers the categories above;
-- [ ] the public module is exported by `BooleanValuedAnalysis.lean`;
-- [ ] repository CI, `lake lint`, and the live Tau Ceti audit pass;
-- [ ] README, ROADMAP, and this milestone record reflect the implemented boundary;
+- [x] no representative-selection API leaks into formula evaluation;
+- [x] no unexpected smallness or choice assumption is introduced by Slices A/B;
+- [ ] `Audit/M006Acceptance.lean` covers all M006 categories above;
+- [x] the public separated-semantics module is exported by `BooleanValuedAnalysis.lean`;
+- [ ] repository CI, `lake lint`, and the live Tau Ceti audit pass for the completed milestone;
+- [x] README, ROADMAP, and this milestone record reflect the current implementation boundary;
 - [ ] R6 can begin with a concrete Transfer/ZF-fragment statement rather than more foundational plumbing.
