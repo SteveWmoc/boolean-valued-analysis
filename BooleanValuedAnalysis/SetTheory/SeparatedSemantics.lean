@@ -171,5 +171,135 @@ Boolean truth value is `⊤`. -/
 def SeparatedIsTrue (φ : Sentence) : Prop :=
   separatedSentenceTruth.{u, v} (𝔹 := 𝔹) φ = ⊤
 
+@[simp]
+theorem separatedTruth_equal {α : Type w} {n : ℕ}
+    (t₁ t₂ : Term (α ⊕ Fin n))
+    (assignment : α → BVSet.Separated.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.Separated.{u, v} 𝔹) :
+    separatedTruth (.equal t₁ t₂) assignment boundAssignment =
+      BVSet.Separated.bvEq
+        (separatedEvalTerm (Sum.elim assignment boundAssignment) t₁)
+        (separatedEvalTerm (Sum.elim assignment boundAssignment) t₂) :=
+  rfl
+
+@[simp]
+theorem separatedTruth_mem {α : Type w} {n : ℕ}
+    (terms : Fin 2 → Term (α ⊕ Fin n))
+    (assignment : α → BVSet.Separated.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.Separated.{u, v} 𝔹) :
+    separatedTruth (.rel Relation.mem terms) assignment boundAssignment =
+      BVSet.Separated.mem
+        (separatedEvalTerm (Sum.elim assignment boundAssignment) (terms 0))
+        (separatedEvalTerm (Sum.elim assignment boundAssignment) (terms 1)) :=
+  rfl
+
+@[simp]
+theorem separatedTruth_imp {α : Type w} {n : ℕ}
+    (φ ψ : BoundedFormula α n)
+    (assignment : α → BVSet.Separated.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.Separated.{u, v} 𝔹) :
+    separatedTruth (.imp φ ψ) assignment boundAssignment =
+      (separatedTruth φ assignment boundAssignment ⇨
+        separatedTruth ψ assignment boundAssignment) :=
+  rfl
+
+@[simp]
+theorem separatedTruth_all {α : Type w} {n : ℕ}
+    (φ : BoundedFormula α (n + 1))
+    (assignment : α → BVSet.Separated.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.Separated.{u, v} 𝔹) :
+    separatedTruth (.all φ) assignment boundAssignment =
+      ⨅ q : BVSet.Separated.{u, v} 𝔹,
+        separatedTruth φ assignment (Fin.snoc boundAssignment q) :=
+  rfl
+
+private theorem sumElim_toSeparated {α : Type w} {n : ℕ}
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
+    Sum.elim
+        (fun a => BVSet.toSeparated (assignment a))
+        (fun i => BVSet.toSeparated (boundAssignment i)) =
+      fun z => BVSet.toSeparated (Sum.elim assignment boundAssignment z) := by
+  funext z
+  cases z <;> rfl
+
+private theorem snoc_toSeparated {n : ℕ}
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹)
+    (x : BVSet.{u, v} 𝔹) :
+    Fin.snoc
+        (fun i => BVSet.toSeparated (boundAssignment i))
+        (BVSet.toSeparated x) =
+      fun i => BVSet.toSeparated ((Fin.snoc boundAssignment x) i) := by
+  funext i
+  refine Fin.lastCases ?_ (fun j => ?_) i
+  · simp
+  · simp
+
+/-- Passing raw free and bound assignments pointwise to the separated quotient
+preserves the complete Boolean truth value of every bounded formula. -/
+theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
+    (φ : BoundedFormula α n)
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
+    separatedTruth φ
+        (fun a => BVSet.toSeparated (assignment a))
+        (fun i => BVSet.toSeparated (boundAssignment i)) =
+      truth φ assignment boundAssignment := by
+  induction φ generalizing assignment boundAssignment with
+  | falsum =>
+      rfl
+  | equal t₁ t₂ =>
+      rw [separatedTruth_equal, truth_equal]
+      rw [sumElim_toSeparated assignment boundAssignment]
+      rw [separatedEvalTerm_toSeparated, separatedEvalTerm_toSeparated]
+      exact BVSet.Separated.bvEq_toSeparated _ _
+  | rel R terms =>
+      cases R with
+      | mem =>
+          rw [separatedTruth_mem, truth_mem]
+          rw [sumElim_toSeparated assignment boundAssignment]
+          rw [separatedEvalTerm_toSeparated, separatedEvalTerm_toSeparated]
+          exact BVSet.Separated.mem_toSeparated _ _
+  | imp φ ψ ihφ ihψ =>
+      rw [separatedTruth_imp, truth_imp, ihφ, ihψ]
+  | all φ ih =>
+      rw [separatedTruth_all, truth_all]
+      rw [BVSet.Separated.iInf_eq_iInf_toSeparated]
+      apply le_antisymm
+      · apply le_iInf
+        intro x
+        calc
+          (⨅ y : BVSet.{u, v} 𝔹,
+              separatedTruth φ
+                (fun a => BVSet.toSeparated (assignment a))
+                (Fin.snoc
+                  (fun i => BVSet.toSeparated (boundAssignment i))
+                  (BVSet.toSeparated y))) ≤
+              separatedTruth φ
+                (fun a => BVSet.toSeparated (assignment a))
+                (Fin.snoc
+                  (fun i => BVSet.toSeparated (boundAssignment i))
+                  (BVSet.toSeparated x)) := iInf_le _ x
+          _ = truth φ assignment (Fin.snoc boundAssignment x) := by
+            rw [snoc_toSeparated boundAssignment x]
+            exact ih
+              (assignment := assignment)
+              (boundAssignment := Fin.snoc boundAssignment x)
+      · apply le_iInf
+        intro x
+        calc
+          (⨅ y : BVSet.{u, v} 𝔹,
+              truth φ assignment (Fin.snoc boundAssignment y)) ≤
+              truth φ assignment (Fin.snoc boundAssignment x) := iInf_le _ x
+          _ = separatedTruth φ
+                (fun a => BVSet.toSeparated (assignment a))
+                (Fin.snoc
+                  (fun i => BVSet.toSeparated (boundAssignment i))
+                  (BVSet.toSeparated x)) := by
+            rw [snoc_toSeparated boundAssignment x]
+            exact (ih
+              (assignment := assignment)
+              (boundAssignment := Fin.snoc boundAssignment x)).symm
+
 end SetTheory
 end BooleanValued
