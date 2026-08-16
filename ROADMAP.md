@@ -21,7 +21,8 @@ The repository currently provides:
 - syntactic set-bounded existential and universal quantifiers whose truth agrees with the weighted-child semantics;
 - arbitrary indexed mixtures, Boolean partitions of arbitrary covered values, and the mixing lemma;
 - a maximum principle for extensional Boolean-valued predicates and existential formula truth under an explicit Boolean-algebra smallness hypothesis;
-- a separated Boolean-valued universe obtained by quotienting raw names by top-valued equality, with the full Boolean values of equality and membership descended to the quotient.
+- a separated Boolean-valued universe obtained by quotienting raw names by top-valued equality, with the full Boolean values of equality and membership descended to the quotient;
+- a lawful set-theory structure on the separated carrier whose formula truth agrees exactly with the raw semantics after quotienting assignments.
 
 These components form the foundation for the milestones below.
 
@@ -117,18 +118,20 @@ The implementation keeps the name and Boolean-algebra universes independent, add
 
 Specification and completion record: [`docs/milestones/005-separated-universe.md`](docs/milestones/005-separated-universe.md)
 
-### M006 — Ascent/descent core and separated semantics bridge — design review
+### M006 — Ascent/descent core and separated semantics bridge — in progress
 
 M006 turns the M005 quotient into the extensional semantic carrier needed by R6 while keeping recursive set construction on raw `BVSet` names.
 
-The milestone is deliberately split into small tests:
+The first two slices are now implemented: `SetTheory.separatedStructure` interprets the existing Mathlib set-theory language directly on `BVSet.Separated` using descended equality and membership and satisfies the generic `LawfulStructure` interface. `SetTheory.separatedTruth_toSeparated` then proves that applying `BVSet.toSeparated` pointwise to raw free and bound assignments preserves the **entire Boolean truth value** of every bounded formula; ordinary-formula and sentence corollaries follow.
 
-1. instantiate the existing generic Boolean-valued first-order structure on `BVSet.Separated` using descended equality and membership, and prove it lawful;
-2. prove that applying `BVSet.toSeparated` pointwise to an assignment preserves the **entire Boolean truth value** of bounded formulas, formulas, and sentences, including quantifiers over the quotient carrier;
-3. define the elementary descent of a separated name by top-valued membership and reuse `BVSet.checkSeparated` as the current ground-set ascent;
-4. test these interfaces against the first Transfer-facing statements before designing generalized ascent or algebraic-system functors.
+The universal-quantifier case compares the infimum over the quotient carrier with the infimum over raw representatives by quotient induction. No representative-selection function, `Small` hypothesis, `Shrink`, Zorn argument, or equality of universes is introduced. `Audit/M006Acceptance.lean` exercises the separated structure, reuse of M001 formula extensionality, and the exact raw/separated comparison.
 
-A general ascent of arbitrary external families of separated elements is intentionally not part of the initial core: constructing a raw internal name from quotient elements raises representative-selection and size questions that should not be answered speculatively. The initial separated semantics bridge and descent should require no `Small` hypothesis and no chosen quotient representatives.
+The remaining focused M006 work is:
+
+1. define elementary descent by top-valued membership and prove its checked-name compatibility;
+2. test the completed bridge against the first Transfer-facing statement before designing generalized ascent or algebraic-system functors.
+
+A general ascent of arbitrary external families of separated elements remains deliberately deferred: constructing a raw internal name from quotient elements raises representative-selection and size questions that should not be answered speculatively.
 
 Specification and design record: [`docs/milestones/006-ascent-descent.md`](docs/milestones/006-ascent-descent.md)
 
