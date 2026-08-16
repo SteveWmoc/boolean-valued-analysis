@@ -28,6 +28,7 @@ import BooleanValuedAnalysis.Canonical
 import BooleanValuedAnalysis.Mixing
 import BooleanValuedAnalysis.Maximum
 import BooleanValuedAnalysis.Separated
+import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
 
 /-!
 # Boolean-Valued Analysis
@@ -41,6 +42,8 @@ weighted-child semantics, extensional predicates, weighted-child bounded
 quantifiers, canonical ground-model names, Boolean-valued mixtures with
 partition-based mixing lemmas, small witness partitions, the maximum principle
 for extensional Boolean-valued predicates, realization of existential formula
-truth by Boolean-valued witnesses, and the separated Boolean-valued universe
-with full Boolean equality and membership descended to top-equality classes.
+truth by Boolean-valued witnesses, the separated Boolean-valued universe with
+full Boolean equality and membership descended to top-equality classes, and an
+intrinsic set-theory semantics on that separated universe together with exact
+comparison to raw formula truth under the quotient map.
 -/
