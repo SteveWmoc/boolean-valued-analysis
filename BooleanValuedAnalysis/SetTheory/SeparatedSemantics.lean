@@ -223,18 +223,6 @@ private theorem sumElim_toSeparated {α : Type w} {n : ℕ}
   funext z
   cases z <;> rfl
 
-private theorem snoc_toSeparated {n : ℕ}
-    (boundAssignment : Fin n → BVSet.{u, v} 𝔹)
-    (x : BVSet.{u, v} 𝔹) :
-    Fin.snoc
-        (fun i => BVSet.toSeparated (boundAssignment i))
-        (BVSet.toSeparated x) =
-      fun i => BVSet.toSeparated ((Fin.snoc boundAssignment x) i) := by
-  funext i
-  refine Fin.lastCases ?_ (fun j => ?_) i
-  · simp
-  · simp
-
 /-- Passing raw free and bound assignments pointwise to the separated quotient
 preserves the complete Boolean truth value of every bounded formula. -/
 theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
@@ -245,7 +233,7 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
         (fun a => BVSet.toSeparated (assignment a))
         (fun i => BVSet.toSeparated (boundAssignment i)) =
       truth φ assignment boundAssignment := by
-  induction φ generalizing assignment boundAssignment with
+  induction φ generalizing assignment with
   | falsum =>
       rfl
   | equal t₁ t₂ =>
@@ -281,7 +269,9 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
                   (fun i => BVSet.toSeparated (boundAssignment i))
                   (BVSet.toSeparated x)) := iInf_le _ x
           _ = truth φ assignment (Fin.snoc boundAssignment x) := by
-            rw [snoc_toSeparated boundAssignment x]
+            rw [← Fin.comp_snoc
+              (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y)
+              boundAssignment x]
             exact ih
               (assignment := assignment)
               (boundAssignment := Fin.snoc boundAssignment x)
@@ -296,7 +286,9 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
                 (Fin.snoc
                   (fun i => BVSet.toSeparated (boundAssignment i))
                   (BVSet.toSeparated x)) := by
-            rw [snoc_toSeparated boundAssignment x]
+            rw [← Fin.comp_snoc
+              (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y)
+              boundAssignment x]
             exact (ih
               (assignment := assignment)
               (boundAssignment := Fin.snoc boundAssignment x)).symm
