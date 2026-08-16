@@ -269,9 +269,16 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
                   (fun i => BVSet.toSeparated (boundAssignment i))
                   (BVSet.toSeparated x)) := iInf_le _ x
           _ = truth φ assignment (Fin.snoc boundAssignment x) := by
-            rw [← Fin.comp_snoc
-              (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y)
-              boundAssignment x]
+            have hsnoc :
+                Fin.snoc
+                    (fun i => BVSet.toSeparated (boundAssignment i))
+                    (BVSet.toSeparated x) =
+                  (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y) ∘
+                    Fin.snoc boundAssignment x := by
+              exact (Fin.comp_snoc
+                (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y)
+                boundAssignment x).symm
+            rw [hsnoc]
             exact ih
               (assignment := assignment)
               (boundAssignment := Fin.snoc boundAssignment x)
@@ -286,9 +293,16 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
                 (Fin.snoc
                   (fun i => BVSet.toSeparated (boundAssignment i))
                   (BVSet.toSeparated x)) := by
-            rw [← Fin.comp_snoc
-              (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y)
-              boundAssignment x]
+            have hsnoc :
+                Fin.snoc
+                    (fun i => BVSet.toSeparated (boundAssignment i))
+                    (BVSet.toSeparated x) =
+                  (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y) ∘
+                    Fin.snoc boundAssignment x := by
+              exact (Fin.comp_snoc
+                (fun y : BVSet.{u, v} 𝔹 => BVSet.toSeparated y)
+                boundAssignment x).symm
+            rw [hsnoc]
             exact (ih
               (assignment := assignment)
               (boundAssignment := Fin.snoc boundAssignment x)).symm
