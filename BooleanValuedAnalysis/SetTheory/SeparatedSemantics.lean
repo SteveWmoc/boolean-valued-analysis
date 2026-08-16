@@ -16,7 +16,7 @@ membership are the full descended Boolean values from M005; no raw quotient
 representatives are selected to evaluate formulas.
 -/
 
-universe u v
+universe u v w
 
 namespace BooleanValued
 
@@ -41,6 +41,22 @@ theorem mem_congr_right
   refine Quotient.inductionOn₃' x y z ?_
   intro x y z
   exact BVSet.mem_congr_right x y z
+
+/-- An infimum over separated names may be computed over all raw representatives.
+This uses quotient surjectivity through induction and does not choose a global
+representative. -/
+theorem iInf_eq_iInf_toSeparated
+    (f : BVSet.Separated.{u, v} 𝔹 → 𝔹) :
+    (⨅ q, f q) = ⨅ x : BVSet.{u, v} 𝔹, f (BVSet.toSeparated x) := by
+  apply le_antisymm
+  · apply le_iInf
+    intro x
+    exact iInf_le f (BVSet.toSeparated x)
+  · apply le_iInf
+    intro q
+    refine Quotient.inductionOn' q ?_
+    intro x
+    exact iInf_le (fun y : BVSet.{u, v} 𝔹 => f (BVSet.toSeparated y)) x
 
 end BVSet.Separated
 
@@ -103,6 +119,57 @@ theorem separatedStructure_lawful :
               inf_le_right
           _ ≤ BVSet.Separated.mem (b 0) (b 1) :=
             BVSet.Separated.mem_congr_right (a 1) (b 1) (b 0)
+
+/-- Evaluate a set-theoretic term in the separated Boolean-valued universe. -/
+def separatedEvalTerm {α : Type w}
+    (assignment : α → BVSet.Separated.{u, v} 𝔹) :
+    Term α → BVSet.Separated.{u, v} 𝔹 :=
+  BooleanValued.FirstOrder.Term.realize
+    (separatedStructure (𝔹 := 𝔹)) assignment
+
+@[simp]
+theorem separatedEvalTerm_var {α : Type w}
+    (assignment : α → BVSet.Separated.{u, v} 𝔹) (a : α) :
+    separatedEvalTerm assignment (.var a) = assignment a :=
+  rfl
+
+/-- Term evaluation commutes exactly with passage from raw names to separated
+names. -/
+@[simp]
+theorem separatedEvalTerm_toSeparated {α : Type w}
+    (assignment : α → BVSet.{u, v} 𝔹) (t : Term α) :
+    separatedEvalTerm (fun a => BVSet.toSeparated (assignment a)) t =
+      BVSet.toSeparated (evalTerm assignment t) := by
+  cases t with
+  | var => rfl
+  | func f _ => exact nomatch f
+
+/-- The Boolean truth value of a bounded set-theoretic formula on separated
+names. This is the generic M001 evaluator specialized to `separatedStructure`. -/
+def separatedTruth {α : Type w} {n : ℕ}
+    (φ : BoundedFormula α n)
+    (assignment : α → BVSet.Separated.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.Separated.{u, v} 𝔹) : 𝔹 :=
+  BooleanValued.FirstOrder.BoundedFormula.truth
+    (separatedStructure (𝔹 := 𝔹)) φ assignment boundAssignment
+
+/-- The Boolean truth value of an ordinary set-theoretic formula on separated
+names. -/
+def separatedFormulaTruth {α : Type w}
+    (φ : Formula α)
+    (assignment : α → BVSet.Separated.{u, v} 𝔹) : 𝔹 :=
+  BooleanValued.FirstOrder.Formula.truth
+    (separatedStructure (𝔹 := 𝔹)) φ assignment
+
+/-- The Boolean truth value of a closed set-theoretic sentence on the separated
+universe. -/
+def separatedSentenceTruth (φ : Sentence) : 𝔹 :=
+  separatedFormulaTruth.{u, v, 0} (𝔹 := 𝔹) φ (fun x => nomatch x)
+
+/-- A closed sentence is true in the separated Boolean-valued universe when its
+Boolean truth value is `⊤`. -/
+def SeparatedIsTrue (φ : Sentence) : Prop :=
+  separatedSentenceTruth.{u, v} (𝔹 := 𝔹) φ = ⊤
 
 end SetTheory
 end BooleanValued
