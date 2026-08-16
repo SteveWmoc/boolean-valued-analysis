@@ -11,12 +11,12 @@ import BooleanValuedAnalysis.SetTheory.Lawful
 # Formula semantics on the separated Boolean-valued universe
 
 This file equips `BVSet.Separated` with the existing generic Boolean-valued
-first-order semantics for the language of set theory.  Atomic equality and
+first-order semantics for the language of set theory. Atomic equality and
 membership are the full descended Boolean values from M005; no raw quotient
 representatives are selected to evaluate formulas.
 
 The main comparison theorem shows that quotienting raw assignments preserves
-the complete Boolean truth value of every bounded formula.  The quantifier case
+the complete Boolean truth value of every bounded formula. The quantifier case
 uses only quotient induction to compare the infimum over separated names with
 the infimum over raw names.
 -/
@@ -69,7 +69,7 @@ namespace SetTheory
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-/-- The Boolean-valued set-theory structure on the separated universe.  Logical
+/-- The Boolean-valued set-theory structure on the separated universe. Logical
 equality and membership are interpreted by the full descended Boolean values. -/
 def separatedStructure :
     BooleanValued.FirstOrder.Structure
@@ -150,7 +150,7 @@ theorem separatedEvalTerm_toSeparated {α : Type w}
   | func f _ => exact nomatch f
 
 /-- The Boolean truth value of a bounded set-theoretic formula on separated
-names.  This is the generic M001 evaluator specialized to `separatedStructure`. -/
+names. This is the generic M001 evaluator specialized to `separatedStructure`. -/
 def separatedTruth {α : Type w} {n : ℕ}
     (φ : BoundedFormula α n)
     (assignment : α → BVSet.Separated.{u, v} 𝔹)
@@ -186,6 +186,20 @@ private theorem sumElim_toSeparated {α : Type w} {n : ℕ}
   funext z
   cases z <;> rfl
 
+private theorem separatedEvalTerm_sum_toSeparated {α : Type w} {n : ℕ}
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹)
+    (t : Term (α ⊕ Fin n)) :
+    separatedEvalTerm
+        (Sum.elim
+          (fun a => BVSet.toSeparated (assignment a))
+          (fun i => BVSet.toSeparated (boundAssignment i))) t =
+      BVSet.toSeparated
+        (evalTerm (Sum.elim assignment boundAssignment) t) := by
+  rw [sumElim_toSeparated assignment boundAssignment]
+  exact separatedEvalTerm_toSeparated
+    (Sum.elim assignment boundAssignment) t
+
 /-- Passing a raw free and bound assignment pointwise to the separated quotient
 preserves the complete Boolean truth value of every bounded formula. -/
 theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
@@ -202,42 +216,38 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
   | @equal n t₁ t₂ =>
       change
         BVSet.Separated.bvEq
-            (BooleanValued.FirstOrder.Term.realize
-              (separatedStructure (𝔹 := 𝔹))
+            (separatedEvalTerm
               (Sum.elim
                 (fun a => BVSet.toSeparated (assignment a))
                 (fun i => BVSet.toSeparated (boundAssignment i))) t₁)
-            (BooleanValued.FirstOrder.Term.realize
-              (separatedStructure (𝔹 := 𝔹))
+            (separatedEvalTerm
               (Sum.elim
                 (fun a => BVSet.toSeparated (assignment a))
                 (fun i => BVSet.toSeparated (boundAssignment i))) t₂) =
           BVSet.bvEq
             (evalTerm (Sum.elim assignment boundAssignment) t₁)
             (evalTerm (Sum.elim assignment boundAssignment) t₂)
-      rw [sumElim_toSeparated assignment boundAssignment]
-      rw [separatedEvalTerm_toSeparated, separatedEvalTerm_toSeparated,
+      rw [separatedEvalTerm_sum_toSeparated assignment boundAssignment t₁,
+        separatedEvalTerm_sum_toSeparated assignment boundAssignment t₂,
         BVSet.Separated.bvEq_toSeparated]
   | @rel n l R terms =>
       cases R with
       | mem =>
           change
             BVSet.Separated.mem
-                (BooleanValued.FirstOrder.Term.realize
-                  (separatedStructure (𝔹 := 𝔹))
+                (separatedEvalTerm
                   (Sum.elim
                     (fun a => BVSet.toSeparated (assignment a))
                     (fun i => BVSet.toSeparated (boundAssignment i))) (terms 0))
-                (BooleanValued.FirstOrder.Term.realize
-                  (separatedStructure (𝔹 := 𝔹))
+                (separatedEvalTerm
                   (Sum.elim
                     (fun a => BVSet.toSeparated (assignment a))
                     (fun i => BVSet.toSeparated (boundAssignment i))) (terms 1)) =
               BVSet.mem
                 (evalTerm (Sum.elim assignment boundAssignment) (terms 0))
                 (evalTerm (Sum.elim assignment boundAssignment) (terms 1))
-          rw [sumElim_toSeparated assignment boundAssignment]
-          rw [separatedEvalTerm_toSeparated, separatedEvalTerm_toSeparated,
+          rw [separatedEvalTerm_sum_toSeparated assignment boundAssignment (terms 0),
+            separatedEvalTerm_sum_toSeparated assignment boundAssignment (terms 1),
             BVSet.Separated.mem_toSeparated]
   | @imp n φ ψ ihφ ihψ =>
       change
@@ -260,22 +270,33 @@ theorem separatedTruth_toSeparated {α : Type w} {n : ℕ}
           ⨅ x : BVSet.{u, v} 𝔹,
             truth φ assignment (Fin.snoc boundAssignment x)
       rw [BVSet.Separated.iInf_eq_iInf_toSeparated]
-      refine congrArg
-        (fun f : BVSet.{u, v} 𝔹 → 𝔹 => ⨅ x, f x) ?_
-      funext x
-      have hsnoc :
-          Fin.snoc
-              (fun i => BVSet.toSeparated (boundAssignment i))
-              (BVSet.toSeparated x) =
-            fun i => BVSet.toSeparated ((Fin.snoc boundAssignment x) i) := by
-        funext i
-        refine Fin.lastCases ?_ (fun j => ?_) i
-        · simp
-        · simp
-      rw [hsnoc]
-      exact ih
-        (assignment := assignment)
-        (boundAssignment := Fin.snoc boundAssignment x)
+      have hbody (x : BVSet.{u, v} 𝔹) :
+          separatedTruth φ
+              (fun a => BVSet.toSeparated (assignment a))
+              (Fin.snoc
+                (fun i => BVSet.toSeparated (boundAssignment i))
+                (BVSet.toSeparated x)) =
+            truth φ assignment (Fin.snoc boundAssignment x) := by
+        have hsnoc :
+            Fin.snoc
+                (fun i => BVSet.toSeparated (boundAssignment i))
+                (BVSet.toSeparated x) =
+              fun i => BVSet.toSeparated ((Fin.snoc boundAssignment x) i) := by
+          funext i
+          refine Fin.lastCases ?_ (fun j => ?_) i
+          · simp
+          · simp
+        rw [hsnoc]
+        exact ih
+          (assignment := assignment)
+          (boundAssignment := Fin.snoc boundAssignment x)
+      apply le_antisymm
+      · apply le_iInf
+        intro x
+        exact (iInf_le _ x).trans_eq (hbody x)
+      · apply le_iInf
+        intro x
+        exact (iInf_le _ x).trans_eq (hbody x).symm
 
 /-- Passage to separated assignments preserves the complete Boolean truth value
 of every ordinary formula. -/
