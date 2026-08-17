@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, and intrinsic formula semantics on the separated universe are usable. The APIs may change as ascent/descent, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, and elementary descent are usable. The APIs may change as transfer and applications are developed.
 
 ## Mathematical overview
 
@@ -30,7 +30,8 @@ The current development establishes that:
 - raw names admit a separated quotient by top-valued Boolean equality, while the full Boolean values of equality and membership descend unchanged to the quotient;
 - ordinary Lean equality on separated names is exactly the `⊤` fiber of descended Boolean-valued equality, and canonical ground-model names retain their preservation/reflection properties after separation;
 - the separated quotient carries its own lawful Boolean-valued first-order set-theory structure using descended equality and membership;
-- quotienting raw assignments preserves the **entire Boolean truth value** of every bounded formula, ordinary formula, and closed sentence, with universal quantification compared by quotient induction rather than representative selection.
+- quotienting raw assignments preserves the **entire Boolean truth value** of every bounded formula, ordinary formula, and closed sentence, with universal quantification compared by quotient induction rather than representative selection;
+- elementary descent sends a separated name `x` to the external set of separated `y` with membership value `⊤`, and checked ground-model membership is exactly membership of `checkSeparated x` in the descent of `checkSeparated y`.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -57,6 +58,7 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.Mixing` | Direct mixtures, Boolean partitions, compatibility estimates, and mixing lemmas |
 | `BooleanValuedAnalysis.Maximum` | Small witness partitions, predicate maximization, formula-body extensionality, and the existential maximum principle |
 | `BooleanValuedAnalysis.Separated` | Top-valued equality quotient, full descended Boolean equality/membership, and separated canonical names |
+| `BooleanValuedAnalysis.Descent` | Elementary descent by top-valued separated membership and checked-name compatibility |
 | `BooleanValuedAnalysis` | Main import file exporting the complete public development |
 
 ## Quick start
@@ -95,7 +97,7 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 3. **Mixing (M003): complete.** Arbitrary indexed mixtures, partitions of arbitrary Boolean values, and the partition-of-unity mixing lemma are public and covered by an executable acceptance suite.
 4. **Maximum principle (M004): complete.** Small witness partitions, maximization of extensional Boolean-valued predicates, and realization of existential formula truth are public and covered by an executable acceptance suite.
 5. **Separated Boolean-valued universe (M005): complete.** Raw names are quotiented by top-valued equality while full Boolean equality and membership descend to the quotient; canonical names pass through separation.
-6. **Ascent/descent core and separated semantics bridge (M006): in progress.** The lawful separated set-theory structure and exact raw/separated formula-truth bridge are implemented; elementary descent and checked-name compatibility remain.
+6. **Ascent/descent core and separated semantics bridge (M006): complete.** The lawful separated set-theory structure, exact raw/separated formula-truth bridge, elementary descent, and checked-name compatibility are implemented. General ascent remains deliberately deferred until a Transfer-facing use fixes its size and representation requirements.
 7. Develop transfer principles and selected ZF/ZFC fragments.
 8. Connect the framework with forcing and applications in Boolean-valued analysis.
 
@@ -117,7 +119,7 @@ The pull request template records this review without imposing the full process 
 
 Every pull request is checked by GitHub Actions. CI builds the library, runs the project linter baseline, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` acceptance files, and compiles the M001, M002, M003, M004, M005, and M006 acceptance suites.
 
-A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds and lints the complete public library in that environment, and compiles the M001–M006 acceptance sequence there as well. Those production-API suites exercise the independent universe policy, structural substitution, bounded quantifiers, mixing, the maximum principle, the separated quotient, and the separated formula-semantics bridge without maintaining a second parallel model under `Audit/`. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
+A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds and lints the complete public library in that environment, and compiles the M001–M006 acceptance sequence there as well. Those production-API suites exercise the independent universe policy, structural substitution, bounded quantifiers, mixing, the maximum principle, the separated quotient, the separated formula-semantics bridge, and elementary descent without maintaining a second parallel model under `Audit/`. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
