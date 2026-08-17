@@ -48,7 +48,6 @@ section Canonical
 
 /-- Checked ground-model membership is exactly membership in the descent of the
 corresponding checked set. -/
-@[simp]
 theorem checkSeparated_mem_descent_iff [Nontrivial 𝔹] {x y : PSet.{u}} :
     checkSeparated (𝔹 := 𝔹) x ∈
         Separated.descent (checkSeparated (𝔹 := 𝔹) y) ↔
