@@ -9,10 +9,10 @@ import BooleanValuedAnalysis
 /-!
 # M006 acceptance probe
 
-Executable checks for the first M006 slice: intrinsic set-theory semantics on
-the separated universe and exact comparison with raw formula truth.  The probe
-keeps the name and Boolean-algebra universes independent and requires no
-`Small` hypothesis.
+Executable checks for M006: intrinsic set-theory semantics on the separated
+universe, exact comparison with raw formula truth, and elementary descent by
+top-valued membership.  The probe keeps the name and Boolean-algebra universes
+independent and requires no `Small` hypothesis.
 -/
 
 universe u v w
@@ -107,6 +107,21 @@ example (φ : Sentence) :
     separatedSentenceTruth.{u, v} (𝔹 := 𝔹) φ =
       sentenceTruth.{u, v} (𝔹 := 𝔹) φ :=
   separatedSentenceTruth_eq_sentenceTruth φ
+
+-- Elementary descent is precisely the top fiber of descended membership.
+example (x y : BVSet.Separated.{u, v} 𝔹) :
+    y ∈ BVSet.Separated.descent x ↔
+      BVSet.Separated.mem y x = ⊤ :=
+  BVSet.Separated.mem_descent y x
+
+-- Checked names have exactly the expected pointwise descent membership.  This
+-- deliberately does not assert that every element of a checked descent is
+-- itself a checked name.
+example [Nontrivial 𝔹] {x y : PSet.{u}} :
+    BVSet.checkSeparated (𝔹 := 𝔹) x ∈
+        BVSet.Separated.descent (BVSet.checkSeparated (𝔹 := 𝔹) y) ↔
+      x ∈ y :=
+  BVSet.checkSeparated_mem_descent_iff
 
 end SetTheory
 end BooleanValued
