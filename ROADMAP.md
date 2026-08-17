@@ -22,7 +22,8 @@ The repository currently provides:
 - arbitrary indexed mixtures, Boolean partitions of arbitrary covered values, and the mixing lemma;
 - a maximum principle for extensional Boolean-valued predicates and existential formula truth under an explicit Boolean-algebra smallness hypothesis;
 - a separated Boolean-valued universe obtained by quotienting raw names by top-valued equality, with the full Boolean values of equality and membership descended to the quotient;
-- a lawful set-theory structure on the separated carrier whose formula truth agrees exactly with the raw semantics after quotienting assignments.
+- a lawful set-theory structure on the separated carrier whose formula truth agrees exactly with the raw semantics after quotienting assignments;
+- elementary descent of separated names by top-valued membership, with pointwise checked-name compatibility.
 
 These components form the foundation for the milestones below.
 
@@ -118,26 +119,38 @@ The implementation keeps the name and Boolean-algebra universes independent, add
 
 Specification and completion record: [`docs/milestones/005-separated-universe.md`](docs/milestones/005-separated-universe.md)
 
-### M006 — Ascent/descent core and separated semantics bridge — in progress
+### M006 — Ascent/descent core and separated semantics bridge — complete
+
+Completed 2026-08-17.
 
 M006 turns the M005 quotient into the extensional semantic carrier needed by R6 while keeping recursive set construction on raw `BVSet` names.
 
-The first two slices are now implemented: `SetTheory.separatedStructure` interprets the existing Mathlib set-theory language directly on `BVSet.Separated` using descended equality and membership and satisfies the generic `LawfulStructure` interface. `SetTheory.separatedTruth_toSeparated` then proves that applying `BVSet.toSeparated` pointwise to raw free and bound assignments preserves the **entire Boolean truth value** of every bounded formula; ordinary-formula and sentence corollaries follow.
+`SetTheory.separatedStructure` interprets the existing Mathlib set-theory language directly on `BVSet.Separated` using descended equality and membership and satisfies the generic `LawfulStructure` interface. `SetTheory.separatedTruth_toSeparated` proves that applying `BVSet.toSeparated` pointwise to raw free and bound assignments preserves the **entire Boolean truth value** of every bounded formula; ordinary-formula and sentence corollaries follow.
 
-The universal-quantifier case compares the infimum over the quotient carrier with the infimum over raw representatives by quotient induction. No representative-selection function, `Small` hypothesis, `Shrink`, Zorn argument, or equality of universes is introduced. `Audit/M006Acceptance.lean` exercises the separated structure, reuse of M001 formula extensionality, and the exact raw/separated comparison.
+The universal-quantifier case compares the infimum over the quotient carrier with the infimum over raw representatives by quotient induction. No representative-selection function, `Small` hypothesis, `Shrink`, Zorn argument, or equality of universes is introduced.
 
-The remaining focused M006 work is:
+The final core operation is elementary descent:
 
-1. define elementary descent by top-valued membership and prove its checked-name compatibility;
-2. test the completed bridge against the first Transfer-facing statement before designing generalized ascent or algebraic-system functors.
+```text
+BVSet.Separated.descent x =
+  { y | BVSet.Separated.mem y x = ⊤ }.
+```
 
-A general ascent of arbitrary external families of separated elements remains deliberately deferred: constructing a raw internal name from quotient elements raises representative-selection and size questions that should not be answered speculatively.
+Over a nontrivial Boolean algebra, canonical names satisfy the expected pointwise compatibility
 
-Specification and design record: [`docs/milestones/006-ascent-descent.md`](docs/milestones/006-ascent-descent.md)
+```text
+checkSeparated x ∈ Separated.descent (checkSeparated y) ↔ x ∈ y.
+```
+
+No stronger image characterization is asserted: mixtures may have top-valued membership in a checked name without being Lean-equal to one fixed checked member. A general ascent of arbitrary external families of separated elements remains deliberately deferred because constructing a raw internal name from quotient elements raises representative-selection and size questions that should be answered only when a Transfer-facing use fixes the required interface.
+
+`Audit/M006Acceptance.lean` covers the separated structure, reuse of M001 formula extensionality, exact raw/separated formula comparison, elementary descent, and checked-name compatibility in both pinned CI and the live Tau Ceti architecture audit.
+
+Specification and completion record: [`docs/milestones/006-ascent-descent.md`](docs/milestones/006-ascent-descent.md)
 
 ## R6. Transfer and ZFC fragments
 
-Use the structural formula semantics from M001 to verify selected axioms or axiom schemes and state transfer results at the strongest level justified by the preceding development.
+Use the structural formula semantics from M001 and the separated semantic/descent interface from M006 to verify selected axioms or axiom schemes and state transfer results at the strongest level justified by the preceding development.
 
 This stage should proceed axiom-by-axiom or fragment-by-fragment rather than beginning with an undifferentiated claim that the universe models all of ZFC.
 
