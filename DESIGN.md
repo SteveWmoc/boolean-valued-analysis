@@ -178,6 +178,36 @@ A Boolean-valued first-order structure is an explicit object containing an equal
 - a canonical-instance mechanism can preserve support for multiple structures without ambiguous algebra inference;
 - Mathlib develops a standard algebra-valued semantic interface that should replace this local abstraction.
 
+## D008 — Stage Transfer through Δ₀ standard-name absoluteness
+
+**Status:** accepted as the R6 design direction
+
+R6 begins with ground semantics and Δ₀ standard-name absoluteness rather than with a general ascent construction or an undifferentiated claim that the Boolean-valued universe models ZFC.
+
+The standard ground objects in this stage are Mathlib `PSet` values. Their canonical images are provided by the already-existing `BVSet.check` and `BVSet.checkSeparated` maps. The same Mathlib first-order syntax is used on both the ground and Boolean-valued sides.
+
+### Rationale
+
+- Δ₀ formulas are the first fragment for which canonical names should be absolute while all quantifiers remain controlled by set membership.
+- M002 already converts syntactic set-bounded quantifiers to weighted-child semantics, so checked bounded quantifiers reduce to checked ground children without claiming arbitrary Boolean-valued names are standard.
+- Beginning here tests the semantic bridge, universes, and canonical-name API before adding ZF axiom constructions or logical soundness machinery.
+- A general ascent of quotient elements raises size and representative-selection questions that are not needed for standard-name absoluteness.
+
+### Consequences
+
+- M007 should define ground `PSet` semantics by reusing the generic M001 evaluator, preferably with `Prop` as the ordinary truth-value algebra.
+- The Δ₀ fragment should be represented by a predicate over existing Mathlib formulas, not a second syntax tree.
+- The primary comparison should be exact (`⊤` for true ground statements and `⊥` for false ones), allowing the theorem to avoid `[Nontrivial 𝔹]` where possible.
+- `[Small.{u} 𝔹]` remains localized to constructions such as the M004 maximum principle and does not become a global Transfer assumption.
+- “Transfer” is treated as several layers: ground absoluteness, Boolean validity of axioms, logical soundness, and later typed application transfer.
+- Typed ascents for functions and structures are deferred until a concrete application specifies their formal interface.
+
+### Reconsider when
+
+- the existing bounded-quantifier syntax cannot support a usable Δ₀ predicate without a parallel formula representation;
+- a first ZF-fragment proof demonstrates that general ascent is already unavoidable;
+- Mathlib provides an ordinary set-theory semantic interface that should replace the proposed ground structure.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001
@@ -209,8 +239,16 @@ Track which definitions and proofs depend only on complete Heyting-algebra struc
 
 ### O005 — General ascent of external separated families
 
-The first M006 core uses `checkSeparated` for ground-set ascent and defines descent by top-valued membership. A general ascent from an external family of separated elements is intentionally left open until a Transfer-facing or algebraic-system construction needs it.
+The M006 core uses `checkSeparated` for ground-set ascent and defines descent by top-valued membership. A general ascent from an external family of separated elements remains intentionally open.
 
-The formal issue is representation-sensitive: an external family contains quotient elements, while raw `BVSet.mk` requires raw children. A direct implementation may therefore require representative selection and an explicit small indexing type. M006 should not add global representatives, `Small`, or universe coupling merely to mimic the textbook construction before its downstream interface is known.
+M007 does not require it: standard names are canonical images of `PSet` values, and Δ₀ bounded quantifiers reduce through the checked children of those names. The formal issue therefore remains representation-sensitive rather than urgent. An external family contains quotient elements, while raw `BVSet.mk` requires raw children; a direct implementation may require representative selection and an explicit small indexing type.
 
-Resolve this question when the first concrete use specifies the necessary domain, size assumptions, functorial behavior, and interaction with mixing.
+Resolve this question only when a concrete Transfer-facing or algebraic-system construction specifies the necessary domain, size assumptions, functorial behavior, and interaction with mixing.
+
+### O006 — Typed ascent/descent for functions and structures
+
+Pure R6 set theory may encode a ground function as a set-theoretic object and then apply `checkSeparated`. This is not intended to be the final interface for functional analysis.
+
+Later applications will need typed operations for functions, relations, homomorphisms, vector spaces, operators, and other structures. Their correct formal shape depends on the source and target carriers, extensionality conditions, size requirements, and whether the construction is naturally defined by graphs, pointwise action, or a functorial structure map.
+
+Do not design a universal typed ascent API before the first application fixes these requirements. Revisit this question when an R7 milestone needs to move a concrete algebraic or analytic structure across the Boolean-valued boundary.
