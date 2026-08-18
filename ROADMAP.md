@@ -150,9 +150,34 @@ Specification and completion record: [`docs/milestones/006-ascent-descent.md`](d
 
 ## R6. Transfer and ZFC fragments
 
-Use the structural formula semantics from M001 and the separated semantic/descent interface from M006 to verify selected axioms or axiom schemes and state transfer results at the strongest level justified by the preceding development.
+R6 is intentionally split into several layers rather than treating “Transfer” as a single theorem:
 
-This stage should proceed axiom-by-axiom or fragment-by-fragment rather than beginning with an undifferentiated claim that the universe models all of ZFC.
+1. compare ordinary ground truth with Boolean-valued truth on canonical names;
+2. prove selected ZF/ZFC axioms have Boolean value `⊤`;
+3. isolate the logical soundness needed to pass from Boolean-valid axioms to Boolean-valid theorems;
+4. later build typed ascent/descent interfaces for algebraic and analytic applications.
+
+The first milestone is designed before any implementation so that universe and smallness assumptions remain visible.
+
+### M007 — Ground semantics and Δ₀ standard-name absoluteness — planned
+
+M007 will interpret the existing Mathlib set-theory syntax on `PSet` with ordinary `Prop` truth values and identify the Δ₀ fragment by a predicate over that existing syntax rather than introducing a second formula datatype.
+
+For Δ₀ formulas, assignments of ground pre-sets should satisfy an exact canonical-name comparison: Boolean-valued truth on the corresponding `BVSet.check` names is `⊤` precisely when the ground statement is true and `⊥` otherwise. The separated theorem should then follow through the M006 exact raw/separated bridge.
+
+The crucial bounded-quantifier step will reuse M002’s weighted-child semantics. Because `check x` has exactly the checked children of `x`, all with coefficient `⊤`, set-bounded quantification reduces to ground quantification over the members of `x` without claiming that arbitrary Boolean-valued names are standard.
+
+M007 preserves independent universes `u`, `v`, and `w`, introduces no general ascent, and must not require `[Small.{u} 𝔹]`. Standard names in this stage are specifically `PSet` values mapped by `check`/`checkSeparated`; arbitrary Lean objects and typed functions require explicit set encodings until later application-level interfaces are designed.
+
+Design specification: [`docs/milestones/007-delta0-absoluteness.md`](docs/milestones/007-delta0-absoluteness.md)
+
+### Later R6 milestones — staged after M007
+
+The next implementation target after M007 should be a small Boolean-valid ZF fragment, probably beginning with axioms admitting direct constructions such as extensionality, empty set, pairing, and union. Separation, infinity, foundation, powerset, replacement, and choice should be ordered by formal dependency rather than textbook order.
+
+A theorem deserving the name **Transfer Principle** should be stated only after the project has both a sufficient Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
+
+General ascent of arbitrary separated families and typed ascents of functions, relations, homomorphisms, vector spaces, operators, and other structures remain deferred until a concrete application specifies the necessary size, extensionality, and functorial requirements.
 
 ## R7. Applications
 
