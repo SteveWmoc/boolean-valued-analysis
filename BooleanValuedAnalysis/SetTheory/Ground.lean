@@ -182,7 +182,7 @@ theorem groundTruth_inf
     BooleanValued.FirstOrder.BoundedFormula.truth groundStructure.{u}
         (φ ⊓ ψ) assignment boundAssignment ↔ _
   rw [BooleanValued.FirstOrder.BoundedFormula.truth_inf]
-  exact inf_Prop_eq
+  simp only [inf_Prop_eq]
 
 @[simp]
 theorem groundTruth_all
