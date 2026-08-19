@@ -41,10 +41,11 @@ theorem mem_empty (z : BVSet.{u, v} 𝔹) :
   exact PEmpty.elim i
 
 /-- The unordered pair of two Boolean-valued sets, with both entries carrying
-coefficient `⊤`. The two-point index type is universe-polymorphic. -/
+coefficient `⊤`. `ULift Bool` supplies a canonical two-point type in the
+name-index universe without any smallness or choice argument. -/
 def pair (x y : BVSet.{u, v} 𝔹) : BVSet.{u, v} 𝔹 :=
-  BVSet.mk (PUnit.{u} ⊕ PUnit.{u})
-    (Sum.elim (fun _ => x) (fun _ => y))
+  BVSet.mk (ULift.{u} Bool)
+    (fun i => if i.down then y else x)
     (fun _ => ⊤)
 
 /-- Membership in a Boolean-valued pair is the join of equality with either
@@ -53,20 +54,24 @@ entry. This remains valid when the two entries are partially or fully equal. -/
 theorem mem_pair (z x y : BVSet.{u, v} 𝔹) :
     mem z (pair x y) = bvEq z x ⊔ bvEq z y := by
   rw [mem_eq_iSup]
-  simp only [pair, mk_index, mk_weight, mk_child, top_inf_eq]
+  change
+    (⨆ i : ULift.{u} Bool,
+      bvEq z (if i.down then y else x)) = bvEq z x ⊔ bvEq z y
   apply le_antisymm
   · apply iSup_le
     intro i
-    cases i with
-    | inl p =>
-        cases p
+    cases h : i.down with
+    | false =>
+        simp only [h, Bool.false_eq, ↓reduceIte]
         exact le_sup_left
-    | inr p =>
-        cases p
+    | true =>
+        simp only [h, ↓reduceIte]
         exact le_sup_right
   · apply sup_le
-    · exact le_iSup_of_le (Sum.inl PUnit.unit) le_rfl
-    · exact le_iSup_of_le (Sum.inr PUnit.unit) le_rfl
+    · apply le_iSup_of_le (ULift.up false)
+      simp
+    · apply le_iSup_of_le (ULift.up true)
+      simp
 
 /-- One-level union of a Boolean-valued set. A grandchild receives the meet of
 the outer and inner coefficients along the two-step membership path. -/
