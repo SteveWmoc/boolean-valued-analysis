@@ -25,7 +25,9 @@ The repository currently provides:
 - a lawful set-theory structure on the separated carrier whose formula truth agrees exactly with the raw semantics after quotienting assignments;
 - elementary descent of separated names by top-valued membership, with pointwise checked-name compatibility;
 - ordinary `Prop`-valued semantics for the same pure set-theory syntax on Mathlib `PSet`, lawful under extensional pre-set equivalence;
-- a Δ₀ predicate over the existing syntax and exact standard-name absoluteness for raw and separated canonical names, without a `Small` hypothesis.
+- a Δ₀ predicate over the existing syntax and exact standard-name absoluteness for raw and separated canonical names, without a `Small` hypothesis;
+- direct raw constructors for pairing and union, exact semantic specifications for empty/pair/union membership, and a characterization of Boolean equality by universal membership agreement;
+- Boolean validity, on both raw and separated carriers, of ZF extensionality, empty set, pairing, and union.
 
 These components form the foundation for the milestones below.
 
@@ -182,11 +184,29 @@ M007 introduces no `[Small.{u} 𝔹]`, no general ascent, no quotient representa
 
 Specification and completion record: [`docs/milestones/007-delta0-absoluteness.md`](docs/milestones/007-delta0-absoluteness.md)
 
-### M008 — First Boolean-valid ZF fragment — next
+### M008 — First Boolean-valid ZF fragment — complete
 
-The next target is a deliberately small Boolean-valid ZF fragment rather than a theorem called Transfer. Begin with axioms whose direct constructions exercise the existing representation without requiring the full maximum-principle or general-ascent machinery. Extensionality, empty set, pairing, and union are the leading candidates; the exact first implementation slice should be fixed by an M008 design specification.
+Completed 2026-08-19.
 
-Later separation, infinity, foundation, powerset, replacement, and choice should be ordered by formal dependency rather than textbook order. A theorem deserving the name **Transfer Principle** should be stated only after the project has both a sufficient Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
+M008 proves Boolean validity for the first four genuinely unbounded ZF axioms in the project: extensionality, empty set, pairing, and union. These are statements about arbitrary Boolean-valued names, not canonical-name consequences of M007.
+
+The raw constructive layer provides `BVSet.pair` and `BVSet.union`, together with exact semantic equations for empty, pair, and union membership. The union construction flattens weighted grandchildren with coefficient `outer ∧ inner`, and `BVSet.mem_union` identifies its membership truth exactly with M002 weighted `boundedExists` semantics.
+
+Extensionality is isolated semantically in `BVSet.extensionality_le_bvEq` and strengthened to the exact characterization `BVSet.bvEq_eq_iInf_mem_iff`: Boolean-valued equality is precisely universal Boolean agreement of membership.
+
+`SetTheory.ZF.extensionality`, `.emptySet`, `.pairing`, and `.union` are actual closed sentences in the existing Mathlib syntax. The union sentence uses the project’s syntactic set-bounded existential for its inner quantifier. Their validity theorems are `ZF.isTrue_extensionality`, `ZF.isTrue_emptySet`, `ZF.isTrue_pairing`, and `ZF.isTrue_union`, with explicit witnesses for the three existential axioms.
+
+`SetTheory.separatedIsTrue_of_isTrue` transports raw sentence validity through M006, yielding the corresponding four separated validity theorems without duplicating the constructive proofs.
+
+M008 introduces no `[Small.{u} 𝔹]`, maximum-principle detour, `Shrink`, Zorn argument, general ascent, quotient representative selector, or equality between universes. `Audit/M008Acceptance.lean` checks the constructor equations, extensionality characterization, raw axiom validity, and separated validity in both pinned CI and the live Tau Ceti architecture audit.
+
+Specification and completion record: [`docs/milestones/008-first-zf-fragment.md`](docs/milestones/008-first-zf-fragment.md)
+
+### Next ZF fragment — design before implementation
+
+The next ZF work should again be split by formal dependency rather than textbook order. **Separation and powerset** are the leading design targets because they test comprehension-style constructions and should expose the precise boundary between direct name construction and maximum-principle witness machinery. Infinity and foundation can remain separate if their representation dependencies differ; replacement and choice should wait until those dependencies are understood.
+
+A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
 General ascent of arbitrary separated families and typed ascents of functions, relations, homomorphisms, vector spaces, operators, and other structures remain deferred until a concrete application specifies the necessary size, extensionality, and functorial requirements.
 
