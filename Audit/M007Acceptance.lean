@@ -58,7 +58,7 @@ def nestedDelta0Formula : BoundedFormula PUnit 0 :=
         (.var (.inr (Fin.last 1)) : Term (PUnit ⊕ Fin 2))
         (.var (.inr (Fin.castSucc (Fin.last 0))) : Term (PUnit ⊕ Fin 2))))
 
-example : IsDelta0 nestedDelta0Formula := by
+theorem nestedDelta0Formula_isDelta0 : IsDelta0 nestedDelta0Formula := by
   unfold nestedDelta0Formula
   apply IsDelta0.boundedForall
   apply IsDelta0.boundedExists
@@ -121,11 +121,7 @@ example (assignment : PUnit → PSet.{u}) :
         (groundTruth BoundedFormula.nestedDelta0Formula
           assignment (fun i => Fin.elim0 i)) :=
   truth_check_of_delta0
-    (by
-      unfold BoundedFormula.nestedDelta0Formula
-      apply BoundedFormula.IsDelta0.boundedForall
-      apply BoundedFormula.IsDelta0.boundedExists
-      exact BoundedFormula.IsDelta0.mem _ _)
+    BoundedFormula.nestedDelta0Formula_isDelta0
     assignment (fun i => Fin.elim0 i)
 
 -- The Transfer-facing separated carrier gets the same exact theorem via M006.
