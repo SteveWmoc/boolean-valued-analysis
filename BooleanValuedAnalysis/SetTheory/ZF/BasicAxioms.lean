@@ -1,0 +1,209 @@
+/-
+Copyright (c) 2026 Steven Sabean. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Steven Sabean
+-/
+
+import BooleanValuedAnalysis.SetTheory.BoundedQuantifierSemantics
+import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
+import BooleanValuedAnalysis.SetTheory.ZF.Constructors
+
+/-!
+# First Boolean-valid ZF axioms
+
+M008 encodes extensionality, empty set, pairing, and union as actual closed
+sentences in the existing Mathlib first-order set-theory syntax and proves that
+each has Boolean truth value `⊤`. Existential witnesses are constructed
+directly as raw Boolean-valued names; no maximum-principle smallness hypothesis
+is used.
+-/
+
+universe u v
+
+namespace BooleanValued
+namespace SetTheory
+namespace ZF
+
+private def bvar {n : ℕ} (i : Fin n) : Term (Empty ⊕ Fin n) :=
+  .var (.inr i)
+
+private def iffFormula {n : ℕ}
+    (φ ψ : BoundedFormula Empty n) : BoundedFormula Empty n :=
+  _root_.FirstOrder.Language.BoundedFormula.iff φ ψ
+
+/-- ZF extensionality:
+`∀ x ∀ y, (∀ z, z ∈ x ↔ z ∈ y) → x = y`. -/
+def extensionality : Sentence :=
+  .all (.all (
+    (.all (iffFormula
+      (BoundedFormula.mem (bvar (2 : Fin 3)) (bvar (0 : Fin 3)))
+      (BoundedFormula.mem (bvar (2 : Fin 3)) (bvar (1 : Fin 3))))).imp
+    (.equal (bvar (0 : Fin 2)) (bvar (1 : Fin 2)))))
+
+/-- ZF empty set:
+`∃ x, ∀ y, y ∉ x`. -/
+def emptySet : Sentence :=
+  (.all ((BoundedFormula.mem
+    (bvar (1 : Fin 2)) (bvar (0 : Fin 2))).not)).ex
+
+/-- ZF pairing:
+`∀ x ∀ y, ∃ z, ∀ a, a ∈ z ↔ (a = x ∨ a = y)`. -/
+def pairing : Sentence :=
+  .all (.all ((.all (iffFormula
+    (BoundedFormula.mem (bvar (3 : Fin 4)) (bvar (2 : Fin 4)))
+    ((.equal (bvar (3 : Fin 4)) (bvar (0 : Fin 4))) ⊔
+      (.equal (bvar (3 : Fin 4)) (bvar (1 : Fin 4)))))).ex))
+
+/-- ZF union:
+`∀ x, ∃ y, ∀ z, z ∈ y ↔ ∃ w ∈ x, z ∈ w`.
+
+The inner existential is the M002 syntactic set-bounded quantifier. -/
+def union : Sentence :=
+  .all ((.all (iffFormula
+    (BoundedFormula.mem (bvar (2 : Fin 3)) (bvar (1 : Fin 3)))
+    (BoundedFormula.boundedExists (bvar (0 : Fin 3))
+      (BoundedFormula.mem
+        (bvar (2 : Fin 4)) (bvar (3 : Fin 4)))))).ex)
+
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+
+private theorem sentenceTruth_eq_truth (φ : Sentence) :
+    sentenceTruth.{u, v} (𝔹 := 𝔹) φ =
+      truth φ (fun x : Empty => nomatch x) (fun i : Fin 0 => Fin.elim0 i) :=
+  rfl
+
+/-- The extensionality sentence has its expected direct Boolean semantics. -/
+theorem sentenceTruth_extensionality :
+    sentenceTruth.{u, v} (𝔹 := 𝔹) extensionality =
+      ⨅ x : BVSet.{u, v} 𝔹, ⨅ y : BVSet.{u, v} 𝔹,
+        (⨅ z : BVSet.{u, v} 𝔹,
+          (BVSet.mem z x ⇨ BVSet.mem z y) ⊓
+            (BVSet.mem z y ⇨ BVSet.mem z x)) ⇨
+          BVSet.bvEq x y := by
+  rw [sentenceTruth_eq_truth]
+  simp [extensionality, iffFormula, bvar, BoundedFormula.mem]
+
+/-- Boolean-valued extensionality is valid. -/
+theorem isTrue_extensionality :
+    IsTrue.{u, v} (𝔹 := 𝔹) extensionality := by
+  unfold IsTrue
+  rw [sentenceTruth_extensionality]
+  apply top_unique
+  apply le_iInf
+  intro x
+  apply le_iInf
+  intro y
+  rw [le_himp_iff]
+  simpa using BVSet.extensionality_le_bvEq x y
+
+/-- The empty-set sentence has its expected direct Boolean semantics. -/
+theorem sentenceTruth_emptySet :
+    sentenceTruth.{u, v} (𝔹 := 𝔹) emptySet =
+      ⨆ x : BVSet.{u, v} 𝔹, ⨅ y : BVSet.{u, v} 𝔹,
+        (BVSet.mem y x)ᶜ := by
+  rw [sentenceTruth_eq_truth]
+  simp [emptySet, bvar, BoundedFormula.mem]
+
+/-- The ZF empty-set axiom is Boolean-valid, witnessed by `BVSet.empty`. -/
+theorem isTrue_emptySet :
+    IsTrue.{u, v} (𝔹 := 𝔹) emptySet := by
+  unfold IsTrue
+  rw [sentenceTruth_emptySet]
+  apply top_unique
+  apply le_iSup_of_le (∅ : BVSet.{u, v} 𝔹)
+  apply le_iInf
+  intro y
+  simp
+
+/-- The pairing sentence has its expected direct Boolean semantics. -/
+theorem sentenceTruth_pairing :
+    sentenceTruth.{u, v} (𝔹 := 𝔹) pairing =
+      ⨅ x : BVSet.{u, v} 𝔹, ⨅ y : BVSet.{u, v} 𝔹,
+        ⨆ z : BVSet.{u, v} 𝔹, ⨅ a : BVSet.{u, v} 𝔹,
+          (BVSet.mem a z ⇨ (BVSet.bvEq a x ⊔ BVSet.bvEq a y)) ⊓
+            ((BVSet.bvEq a x ⊔ BVSet.bvEq a y) ⇨ BVSet.mem a z) := by
+  rw [sentenceTruth_eq_truth]
+  simp [pairing, iffFormula, bvar, BoundedFormula.mem]
+
+/-- The ZF pairing axiom is Boolean-valid, witnessed by `BVSet.pair`. -/
+theorem isTrue_pairing :
+    IsTrue.{u, v} (𝔹 := 𝔹) pairing := by
+  unfold IsTrue
+  rw [sentenceTruth_pairing]
+  apply top_unique
+  apply le_iInf
+  intro x
+  apply le_iInf
+  intro y
+  apply le_iSup_of_le (BVSet.pair x y)
+  apply le_iInf
+  intro a
+  rw [BVSet.mem_pair]
+  simp
+
+/-- The union sentence has its expected direct Boolean semantics. -/
+theorem sentenceTruth_union :
+    sentenceTruth.{u, v} (𝔹 := 𝔹) union =
+      ⨅ x : BVSet.{u, v} 𝔹, ⨆ y : BVSet.{u, v} 𝔹,
+        ⨅ z : BVSet.{u, v} 𝔹,
+          (BVSet.mem z y ⇨
+              BVSet.boundedExists x (fun w => BVSet.mem z w)) ⊓
+            (BVSet.boundedExists x (fun w => BVSet.mem z w) ⇨
+              BVSet.mem z y) := by
+  rw [sentenceTruth_eq_truth]
+  simp only [union, iffFormula, truth_all, truth_ex, truth_iff,
+    truth_mem, truth_boundedExists_eq_boundedExists, evalTerm_var, bvar,
+    Sum.elim_inr, Fin.snoc_last, Fin.snoc_castSucc]
+
+/-- The ZF union axiom is Boolean-valid, witnessed by `BVSet.union`. -/
+theorem isTrue_union :
+    IsTrue.{u, v} (𝔹 := 𝔹) union := by
+  unfold IsTrue
+  rw [sentenceTruth_union]
+  apply top_unique
+  apply le_iInf
+  intro x
+  apply le_iSup_of_le (BVSet.union x)
+  apply le_iInf
+  intro z
+  rw [BVSet.mem_union]
+  simp
+
+end ZF
+
+/-- Raw Boolean validity of a closed sentence implies validity on the separated
+carrier by the exact M006 sentence-truth bridge. -/
+theorem separatedIsTrue_of_isTrue
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] {φ : Sentence}
+    (h : IsTrue.{u, v} (𝔹 := 𝔹) φ) :
+    SeparatedIsTrue.{u, v} (𝔹 := 𝔹) φ := by
+  unfold SeparatedIsTrue IsTrue at *
+  rw [separatedSentenceTruth_eq_sentenceTruth]
+  exact h
+
+/-- Separated validity of ZF extensionality. -/
+theorem separatedIsTrue_extensionality
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] :
+    SeparatedIsTrue.{u, v} (𝔹 := 𝔹) ZF.extensionality :=
+  separatedIsTrue_of_isTrue ZF.isTrue_extensionality
+
+/-- Separated validity of the ZF empty-set axiom. -/
+theorem separatedIsTrue_emptySet
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] :
+    SeparatedIsTrue.{u, v} (𝔹 := 𝔹) ZF.emptySet :=
+  separatedIsTrue_of_isTrue ZF.isTrue_emptySet
+
+/-- Separated validity of the ZF pairing axiom. -/
+theorem separatedIsTrue_pairing
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] :
+    SeparatedIsTrue.{u, v} (𝔹 := 𝔹) ZF.pairing :=
+  separatedIsTrue_of_isTrue ZF.isTrue_pairing
+
+/-- Separated validity of the ZF union axiom. -/
+theorem separatedIsTrue_union
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] :
+    SeparatedIsTrue.{u, v} (𝔹 := 𝔹) ZF.union :=
+  separatedIsTrue_of_isTrue ZF.isTrue_union
+
+end SetTheory
+end BooleanValued
