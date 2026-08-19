@@ -13,8 +13,8 @@ import Mathlib.SetTheory.ZFC.PSet
 # Ground-model semantics for pure set theory
 
 This file interprets the same Mathlib first-order language used by the
-Boolean-valued universe on Mathlib ground-model pre-sets.  Truth values are
-ordinary propositions.  The resulting semantics is the ground side of M007
+Boolean-valued universe on Mathlib ground-model pre-sets. Truth values are
+ordinary propositions. The resulting semantics is the ground side of M007
 standard-name absoluteness.
 -/
 
@@ -23,7 +23,7 @@ universe u w
 namespace BooleanValued
 namespace SetTheory
 
-/-- The ordinary set-theory structure on Mathlib pre-sets.  Extensional
+/-- The ordinary set-theory structure on Mathlib pre-sets. Extensional
 pre-set equivalence interprets equality and pre-set membership interprets the
 sole relation symbol. -/
 def groundStructure :
@@ -56,13 +56,14 @@ theorem groundStructure_lawful :
     intro n R a b
     cases R with
     | mem =>
-        change
-          ((∀ i : Fin 2, PSet.Equiv (a i) (b i)) ∧ a 0 ∈ a 1) →
-            b 0 ∈ b 1
-        rintro ⟨hab, hmem⟩
-        have hleft : b 0 ∈ a 1 :=
-          (PSet.Mem.congr_left (hab 0)).mp hmem
-        exact (PSet.Mem.congr_right (hab 1)).mp hleft
+        have h :
+            ((∀ i : Fin 2, PSet.Equiv (a i) (b i)) ∧ a 0 ∈ a 1) →
+              b 0 ∈ b 1 := by
+          rintro ⟨hab, hmem⟩
+          have hleft : b 0 ∈ a 1 :=
+            (PSet.Mem.congr_left (hab 0)).mp hmem
+          exact (PSet.Mem.congr_right (hab 1)).mp hleft
+        simpa only [groundStructure, iInf_Prop_eq, inf_Prop_eq] using h
 
 /-- Evaluate a pure set-theory term in the ground pre-set universe. -/
 def groundEvalTerm {α : Type w}
@@ -140,8 +141,9 @@ theorem groundTruth_all
     (boundAssignment : Fin n → PSet.{u}) :
     groundTruth (.all φ) assignment boundAssignment ↔
       ∀ x : PSet.{u},
-        groundTruth φ assignment (Fin.snoc boundAssignment x) :=
-  Iff.rfl
+        groundTruth φ assignment (Fin.snoc boundAssignment x) := by
+  simp only [groundTruth, BooleanValued.FirstOrder.BoundedFormula.truth_all,
+    iInf_Prop_eq]
 
 @[simp]
 theorem groundTruth_ex
