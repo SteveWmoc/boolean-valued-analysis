@@ -5,7 +5,6 @@ Authors: Steven Sabean
 -/
 
 import BooleanValuedAnalysis.Bounded
-import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Direct Boolean-valued set constructors for basic ZF axioms
@@ -34,19 +33,40 @@ theorem mem_eq_iSup (z x : BVSet.{u, v} 𝔹) :
 @[simp]
 theorem mem_empty (z : BVSet.{u, v} 𝔹) :
     mem z (∅ : BVSet.{u, v} 𝔹) = ⊥ := by
-  simp [mem_eq_iSup, empty]
+  rw [mem_eq_iSup]
+  apply bot_unique
+  apply iSup_le
+  intro i
+  change PEmpty at i
+  exact PEmpty.elim i
 
 /-- The unordered pair of two Boolean-valued sets, with both entries carrying
-coefficient `⊤`. -/
+coefficient `⊤`. The two-point index type is universe-polymorphic. -/
 def pair (x y : BVSet.{u, v} 𝔹) : BVSet.{u, v} 𝔹 :=
-  BVSet.mk (Fin 2) ![x, y] (fun _ => ⊤)
+  BVSet.mk (PUnit.{u} ⊕ PUnit.{u})
+    (Sum.elim (fun _ => x) (fun _ => y))
+    (fun _ => ⊤)
 
 /-- Membership in a Boolean-valued pair is the join of equality with either
 entry. This remains valid when the two entries are partially or fully equal. -/
 @[simp]
 theorem mem_pair (z x y : BVSet.{u, v} 𝔹) :
     mem z (pair x y) = bvEq z x ⊔ bvEq z y := by
-  simp [pair, mem_eq_iSup]
+  rw [mem_eq_iSup]
+  simp only [pair, mk_index, mk_weight, mk_child, top_inf_eq]
+  apply le_antisymm
+  · apply iSup_le
+    intro i
+    cases i with
+    | inl p =>
+        cases p
+        exact le_sup_left
+    | inr p =>
+        cases p
+        exact le_sup_right
+  · apply sup_le
+    · exact le_iSup_of_le (Sum.inl PUnit.unit) le_rfl
+    · exact le_iSup_of_le (Sum.inr PUnit.unit) le_rfl
 
 /-- One-level union of a Boolean-valued set. A grandchild receives the meet of
 the outer and inner coefficients along the two-step membership path. -/
@@ -68,11 +88,20 @@ theorem mem_union (z x : BVSet.{u, v} 𝔹) :
   · apply iSup_le
     rintro ⟨i, j⟩
     apply le_iSup_of_le i
+    change
+      (x.weight i ⊓ (x.child i).weight j) ⊓
+          bvEq z ((x.child i).child j) ≤
+        x.weight i ⊓ mem z (x.child i)
     rw [mem_eq_iSup, inf_iSup_eq]
     apply le_iSup_of_le j
     exact le_of_eq (by ac_rfl)
   · apply iSup_le
     intro i
+    change
+      x.weight i ⊓ mem z (x.child i) ≤
+        ⨆ p : Sigma fun i : x.Index => (x.child i).Index,
+          (x.weight p.1 ⊓ (x.child p.1).weight p.2) ⊓
+            bvEq z ((x.child p.1).child p.2)
     rw [mem_eq_iSup, inf_iSup_eq]
     apply iSup_le
     intro j
