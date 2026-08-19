@@ -191,6 +191,204 @@ private theorem groundTruth_setMem {α : Type w} {n : ℕ}
         groundEvalTerm (Sum.elim assignment boundAssignment) t₂ := by
   simp [BoundedFormula.mem]
 
+private theorem truth_check_boundedExists_step
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+    {α : Type w} {n : ℕ} {body : BoundedFormula α (n + 1)}
+    (bound : Term (α ⊕ Fin n))
+    (ih : ∀ (assignment : α → PSet.{u})
+        (boundAssignment : Fin (n + 1) → PSet.{u}),
+      truth body
+          (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+          (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i)) =
+        classicalValue (𝔹 := 𝔹)
+          (groundTruth body assignment boundAssignment))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    truth (BoundedFormula.boundedExists bound body)
+        (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+        (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i)) =
+      classicalValue (𝔹 := 𝔹)
+        (groundTruth (BoundedFormula.boundedExists bound body)
+          assignment boundAssignment) := by
+  rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
+  rw [sumElim_check assignment boundAssignment]
+  rw [evalTerm_check]
+  rw [BVSet.boundedExists_check]
+  let x : PSet.{u} :=
+    groundEvalTerm (Sum.elim assignment boundAssignment) bound
+  have hjoin :
+      (⨆ i : x.Type,
+        truth body
+          (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+          (Fin.snoc
+            (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
+            (BVSet.check (𝔹 := 𝔹) (x.Func i)))) =
+        ⨆ i : x.Type,
+          classicalValue (𝔹 := 𝔹)
+            (groundTruth body assignment
+              (Fin.snoc boundAssignment (x.Func i))) := by
+    apply le_antisymm
+    · apply iSup_le
+      intro i
+      have hsnoc :
+          Fin.snoc
+              (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
+              (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
+            (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
+              Fin.snoc boundAssignment (x.Func i) := by
+        exact (Fin.comp_snoc
+          (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
+          boundAssignment (x.Func i)).symm
+      rw [hsnoc]
+      calc
+        truth body
+            (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+            ((fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
+              Fin.snoc boundAssignment (x.Func i)) =
+            classicalValue (𝔹 := 𝔹)
+              (groundTruth body assignment
+                (Fin.snoc boundAssignment (x.Func i))) :=
+          ih assignment (Fin.snoc boundAssignment (x.Func i))
+        _ ≤ ⨆ j : x.Type,
+            classicalValue (𝔹 := 𝔹)
+              (groundTruth body assignment
+                (Fin.snoc boundAssignment (x.Func j))) :=
+          le_iSup
+            (fun j : x.Type =>
+              classicalValue (𝔹 := 𝔹)
+                (groundTruth body assignment
+                  (Fin.snoc boundAssignment (x.Func j)))) i
+    · apply iSup_le
+      intro i
+      apply le_iSup_of_le i
+      have hsnoc :
+          Fin.snoc
+              (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
+              (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
+            (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
+              Fin.snoc boundAssignment (x.Func i) := by
+        exact (Fin.comp_snoc
+          (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
+          boundAssignment (x.Func i)).symm
+      rw [hsnoc]
+      exact le_of_eq
+        (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
+  rw [hjoin, iSup_classicalValue]
+  apply classicalValue_congr
+  exact
+    (BoundedFormula.groundTruth_boundedExists_iff_exists_child
+      bound body assignment boundAssignment).symm
+
+private theorem truth_check_boundedForall_step
+    {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+    {α : Type w} {n : ℕ} {body : BoundedFormula α (n + 1)}
+    (bound : Term (α ⊕ Fin n))
+    (ih : ∀ (assignment : α → PSet.{u})
+        (boundAssignment : Fin (n + 1) → PSet.{u}),
+      truth body
+          (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+          (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i)) =
+        classicalValue (𝔹 := 𝔹)
+          (groundTruth body assignment boundAssignment))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    truth (BoundedFormula.boundedForall bound body)
+        (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+        (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i)) =
+      classicalValue (𝔹 := 𝔹)
+        (groundTruth (BoundedFormula.boundedForall bound body)
+          assignment boundAssignment) := by
+  rw [BoundedFormula.truth_boundedForall_eq_boundedForall]
+  rw [sumElim_check assignment boundAssignment]
+  rw [evalTerm_check]
+  rw [BVSet.boundedForall_check]
+  let x : PSet.{u} :=
+    groundEvalTerm (Sum.elim assignment boundAssignment) bound
+  have hmeet :
+      (⨅ i : x.Type,
+        truth body
+          (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+          (Fin.snoc
+            (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
+            (BVSet.check (𝔹 := 𝔹) (x.Func i)))) =
+        ⨅ i : x.Type,
+          classicalValue (𝔹 := 𝔹)
+            (groundTruth body assignment
+              (Fin.snoc boundAssignment (x.Func i))) := by
+    apply le_antisymm
+    · apply le_iInf
+      intro i
+      calc
+        (⨅ j : x.Type,
+          truth body
+            (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+            (Fin.snoc
+              (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+              (BVSet.check (𝔹 := 𝔹) (x.Func j)))) ≤
+            truth body
+              (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+              (Fin.snoc
+                (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+                (BVSet.check (𝔹 := 𝔹) (x.Func i))) :=
+          iInf_le
+            (fun j : x.Type =>
+              truth body
+                (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+                (Fin.snoc
+                  (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+                  (BVSet.check (𝔹 := 𝔹) (x.Func j)))) i
+        _ = classicalValue (𝔹 := 𝔹)
+            (groundTruth body assignment
+              (Fin.snoc boundAssignment (x.Func i))) := by
+          have hsnoc :
+              Fin.snoc
+                  (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+                  (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
+                (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
+                  Fin.snoc boundAssignment (x.Func i) := by
+            exact (Fin.comp_snoc
+              (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
+              boundAssignment (x.Func i)).symm
+          rw [hsnoc]
+          exact ih assignment (Fin.snoc boundAssignment (x.Func i))
+    · apply le_iInf
+      intro i
+      calc
+        (⨅ j : x.Type,
+          classicalValue (𝔹 := 𝔹)
+            (groundTruth body assignment
+              (Fin.snoc boundAssignment (x.Func j)))) ≤
+            classicalValue (𝔹 := 𝔹)
+              (groundTruth body assignment
+                (Fin.snoc boundAssignment (x.Func i))) :=
+          iInf_le
+            (fun j : x.Type =>
+              classicalValue (𝔹 := 𝔹)
+                (groundTruth body assignment
+                  (Fin.snoc boundAssignment (x.Func j)))) i
+        _ = truth body
+            (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+            (Fin.snoc
+              (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+              (BVSet.check (𝔹 := 𝔹) (x.Func i))) := by
+          have hsnoc :
+              Fin.snoc
+                  (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+                  (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
+                (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
+                  Fin.snoc boundAssignment (x.Func i) := by
+            exact (Fin.comp_snoc
+              (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
+              boundAssignment (x.Func i)).symm
+          rw [hsnoc]
+          exact
+            (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
+  rw [hmeet, iInf_classicalValue]
+  apply classicalValue_congr
+  exact
+    (BoundedFormula.groundTruth_boundedForall_iff_forall_child
+      bound body assignment boundAssignment).symm
+
 /-- Exact Δ₀ standard-name absoluteness on raw Boolean-valued names. -/
 theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
     {α : Type w} {n : ℕ} {φ : BoundedFormula α n}
@@ -244,165 +442,11 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       rw [truth_imp, ihleft, ihrigh, groundTruth_imp]
       exact himp_classicalValue (𝔹 := 𝔹) _ _
   | boundedExists bound hbody ih =>
-      rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
-      rw [sumElim_check assignment boundAssignment]
-      rw [evalTerm_check]
-      rw [BVSet.boundedExists_check]
-      let x : PSet.{u} :=
-        groundEvalTerm (Sum.elim assignment boundAssignment) bound
-      have hjoin :
-          (⨆ i : x.Type,
-            truth _
-              (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-              (Fin.snoc
-                (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
-                (BVSet.check (𝔹 := 𝔹) (x.Func i)))) =
-            ⨆ i : x.Type,
-              classicalValue (𝔹 := 𝔹)
-                (groundTruth _ assignment
-                  (Fin.snoc boundAssignment (x.Func i))) := by
-        apply le_antisymm
-        · apply iSup_le
-          intro i
-          have hsnoc :
-              Fin.snoc
-                  (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
-                  (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
-                (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
-                  Fin.snoc boundAssignment (x.Func i) := by
-            exact (Fin.comp_snoc
-              (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
-              boundAssignment (x.Func i)).symm
-          rw [hsnoc]
-          calc
-            truth _
-                (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                ((fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
-                  Fin.snoc boundAssignment (x.Func i)) =
-                classicalValue (𝔹 := 𝔹)
-                  (groundTruth _ assignment
-                    (Fin.snoc boundAssignment (x.Func i))) :=
-              ih assignment (Fin.snoc boundAssignment (x.Func i))
-            _ ≤ ⨆ j : x.Type,
-                classicalValue (𝔹 := 𝔹)
-                  (groundTruth _ assignment
-                    (Fin.snoc boundAssignment (x.Func j))) :=
-              le_iSup
-                (fun j : x.Type =>
-                  classicalValue (𝔹 := 𝔹)
-                    (groundTruth _ assignment
-                      (Fin.snoc boundAssignment (x.Func j)))) i
-        · apply iSup_le
-          intro i
-          apply le_iSup_of_le i
-          have hsnoc :
-              Fin.snoc
-                  (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
-                  (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
-                (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
-                  Fin.snoc boundAssignment (x.Func i) := by
-            exact (Fin.comp_snoc
-              (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
-              boundAssignment (x.Func i)).symm
-          rw [hsnoc]
-          exact le_of_eq
-            (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
-      rw [hjoin, iSup_classicalValue]
-      apply classicalValue_congr
-      exact
-        (BoundedFormula.groundTruth_boundedExists_iff_exists_child
-          bound _ assignment boundAssignment).symm
+      exact truth_check_boundedExists_step
+        (𝔹 := 𝔹) bound ih assignment boundAssignment
   | boundedForall bound hbody ih =>
-      rw [BoundedFormula.truth_boundedForall_eq_boundedForall]
-      rw [sumElim_check assignment boundAssignment]
-      rw [evalTerm_check]
-      rw [BVSet.boundedForall_check]
-      let x : PSet.{u} :=
-        groundEvalTerm (Sum.elim assignment boundAssignment) bound
-      have hmeet :
-          (⨅ i : x.Type,
-            truth _
-              (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-              (Fin.snoc
-                (fun j => BVSet.check (𝔹 := 𝔹) (boundAssignment j))
-                (BVSet.check (𝔹 := 𝔹) (x.Func i)))) =
-            ⨅ i : x.Type,
-              classicalValue (𝔹 := 𝔹)
-                (groundTruth _ assignment
-                  (Fin.snoc boundAssignment (x.Func i))) := by
-        apply le_antisymm
-        · apply le_iInf
-          intro i
-          calc
-            (⨅ j : x.Type,
-              truth _
-                (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                (Fin.snoc
-                  (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                  (BVSet.check (𝔹 := 𝔹) (x.Func j)))) ≤
-                truth _
-                  (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                  (Fin.snoc
-                    (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                    (BVSet.check (𝔹 := 𝔹) (x.Func i))) :=
-              iInf_le
-                (fun j : x.Type =>
-                  truth _
-                    (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                    (Fin.snoc
-                      (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                      (BVSet.check (𝔹 := 𝔹) (x.Func j)))) i
-            _ = classicalValue (𝔹 := 𝔹)
-                (groundTruth _ assignment
-                  (Fin.snoc boundAssignment (x.Func i))) := by
-              have hsnoc :
-                  Fin.snoc
-                      (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                      (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
-                    (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
-                      Fin.snoc boundAssignment (x.Func i) := by
-                exact (Fin.comp_snoc
-                  (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
-                  boundAssignment (x.Func i)).symm
-              rw [hsnoc]
-              exact ih assignment (Fin.snoc boundAssignment (x.Func i))
-        · apply le_iInf
-          intro i
-          calc
-            (⨅ j : x.Type,
-              classicalValue (𝔹 := 𝔹)
-                (groundTruth _ assignment
-                  (Fin.snoc boundAssignment (x.Func j)))) ≤
-                classicalValue (𝔹 := 𝔹)
-                  (groundTruth _ assignment
-                    (Fin.snoc boundAssignment (x.Func i))) :=
-              iInf_le
-                (fun j : x.Type =>
-                  classicalValue (𝔹 := 𝔹)
-                    (groundTruth _ assignment
-                      (Fin.snoc boundAssignment (x.Func j)))) i
-            _ = truth _
-                (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                (Fin.snoc
-                  (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                  (BVSet.check (𝔹 := 𝔹) (x.Func i))) := by
-              have hsnoc :
-                  Fin.snoc
-                      (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                      (BVSet.check (𝔹 := 𝔹) (x.Func i)) =
-                    (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y) ∘
-                      Fin.snoc boundAssignment (x.Func i) := by
-                exact (Fin.comp_snoc
-                  (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
-                  boundAssignment (x.Func i)).symm
-              rw [hsnoc]
-              exact
-                (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
-      rw [hmeet, iInf_classicalValue]
-      apply classicalValue_congr
-      exact
-        (BoundedFormula.groundTruth_boundedForall_iff_forall_child
-          bound _ assignment boundAssignment).symm
+      exact truth_check_boundedForall_step
+        (𝔹 := 𝔹) bound ih assignment boundAssignment
 
 /-- Exact Δ₀ standard-name absoluteness on the separated Boolean-valued
 universe. -/
