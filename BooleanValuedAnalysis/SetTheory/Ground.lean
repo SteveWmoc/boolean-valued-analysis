@@ -56,21 +56,20 @@ theorem groundStructure_lawful :
     intro n R a b
     cases R with
     | mem =>
-        have h :
-            ((∀ i : Fin 2, PSet.Equiv (a i) (b i)) ∧ a 0 ∈ a 1) →
-              b 0 ∈ b 1 := by
+        let A : Prop := (∀ i : Fin 2, PSet.Equiv (a i) (b i)) ∧ a 0 ∈ a 1
+        let B : Prop := b 0 ∈ b 1
+        have h : A → B := by
           rintro ⟨hab, hmem⟩
           have hleft : b 0 ∈ a 1 :=
             (PSet.Mem.congr_left (hab 0)).mp hmem
           exact (PSet.Mem.congr_right (hab 1)).mp hleft
         simp only [groundStructure, iInf_Prop_eq, inf_Prop_eq]
-        rw [← inf_eq_left]
-        rw [inf_Prop_eq]
-        apply propext
-        constructor
-        · exact And.left
-        · intro ha
-          exact ⟨ha, h ha⟩
+        change A ≤ B
+        classical
+        by_cases hA : A
+        · have hB : B := h hA
+          simpa [hA, hB]
+        · simpa [hA]
 
 /-- Evaluate a pure set-theory term in the ground pre-set universe. -/
 def groundEvalTerm {α : Type w}
