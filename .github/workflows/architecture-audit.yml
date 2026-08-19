@@ -124,3 +124,6 @@ jobs:
 
       - name: Compile M007 acceptance probe
         run: lake env lean Audit/M007Acceptance.lean
+
+      - name: Compile M008 acceptance probe
+        run: lake env lean Audit/M008Acceptance.lean
