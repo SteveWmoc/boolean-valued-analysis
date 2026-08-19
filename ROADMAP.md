@@ -23,7 +23,9 @@ The repository currently provides:
 - a maximum principle for extensional Boolean-valued predicates and existential formula truth under an explicit Boolean-algebra smallness hypothesis;
 - a separated Boolean-valued universe obtained by quotienting raw names by top-valued equality, with the full Boolean values of equality and membership descended to the quotient;
 - a lawful set-theory structure on the separated carrier whose formula truth agrees exactly with the raw semantics after quotienting assignments;
-- elementary descent of separated names by top-valued membership, with pointwise checked-name compatibility.
+- elementary descent of separated names by top-valued membership, with pointwise checked-name compatibility;
+- ordinary `Prop`-valued semantics for the same pure set-theory syntax on Mathlib `PSet`, lawful under extensional pre-set equivalence;
+- a Δ₀ predicate over the existing syntax and exact standard-name absoluteness for raw and separated canonical names, without a `Small` hypothesis.
 
 These components form the foundation for the milestones below.
 
@@ -157,25 +159,34 @@ R6 is intentionally split into several layers rather than treating “Transfer�
 3. isolate the logical soundness needed to pass from Boolean-valid axioms to Boolean-valid theorems;
 4. later build typed ascent/descent interfaces for algebraic and analytic applications.
 
-The first milestone is designed before any implementation so that universe and smallness assumptions remain visible.
+### M007 — Ground semantics and Δ₀ standard-name absoluteness — complete
 
-### M007 — Ground semantics and Δ₀ standard-name absoluteness — planned
+Completed 2026-08-18.
 
-M007 will interpret the existing Mathlib set-theory syntax on `PSet` with ordinary `Prop` truth values and identify the Δ₀ fragment by a predicate over that existing syntax rather than introducing a second formula datatype.
+M007 interprets the existing Mathlib set-theory syntax on `PSet` with ordinary `Prop` truth values through `SetTheory.groundStructure`, and proves that this structure is lawful with respect to `PSet.Equiv`. Ground formula wrappers reuse the generic M001 evaluator rather than introducing a parallel semantic engine.
 
-For Δ₀ formulas, assignments of ground pre-sets should satisfy an exact canonical-name comparison: Boolean-valued truth on the corresponding `BVSet.check` names is `⊤` precisely when the ground statement is true and `⊥` otherwise. The separated theorem should then follow through the M006 exact raw/separated bridge.
+`SetTheory.BoundedFormula.IsDelta0` is an inductive predicate over the existing syntax. It admits falsum, equality, membership, implication, and quantifiers introduced through the project’s `boundedExists` and `boundedForall` constructors; there is no constructor for unrestricted quantification.
 
-The crucial bounded-quantifier step will reuse M002’s weighted-child semantics. Because `check x` has exactly the checked children of `x`, all with coefficient `⊤`, set-bounded quantification reduces to ground quantification over the members of `x` without claiming that arbitrary Boolean-valued names are standard.
+The core theorem `SetTheory.truth_check_of_delta0` proves an exact comparison for independent universes `u`, `v`, and `w`:
 
-M007 preserves independent universes `u`, `v`, and `w`, introduces no general ascent, and must not require `[Small.{u} 𝔹]`. Standard names in this stage are specifically `PSet` values mapped by `check`/`checkSeparated`; arbitrary Lean objects and typed functions require explicit set encodings until later application-level interfaces are designed.
+```text
+truth φ (check ∘ assignment) (check ∘ boundAssignment)
+  = classicalValue (groundTruth φ assignment boundAssignment).
+```
 
-Design specification: [`docs/milestones/007-delta0-absoluteness.md`](docs/milestones/007-delta0-absoluteness.md)
+The bounded induction steps use M002’s weighted-child semantics. Ground bounded quantifiers are separately reduced to the actual `PSet` children of their bounding term, while `BVSet.boundedExists_check` and `BVSet.boundedForall_check` reduce the checked Boolean side to those same checked children. Atomic cases reuse the canonical-name `⊤`/`⊥` dichotomies, and Boolean implication is handled by the classical-value embedding.
 
-### Later R6 milestones — staged after M007
+`SetTheory.separatedTruth_checkSeparated_of_delta0` is then obtained through the exact M006 raw/separated truth bridge, so the downstream Transfer-facing carrier remains `BVSet.Separated`.
 
-The next implementation target after M007 should be a small Boolean-valid ZF fragment, probably beginning with axioms admitting direct constructions such as extensionality, empty set, pairing, and union. Separation, infinity, foundation, powerset, replacement, and choice should be ordered by formal dependency rather than textbook order.
+M007 introduces no `[Small.{u} 𝔹]`, no general ascent, no quotient representative selector, no `Shrink` or Zorn machinery, and no equality between universes. `Audit/M007Acceptance.lean` exercises the ground structure, bounded child semantics, atomic and nested bounded Δ₀ formulas, rejection of an unrestricted universal formula, and the exact raw and separated comparison theorems.
 
-A theorem deserving the name **Transfer Principle** should be stated only after the project has both a sufficient Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
+Specification and completion record: [`docs/milestones/007-delta0-absoluteness.md`](docs/milestones/007-delta0-absoluteness.md)
+
+### M008 — First Boolean-valid ZF fragment — next
+
+The next target is a deliberately small Boolean-valid ZF fragment rather than a theorem called Transfer. Begin with axioms whose direct constructions exercise the existing representation without requiring the full maximum-principle or general-ascent machinery. Extensionality, empty set, pairing, and union are the leading candidates; the exact first implementation slice should be fixed by an M008 design specification.
+
+Later separation, infinity, foundation, powerset, replacement, and choice should be ordered by formal dependency rather than textbook order. A theorem deserving the name **Transfer Principle** should be stated only after the project has both a sufficient Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
 General ascent of arbitrary separated families and typed ascents of functions, relations, homomorphisms, vector spaces, operators, and other structures remain deferred until a concrete application specifies the necessary size, extensionality, and functorial requirements.
 

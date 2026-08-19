@@ -21,6 +21,7 @@ import BooleanValuedAnalysis.SetTheory.Lawful
 import BooleanValuedAnalysis.SetTheory.Structural
 import BooleanValuedAnalysis.SetTheory.BoundedQuantifier
 import BooleanValuedAnalysis.SetTheory.BoundedQuantifierSemantics
+import BooleanValuedAnalysis.SetTheory.Ground
 import BooleanValuedAnalysis.Equality
 import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.Bounded
@@ -30,6 +31,7 @@ import BooleanValuedAnalysis.Maximum
 import BooleanValuedAnalysis.Separated
 import BooleanValuedAnalysis.Descent
 import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
+import BooleanValuedAnalysis.SetTheory.Delta0
 
 /-!
 # Boolean-Valued Analysis
@@ -39,8 +41,9 @@ It exports raw Boolean-valued pre-sets, their equality and membership semantics,
 generic Boolean-valued first-order structures, relabeling, lifting, substitution,
 lawfulness, formula extensionality and structural corollaries, set-theoretic
 formula semantics including syntactic set-bounded quantifiers and their
-weighted-child semantics, extensional predicates, weighted-child bounded
-quantifiers, canonical ground-model names, Boolean-valued mixtures with
+weighted-child semantics, ordinary ground-model formula semantics on Mathlib
+pre-sets, Δ₀ standard-name absoluteness, extensional predicates, weighted-child
+bounded quantifiers, canonical ground-model names, Boolean-valued mixtures with
 partition-based mixing lemmas, small witness partitions, the maximum principle
 for extensional Boolean-valued predicates, realization of existential formula
 truth by Boolean-valued witnesses, the separated Boolean-valued universe with
