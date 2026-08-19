@@ -27,7 +27,7 @@ namespace BoundedFormula
 
 variable {α : Type w}
 
-/-- The Δ₀ fragment of the existing set-theory syntax.  Quantifiers enter this
+/-- The Δ₀ fragment of the existing set-theory syntax. Quantifiers enter this
 fragment only through the project's syntactic set-bounded constructors. -/
 inductive IsDelta0 : {n : ℕ} → BoundedFormula α n → Prop where
   | falsum {n : ℕ} : IsDelta0 (.falsum : BoundedFormula α n)
@@ -74,17 +74,19 @@ theorem iSup_classicalValue {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       classicalValue (𝔹 := 𝔹) (∃ i, p i) := by
   classical
   by_cases h : ∃ i, p i
-  · rcases h with ⟨i, hi⟩
-    rw [show classicalValue (𝔹 := 𝔹) (∃ i, p i) = ⊤ by
-      simp [classicalValue, ⟨i, hi⟩]]
+  · obtain ⟨i, hi⟩ := h
+    have htarget : classicalValue (𝔹 := 𝔹) (∃ i, p i) = ⊤ := by
+      simp [classicalValue, h]
+    rw [htarget]
     apply top_unique
     calc
       ⊤ = classicalValue (𝔹 := 𝔹) (p i) := by
         simp [classicalValue, hi]
-      _ ≤ ⨆ j, classicalValue (𝔹 := 𝔹) (p j) := le_iSup _ i
+      _ ≤ ⨆ j, classicalValue (𝔹 := 𝔹) (p j) :=
+        le_iSup (fun j => classicalValue (𝔹 := 𝔹) (p j)) i
   · have hp : ∀ i, ¬ p i := by
       simpa only [not_exists] using h
-    simp [classicalValue, h, hp]
+    simp [classicalValue, hp]
 
 /-- Classical values commute with arbitrary universal meets. -/
 theorem iInf_classicalValue {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
@@ -96,13 +98,15 @@ theorem iInf_classicalValue {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
   · simp [classicalValue, h]
   · have hex : ∃ i, ¬ p i := by
       simpa only [not_forall] using h
-    rcases hex with ⟨i, hi⟩
-    rw [show classicalValue (𝔹 := 𝔹) (∀ i, p i) = ⊥ by
-      simp [classicalValue, h]]
+    obtain ⟨i, hi⟩ := hex
+    have htarget : classicalValue (𝔹 := 𝔹) (∀ i, p i) = ⊥ := by
+      simp [classicalValue, h]
+    rw [htarget]
     apply bot_unique
     calc
       (⨅ j, classicalValue (𝔹 := 𝔹) (p j)) ≤
-          classicalValue (𝔹 := 𝔹) (p i) := iInf_le _ i
+          classicalValue (𝔹 := 𝔹) (p i) :=
+        iInf_le (fun j => classicalValue (𝔹 := 𝔹) (p j)) i
       _ = ⊥ := by simp [classicalValue, hi]
 
 /-- Term evaluation commutes with the canonical-name embedding. -/
@@ -126,6 +130,8 @@ private theorem sumElim_check {𝔹 : Type v} [Top 𝔹]
         (Sum.elim assignment boundAssignment z) := by
   funext z
   cases z <;> rfl
+
+end SetTheory
 
 namespace BVSet
 
@@ -153,6 +159,28 @@ theorem boundedForall_check {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 end BVSet
 
+namespace SetTheory
+
+private theorem truth_setMem {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+    {α : Type w} {n : ℕ}
+    (t₁ t₂ : Term (α ⊕ Fin n))
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
+    truth (BoundedFormula.mem t₁ t₂) assignment boundAssignment =
+      BVSet.mem
+        (evalTerm (Sum.elim assignment boundAssignment) t₁)
+        (evalTerm (Sum.elim assignment boundAssignment) t₂) := by
+  simp [BoundedFormula.mem]
+
+private theorem groundTruth_setMem {α : Type w} {n : ℕ}
+    (t₁ t₂ : Term (α ⊕ Fin n))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (BoundedFormula.mem t₁ t₂) assignment boundAssignment ↔
+      groundEvalTerm (Sum.elim assignment boundAssignment) t₁ ∈
+        groundEvalTerm (Sum.elim assignment boundAssignment) t₂ := by
+  simp [BoundedFormula.mem]
+
 /-- Exact Δ₀ standard-name absoluteness on raw Boolean-valued names. -/
 theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
     {α : Type w} {n : ℕ} {φ : BoundedFormula α n}
@@ -164,7 +192,7 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
         (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i)) =
       classicalValue (𝔹 := 𝔹)
         (groundTruth φ assignment boundAssignment) := by
-  induction hφ generalizing assignment boundAssignment with
+  induction hφ generalizing assignment with
   | falsum =>
       change (⊥ : 𝔹) = classicalValue (𝔹 := 𝔹) False
       exact classicalValue_false.symm
@@ -191,19 +219,7 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       · rw [BVSet.check_bvEq_bot_of_not_equiv h]
         simp [classicalValue, h]
   | mem t₁ t₂ =>
-      change
-        BVSet.mem
-            (evalTerm
-              (Sum.elim
-                (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i))) t₁)
-            (evalTerm
-              (Sum.elim
-                (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
-                (fun i => BVSet.check (𝔹 := 𝔹) (boundAssignment i))) t₂) =
-          classicalValue (𝔹 := 𝔹)
-            (groundEvalTerm (Sum.elim assignment boundAssignment) t₁ ∈
-              groundEvalTerm (Sum.elim assignment boundAssignment) t₂)
+      rw [truth_setMem, groundTruth_setMem]
       rw [sumElim_check assignment boundAssignment]
       rw [evalTerm_check, evalTerm_check]
       classical
@@ -215,15 +231,7 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       · rw [BVSet.check_mem_bot_of_not_mem h]
         simp [classicalValue, h]
   | imp hleft hright ihleft ihrigh =>
-      rw [truth_imp, ihleft, ihrigh]
-      change
-        classicalValue (𝔹 := 𝔹)
-              (groundTruth _ assignment boundAssignment) ⇨
-            classicalValue (𝔹 := 𝔹)
-              (groundTruth _ assignment boundAssignment) =
-          classicalValue (𝔹 := 𝔹)
-            (groundTruth _ assignment boundAssignment →
-              groundTruth _ assignment boundAssignment)
+      rw [truth_imp, ihleft, ihrigh, groundTruth_imp]
       classical
       by_cases hp : groundTruth _ assignment boundAssignment <;>
         by_cases hq : groundTruth _ assignment boundAssignment <;>
@@ -271,7 +279,12 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
             _ ≤ ⨆ j : x.Type,
                 classicalValue (𝔹 := 𝔹)
                   (groundTruth _ assignment
-                    (Fin.snoc boundAssignment (x.Func j))) := le_iSup _ i
+                    (Fin.snoc boundAssignment (x.Func j))) :=
+              le_iSup
+                (fun j : x.Type =>
+                  classicalValue (𝔹 := 𝔹)
+                    (groundTruth _ assignment
+                      (Fin.snoc boundAssignment (x.Func j)))) i
         · apply iSup_le
           intro i
           apply le_iSup_of_le i
@@ -285,12 +298,13 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
               (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
               boundAssignment (x.Func i)).symm
           rw [hsnoc]
-          exact le_of_eq (ih assignment
-            (Fin.snoc boundAssignment (x.Func i))).symm
+          exact le_of_eq
+            (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
       rw [hjoin, iSup_classicalValue]
       apply classicalValue_congr
-      exact (BoundedFormula.groundTruth_boundedExists_iff_exists_child
-        bound hbody assignment boundAssignment).symm
+      exact
+        (BoundedFormula.groundTruth_boundedExists_iff_exists_child
+          bound _ assignment boundAssignment).symm
   | boundedForall bound hbody ih =>
       rw [BoundedFormula.truth_boundedForall_eq_boundedForall]
       rw [sumElim_check assignment boundAssignment]
@@ -323,7 +337,14 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
                   (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
                   (Fin.snoc
                     (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
-                    (BVSet.check (𝔹 := 𝔹) (x.Func i))) := iInf_le _ i
+                    (BVSet.check (𝔹 := 𝔹) (x.Func i))) :=
+              iInf_le
+                (fun j : x.Type =>
+                  truth _
+                    (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
+                    (Fin.snoc
+                      (fun k => BVSet.check (𝔹 := 𝔹) (boundAssignment k))
+                      (BVSet.check (𝔹 := 𝔹) (x.Func j)))) i
             _ = classicalValue (𝔹 := 𝔹)
                 (groundTruth _ assignment
                   (Fin.snoc boundAssignment (x.Func i))) := by
@@ -347,7 +368,12 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
                   (Fin.snoc boundAssignment (x.Func j)))) ≤
                 classicalValue (𝔹 := 𝔹)
                   (groundTruth _ assignment
-                    (Fin.snoc boundAssignment (x.Func i))) := iInf_le _ i
+                    (Fin.snoc boundAssignment (x.Func i))) :=
+              iInf_le
+                (fun j : x.Type =>
+                  classicalValue (𝔹 := 𝔹)
+                    (groundTruth _ assignment
+                      (Fin.snoc boundAssignment (x.Func j)))) i
             _ = truth _
                 (fun a => BVSet.check (𝔹 := 𝔹) (assignment a))
                 (Fin.snoc
@@ -363,11 +389,13 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
                   (fun y : PSet.{u} => BVSet.check (𝔹 := 𝔹) y)
                   boundAssignment (x.Func i)).symm
               rw [hsnoc]
-              exact (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
+              exact
+                (ih assignment (Fin.snoc boundAssignment (x.Func i))).symm
       rw [hmeet, iInf_classicalValue]
       apply classicalValue_congr
-      exact (BoundedFormula.groundTruth_boundedForall_iff_forall_child
-        bound hbody assignment boundAssignment).symm
+      exact
+        (BoundedFormula.groundTruth_boundedForall_iff_forall_child
+          bound _ assignment boundAssignment).symm
 
 /-- Exact Δ₀ standard-name absoluteness on the separated Boolean-valued
 universe. -/
