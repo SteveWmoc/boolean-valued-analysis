@@ -59,13 +59,9 @@ theorem mem_pair (z x y : BVSet.{u, v} 𝔹) :
   apply le_antisymm
   · apply iSup_le
     intro i
-    cases h : i.down with
-    | false =>
-        simp only [h, Bool.false_eq, ↓reduceIte]
-        exact le_sup_left
-    | true =>
-        simp only [h, ↓reduceIte]
-        exact le_sup_right
+    cases i.down with
+    | false => exact le_sup_left
+    | true => exact le_sup_right
   · apply sup_le
     · apply le_iSup_of_le (ULift.up false)
       simp
