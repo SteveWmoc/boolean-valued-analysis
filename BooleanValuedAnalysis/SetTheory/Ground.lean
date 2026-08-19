@@ -208,5 +208,95 @@ theorem groundTruth_snoc_congr
     · simp only [Fin.snoc_castSucc]
       exact PSet.Equiv.refl _
 
+namespace BoundedFormula
+
+private theorem castAdd_one_eq_castSucc_ground {n : ℕ} (i : Fin n) :
+    Fin.castAdd 1 i = Fin.castSucc i := by
+  apply Fin.ext
+  rfl
+
+/-- Ground semantics of a syntactic set-bounded existential quantifier. -/
+@[simp]
+theorem groundTruth_boundedExists
+    (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (boundedExists bound body) assignment boundAssignment ↔
+      ∃ y : PSet.{u},
+        y ∈ groundEvalTerm (Sum.elim assignment boundAssignment) bound ∧
+          groundTruth body assignment (Fin.snoc boundAssignment y) := by
+  cases bound with
+  | var z =>
+      cases z with
+      | inl a =>
+          simp [boundedExists, mem, groundTruth, groundStructure, groundEvalTerm]
+      | inr i =>
+          simp [boundedExists, mem, groundTruth, groundStructure, groundEvalTerm,
+            castAdd_one_eq_castSucc_ground i]
+  | func f _ =>
+      nomatch f
+
+/-- Ground semantics of a syntactic set-bounded universal quantifier. -/
+@[simp]
+theorem groundTruth_boundedForall
+    (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (boundedForall bound body) assignment boundAssignment ↔
+      ∀ y : PSet.{u},
+        y ∈ groundEvalTerm (Sum.elim assignment boundAssignment) bound →
+          groundTruth body assignment (Fin.snoc boundAssignment y) := by
+  cases bound with
+  | var z =>
+      cases z with
+      | inl a =>
+          simp [boundedForall, mem, groundTruth, groundStructure, groundEvalTerm]
+      | inr i =>
+          simp [boundedForall, mem, groundTruth, groundStructure, groundEvalTerm,
+            castAdd_one_eq_castSucc_ground i]
+  | func f _ =>
+      nomatch f
+
+/-- Ground bounded existential truth can be computed over the actual children
+of the interpreted bounding pre-set. -/
+theorem groundTruth_boundedExists_iff_exists_child
+    (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (boundedExists bound body) assignment boundAssignment ↔
+      ∃ i : (groundEvalTerm (Sum.elim assignment boundAssignment) bound).Type,
+        groundTruth body assignment
+          (Fin.snoc boundAssignment
+            ((groundEvalTerm (Sum.elim assignment boundAssignment) bound).Func i)) := by
+  rw [groundTruth_boundedExists]
+  constructor
+  · rintro ⟨y, hy, hbody⟩
+    rcases hy with ⟨i, hi⟩
+    refine ⟨i, ?_⟩
+    exact (groundTruth_snoc_congr body assignment boundAssignment hi).mp hbody
+  · rintro ⟨i, hbody⟩
+    refine ⟨(groundEvalTerm (Sum.elim assignment boundAssignment) bound).Func i, ?_, hbody⟩
+    exact PSet.func_mem _ i
+
+/-- Ground bounded universal truth can be computed over the actual children
+of the interpreted bounding pre-set. -/
+theorem groundTruth_boundedForall_iff_forall_child
+    (bound : Term (α ⊕ Fin n)) (body : BoundedFormula α (n + 1))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (boundedForall bound body) assignment boundAssignment ↔
+      ∀ i : (groundEvalTerm (Sum.elim assignment boundAssignment) bound).Type,
+        groundTruth body assignment
+          (Fin.snoc boundAssignment
+            ((groundEvalTerm (Sum.elim assignment boundAssignment) bound).Func i)) := by
+  rw [groundTruth_boundedForall]
+  constructor
+  · intro h i
+    exact h _ (PSet.func_mem _ i)
+  · intro h y hy
+    rcases hy with ⟨i, hi⟩
+    exact (groundTruth_snoc_congr body assignment boundAssignment hi).mpr (h i)
+
+end BoundedFormula
 end SetTheory
 end BooleanValued
