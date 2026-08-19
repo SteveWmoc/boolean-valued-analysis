@@ -5,6 +5,7 @@ Authors: Steven Sabean
 -/
 
 import BooleanValuedAnalysis.FirstOrder.Extensional
+import BooleanValuedAnalysis.FirstOrder.Lift
 import BooleanValuedAnalysis.Formula
 import BooleanValuedAnalysis.SetTheory.BoundedQuantifier
 import Mathlib.SetTheory.ZFC.PSet
@@ -68,8 +69,8 @@ theorem groundStructure_lawful :
         classical
         by_cases hA : A
         · have hB : B := h hA
-          simpa [hA, hB]
-        · simpa [hA]
+          simp [hA, hB]
+        · simp [hA]
 
 /-- Evaluate a pure set-theory term in the ground pre-set universe. -/
 def groundEvalTerm {α : Type w}
@@ -81,6 +82,35 @@ theorem groundEvalTerm_var {α : Type w}
     (assignment : α → PSet.{u}) (a : α) :
     groundEvalTerm assignment (.var a) = assignment a :=
   rfl
+
+/-- Ground term evaluation commutes with insertion of one fresh bound variable
+immediately above the existing bound-variable context. -/
+@[simp]
+theorem groundEvalTerm_liftAt_one_self
+    {α : Type w} {n : ℕ} (t : Term (α ⊕ Fin n))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) (x : PSet.{u}) :
+    groundEvalTerm (Sum.elim assignment (Fin.snoc boundAssignment x))
+        (t.liftAt 1 n) =
+      groundEvalTerm (Sum.elim assignment boundAssignment) t := by
+  change
+    BooleanValued.FirstOrder.Term.realize groundStructure.{u}
+        (Sum.elim assignment (Fin.snoc boundAssignment x)) (t.liftAt 1 n) =
+      BooleanValued.FirstOrder.Term.realize groundStructure.{u}
+        (Sum.elim assignment boundAssignment) t
+  rw [BooleanValued.FirstOrder.Term.realize_liftAt]
+  apply congrArg
+    (fun f => BooleanValued.FirstOrder.Term.realize groundStructure.{u} f t)
+  funext z
+  cases z with
+  | inl a => rfl
+  | inr i =>
+      simp only [Function.comp_apply, Sum.map_inr, Sum.elim_inr]
+      rw [if_pos i.isLt]
+      have hcast : Fin.castAdd 1 i = Fin.castSucc i := by
+        apply Fin.ext
+        rfl
+      rw [hcast, Fin.snoc_castSucc]
 
 /-- Ordinary propositional truth of a bounded set-theory formula on ground
 pre-sets. -/
@@ -139,6 +169,20 @@ theorem groundTruth_imp
       (groundTruth φ assignment boundAssignment →
         groundTruth ψ assignment boundAssignment) :=
   Iff.rfl
+
+@[simp]
+theorem groundTruth_inf
+    (φ ψ : BoundedFormula α n)
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (φ ⊓ ψ) assignment boundAssignment ↔
+      groundTruth φ assignment boundAssignment ∧
+        groundTruth ψ assignment boundAssignment := by
+  change
+    BooleanValued.FirstOrder.BoundedFormula.truth groundStructure.{u}
+        (φ ⊓ ψ) assignment boundAssignment ↔ _
+  rw [BooleanValued.FirstOrder.BoundedFormula.truth_inf]
+  exact inf_Prop_eq
 
 @[simp]
 theorem groundTruth_all
@@ -210,10 +254,17 @@ theorem groundTruth_snoc_congr
 
 namespace BoundedFormula
 
-private theorem castAdd_one_eq_castSucc_ground {n : ℕ} (i : Fin n) :
-    Fin.castAdd 1 i = Fin.castSucc i := by
-  apply Fin.ext
-  rfl
+/-- Ground semantics of atomic set membership. -/
+@[simp]
+theorem groundTruth_setMem
+    (t₁ t₂ : Term (α ⊕ Fin n))
+    (assignment : α → PSet.{u})
+    (boundAssignment : Fin n → PSet.{u}) :
+    groundTruth (mem t₁ t₂) assignment boundAssignment ↔
+      groundEvalTerm (Sum.elim assignment boundAssignment) t₁ ∈
+        groundEvalTerm (Sum.elim assignment boundAssignment) t₂ := by
+  change groundTruth (.rel Relation.mem ![t₁, t₂]) assignment boundAssignment ↔ _
+  exact groundTruth_mem ![t₁, t₂] assignment boundAssignment
 
 /-- Ground semantics of a syntactic set-bounded existential quantifier. -/
 @[simp]
@@ -225,16 +276,25 @@ theorem groundTruth_boundedExists
       ∃ y : PSet.{u},
         y ∈ groundEvalTerm (Sum.elim assignment boundAssignment) bound ∧
           groundTruth body assignment (Fin.snoc boundAssignment y) := by
-  cases bound with
-  | var z =>
-      cases z with
-      | inl a =>
-          simp [boundedExists, mem, groundTruth, groundStructure, groundEvalTerm]
-      | inr i =>
-          simp [boundedExists, mem, groundTruth, groundStructure, groundEvalTerm,
-            castAdd_one_eq_castSucc_ground i]
-  | func f _ =>
-      nomatch f
+  let fresh : Term (α ⊕ Fin (n + 1)) := .var (.inr (Fin.last n))
+  let lifted : Term (α ⊕ Fin (n + 1)) := bound.liftAt 1 n
+  change groundTruth ((mem fresh lifted ⊓ body).ex) assignment boundAssignment ↔ _
+  rw [groundTruth_ex]
+  constructor
+  · rintro ⟨y, hy⟩
+    rw [groundTruth_inf] at hy
+    refine ⟨y, ?_, hy.2⟩
+    have hmem := (groundTruth_setMem fresh lifted assignment
+      (Fin.snoc boundAssignment y)).mp hy.1
+    simpa only [fresh, lifted, groundEvalTerm_var, Sum.elim_inr,
+      Fin.snoc_last, groundEvalTerm_liftAt_one_self] using hmem
+  · rintro ⟨y, hmem, hbody⟩
+    refine ⟨y, (groundTruth_inf _ _ assignment
+      (Fin.snoc boundAssignment y)).mpr ⟨?_, hbody⟩⟩
+    apply (groundTruth_setMem fresh lifted assignment
+      (Fin.snoc boundAssignment y)).mpr
+    simpa only [fresh, lifted, groundEvalTerm_var, Sum.elim_inr,
+      Fin.snoc_last, groundEvalTerm_liftAt_one_self] using hmem
 
 /-- Ground semantics of a syntactic set-bounded universal quantifier. -/
 @[simp]
@@ -246,16 +306,27 @@ theorem groundTruth_boundedForall
       ∀ y : PSet.{u},
         y ∈ groundEvalTerm (Sum.elim assignment boundAssignment) bound →
           groundTruth body assignment (Fin.snoc boundAssignment y) := by
-  cases bound with
-  | var z =>
-      cases z with
-      | inl a =>
-          simp [boundedForall, mem, groundTruth, groundStructure, groundEvalTerm]
-      | inr i =>
-          simp [boundedForall, mem, groundTruth, groundStructure, groundEvalTerm,
-            castAdd_one_eq_castSucc_ground i]
-  | func f _ =>
-      nomatch f
+  let fresh : Term (α ⊕ Fin (n + 1)) := .var (.inr (Fin.last n))
+  let lifted : Term (α ⊕ Fin (n + 1)) := bound.liftAt 1 n
+  change groundTruth (.all ((mem fresh lifted).imp body)) assignment boundAssignment ↔ _
+  rw [groundTruth_all]
+  constructor
+  · intro h y hmem
+    have hy := h y
+    rw [groundTruth_imp] at hy
+    apply hy
+    apply (groundTruth_setMem fresh lifted assignment
+      (Fin.snoc boundAssignment y)).mpr
+    simpa only [fresh, lifted, groundEvalTerm_var, Sum.elim_inr,
+      Fin.snoc_last, groundEvalTerm_liftAt_one_self] using hmem
+  · intro h y
+    rw [groundTruth_imp]
+    intro hmem
+    apply h y
+    have hm := (groundTruth_setMem fresh lifted assignment
+      (Fin.snoc boundAssignment y)).mp hmem
+    simpa only [fresh, lifted, groundEvalTerm_var, Sum.elim_inr,
+      Fin.snoc_last, groundEvalTerm_liftAt_one_self] using hm
 
 /-- Ground bounded existential truth can be computed over the actual children
 of the interpreted bounding pre-set. -/
