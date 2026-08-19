@@ -54,9 +54,8 @@ entry. This remains valid when the two entries are partially or fully equal. -/
 theorem mem_pair (z x y : BVSet.{u, v} 𝔹) :
     mem z (pair x y) = bvEq z x ⊔ bvEq z y := by
   rw [mem_eq_iSup]
-  change
-    (⨆ i : ULift.{u} Bool,
-      bvEq z (if i.down then y else x)) = bvEq z x ⊔ bvEq z y
+  unfold pair
+  simp only [mk_index, mk_weight, mk_child, top_inf_eq]
   apply le_antisymm
   · apply iSup_le
     intro i
