@@ -115,7 +115,6 @@ theorem sentenceTruth_extensionality :
   rw [sentenceTruth_eq_truth]
   simp [extensionality, allF, equalF, iffFormula, bvar,
     BoundedFormula.mem, Fin.snoc]
-  rfl
 
 /-- Boolean-valued extensionality is valid. -/
 theorem isTrue_extensionality :
@@ -137,7 +136,6 @@ theorem sentenceTruth_emptySet :
         (BVSet.mem y x)ᶜ := by
   rw [sentenceTruth_eq_truth]
   simp [emptySet, allF, exF, bvar, BoundedFormula.mem, Fin.snoc]
-  rfl
 
 /-- The ZF empty-set axiom is Boolean-valid, witnessed by `BVSet.empty`. -/
 theorem isTrue_emptySet :
@@ -160,7 +158,6 @@ theorem sentenceTruth_pairing :
   rw [sentenceTruth_eq_truth]
   simp [pairing, allF, exF, equalF, iffFormula, bvar,
     BoundedFormula.mem, Fin.snoc]
-  rfl
 
 /-- The ZF pairing axiom is Boolean-valid, witnessed by `BVSet.pair`. -/
 theorem isTrue_pairing :
