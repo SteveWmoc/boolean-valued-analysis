@@ -27,6 +27,18 @@ namespace ZF
 private def bvar {n : ℕ} (i : Fin n) : Term (Empty ⊕ Fin n) :=
   .var (.inr i)
 
+private def allF {n : ℕ}
+    (φ : BoundedFormula Empty (n + 1)) : BoundedFormula Empty n :=
+  _root_.FirstOrder.Language.BoundedFormula.all φ
+
+private def exF {n : ℕ}
+    (φ : BoundedFormula Empty (n + 1)) : BoundedFormula Empty n :=
+  φ.ex
+
+private def equalF {n : ℕ}
+    (t₁ t₂ : Term (Empty ⊕ Fin n)) : BoundedFormula Empty n :=
+  _root_.FirstOrder.Language.BoundedFormula.equal t₁ t₂
+
 private def iffFormula {n : ℕ}
     (φ ψ : BoundedFormula Empty n) : BoundedFormula Empty n :=
   _root_.FirstOrder.Language.BoundedFormula.iff φ ψ
@@ -34,43 +46,43 @@ private def iffFormula {n : ℕ}
 /-- ZF extensionality:
 `∀ x ∀ y, (∀ z, z ∈ x ↔ z ∈ y) → x = y`. -/
 def extensionality : Sentence :=
-  .all (.all (
-    (.all (iffFormula
+  allF (allF (
+    (allF (iffFormula
       (BoundedFormula.mem (bvar (2 : Fin 3)) (bvar (0 : Fin 3)))
       (BoundedFormula.mem (bvar (2 : Fin 3)) (bvar (1 : Fin 3))))).imp
-    (.equal (bvar (0 : Fin 2)) (bvar (1 : Fin 2)))))
+    (equalF (bvar (0 : Fin 2)) (bvar (1 : Fin 2)))))
 
 /-- ZF empty set:
 `∃ x, ∀ y, y ∉ x`. -/
 def emptySet : Sentence :=
-  (.all ((BoundedFormula.mem
-    (bvar (1 : Fin 2)) (bvar (0 : Fin 2))).not)).ex
+  exF (allF ((BoundedFormula.mem
+    (bvar (1 : Fin 2)) (bvar (0 : Fin 2))).not))
 
 /-- ZF pairing:
 `∀ x ∀ y, ∃ z, ∀ a, a ∈ z ↔ (a = x ∨ a = y)`. -/
 def pairing : Sentence :=
-  .all (.all ((.all (iffFormula
+  allF (allF (exF (allF (iffFormula
     (BoundedFormula.mem (bvar (3 : Fin 4)) (bvar (2 : Fin 4)))
-    ((.equal (bvar (3 : Fin 4)) (bvar (0 : Fin 4))) ⊔
-      (.equal (bvar (3 : Fin 4)) (bvar (1 : Fin 4)))))).ex))
+    (equalF (bvar (3 : Fin 4)) (bvar (0 : Fin 4)) ⊔
+      equalF (bvar (3 : Fin 4)) (bvar (1 : Fin 4)))))))
 
 /-- ZF union:
 `∀ x, ∃ y, ∀ z, z ∈ y ↔ ∃ w ∈ x, z ∈ w`.
 
 The inner existential is the M002 syntactic set-bounded quantifier. -/
 def union : Sentence :=
-  .all ((.all (iffFormula
+  allF (exF (allF (iffFormula
     (BoundedFormula.mem (bvar (2 : Fin 3)) (bvar (1 : Fin 3)))
     (BoundedFormula.boundedExists (bvar (0 : Fin 3))
       (BoundedFormula.mem
-        (bvar (2 : Fin 4)) (bvar (3 : Fin 4)))))).ex)
+        (bvar (2 : Fin 4)) (bvar (3 : Fin 4)))))))
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 private theorem sentenceTruth_eq_truth (φ : Sentence) :
     sentenceTruth.{u, v} (𝔹 := 𝔹) φ =
-      truth φ (fun x : Empty => nomatch x) (fun i : Fin 0 => Fin.elim0 i) :=
-  rfl
+      truth φ (fun x : Empty => nomatch x) (fun i : Fin 0 => Fin.elim0 i) := by
+  unfold sentenceTruth formulaTruth BooleanValued.FirstOrder.Formula.truth truth
 
 /-- The extensionality sentence has its expected direct Boolean semantics. -/
 theorem sentenceTruth_extensionality :
@@ -81,7 +93,7 @@ theorem sentenceTruth_extensionality :
             (BVSet.mem z y ⇨ BVSet.mem z x)) ⇨
           BVSet.bvEq x y := by
   rw [sentenceTruth_eq_truth]
-  simp [extensionality, iffFormula, bvar, BoundedFormula.mem]
+  simp [extensionality, allF, equalF, iffFormula, bvar, BoundedFormula.mem]
 
 /-- Boolean-valued extensionality is valid. -/
 theorem isTrue_extensionality :
@@ -102,7 +114,7 @@ theorem sentenceTruth_emptySet :
       ⨆ x : BVSet.{u, v} 𝔹, ⨅ y : BVSet.{u, v} 𝔹,
         (BVSet.mem y x)ᶜ := by
   rw [sentenceTruth_eq_truth]
-  simp [emptySet, bvar, BoundedFormula.mem]
+  simp [emptySet, allF, exF, bvar, BoundedFormula.mem]
 
 /-- The ZF empty-set axiom is Boolean-valid, witnessed by `BVSet.empty`. -/
 theorem isTrue_emptySet :
@@ -123,7 +135,7 @@ theorem sentenceTruth_pairing :
           (BVSet.mem a z ⇨ (BVSet.bvEq a x ⊔ BVSet.bvEq a y)) ⊓
             ((BVSet.bvEq a x ⊔ BVSet.bvEq a y) ⇨ BVSet.mem a z) := by
   rw [sentenceTruth_eq_truth]
-  simp [pairing, iffFormula, bvar, BoundedFormula.mem]
+  simp [pairing, allF, exF, equalF, iffFormula, bvar, BoundedFormula.mem]
 
 /-- The ZF pairing axiom is Boolean-valid, witnessed by `BVSet.pair`. -/
 theorem isTrue_pairing :
@@ -151,9 +163,15 @@ theorem sentenceTruth_union :
             (BVSet.boundedExists x (fun w => BVSet.mem z w) ⇨
               BVSet.mem z y) := by
   rw [sentenceTruth_eq_truth]
-  simp only [union, iffFormula, truth_all, truth_ex, truth_iff,
-    truth_mem, truth_boundedExists_eq_boundedExists, evalTerm_var, bvar,
-    Sum.elim_inr, Fin.snoc_last, Fin.snoc_castSucc]
+  simp only [union, allF, exF, iffFormula, truth_all, truth_ex, truth_iff]
+  congr 1
+  funext x
+  congr 1
+  funext y
+  congr 1
+  funext z
+  rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
+  simp [bvar, BoundedFormula.mem]
 
 /-- The ZF union axiom is Boolean-valid, witnessed by `BVSet.union`. -/
 theorem isTrue_union :
