@@ -31,6 +31,7 @@ import BooleanValuedAnalysis.Maximum
 import BooleanValuedAnalysis.Separated
 import BooleanValuedAnalysis.Descent
 import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
+import BooleanValuedAnalysis.SetTheory.Delta0
 
 /-!
 # Boolean-Valued Analysis
@@ -41,12 +42,13 @@ generic Boolean-valued first-order structures, relabeling, lifting, substitution
 lawfulness, formula extensionality and structural corollaries, set-theoretic
 formula semantics including syntactic set-bounded quantifiers and their
 weighted-child semantics, ordinary ground-model formula semantics on Mathlib
-pre-sets, extensional predicates, weighted-child bounded quantifiers, canonical
-ground-model names, Boolean-valued mixtures with partition-based mixing lemmas,
-small witness partitions, the maximum principle for extensional Boolean-valued
-predicates, realization of existential formula truth by Boolean-valued
-witnesses, the separated Boolean-valued universe with full Boolean equality and
-membership descended to top-equality classes, elementary descent by top-valued
-membership, and an intrinsic set-theory semantics on that separated universe
-together with exact comparison to raw formula truth under the quotient map.
+pre-sets, Δ₀ standard-name absoluteness, extensional predicates, weighted-child
+bounded quantifiers, canonical ground-model names, Boolean-valued mixtures with
+partition-based mixing lemmas, small witness partitions, the maximum principle
+for extensional Boolean-valued predicates, realization of existential formula
+truth by Boolean-valued witnesses, the separated Boolean-valued universe with
+full Boolean equality and membership descended to top-equality classes,
+elementary descent by top-valued membership, and an intrinsic set-theory
+semantics on that separated universe together with exact comparison to raw
+formula truth under the quotient map.
 -/
