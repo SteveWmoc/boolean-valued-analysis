@@ -64,7 +64,7 @@ theorem groundStructure_lawful :
             (PSet.Mem.congr_left (hab 0)).mp hmem
           exact (PSet.Mem.congr_right (hab 1)).mp hleft
         simp only [groundStructure, iInf_Prop_eq, inf_Prop_eq]
-        apply le_iff_inf_eq.mpr
+        rw [← inf_eq_left]
         rw [inf_Prop_eq]
         apply propext
         constructor
