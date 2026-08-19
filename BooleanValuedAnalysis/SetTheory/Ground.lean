@@ -37,8 +37,7 @@ def groundStructure :
 /-- The ground `PSet` interpretation is lawful with respect to extensional
 pre-set equivalence. -/
 theorem groundStructure_lawful :
-    BooleanValued.FirstOrder.LawfulStructure
-      (groundStructure (u := u)) where
+    BooleanValued.FirstOrder.LawfulStructure groundStructure.{u} where
   eq_refl := by
     intro x
     exact propext ⟨fun _ => True.intro, fun _ => PSet.Equiv.refl x⟩
@@ -68,8 +67,7 @@ theorem groundStructure_lawful :
 /-- Evaluate a pure set-theory term in the ground pre-set universe. -/
 def groundEvalTerm {α : Type w}
     (assignment : α → PSet.{u}) : Term α → PSet.{u} :=
-  BooleanValued.FirstOrder.Term.realize
-    (groundStructure (u := u)) assignment
+  BooleanValued.FirstOrder.Term.realize groundStructure.{u} assignment
 
 @[simp]
 theorem groundEvalTerm_var {α : Type w}
@@ -84,17 +82,16 @@ def groundTruth {α : Type w} {n : ℕ}
     (assignment : α → PSet.{u})
     (boundAssignment : Fin n → PSet.{u}) : Prop :=
   BooleanValued.FirstOrder.BoundedFormula.truth
-    (groundStructure (u := u)) φ assignment boundAssignment
+    groundStructure.{u} φ assignment boundAssignment
 
 /-- Ordinary propositional truth of a set-theory formula on ground pre-sets. -/
 def groundFormulaTruth {α : Type w}
     (φ : Formula α) (assignment : α → PSet.{u}) : Prop :=
-  BooleanValued.FirstOrder.Formula.truth
-    (groundStructure (u := u)) φ assignment
+  BooleanValued.FirstOrder.Formula.truth groundStructure.{u} φ assignment
 
 /-- Ordinary truth of a closed set-theory sentence on ground pre-sets. -/
 def groundSentenceTruth (φ : Sentence) : Prop :=
-  groundFormulaTruth (u := u) φ (fun x => nomatch x)
+  groundFormulaTruth.{u, 0} φ (fun x => nomatch x)
 
 variable {α : Type w} {n : ℕ}
 
@@ -170,7 +167,7 @@ theorem groundTruth_congr
   · intro h
     have ht :=
       BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le
-        (groundStructure (u := u)) (groundStructure_lawful (u := u))
+        groundStructure.{u} groundStructure_lawful.{u}
         φ assignment₁ assignment₂ boundAssignment₁ boundAssignment₂
         (⊤ : Prop)
         (fun a _ => hfree a)
@@ -179,7 +176,7 @@ theorem groundTruth_congr
   · intro h
     have ht :=
       BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le
-        (groundStructure (u := u)) (groundStructure_lawful (u := u))
+        groundStructure.{u} groundStructure_lawful.{u}
         φ assignment₂ assignment₁ boundAssignment₂ boundAssignment₁
         (⊤ : Prop)
         (fun a _ => (hfree a).symm)
