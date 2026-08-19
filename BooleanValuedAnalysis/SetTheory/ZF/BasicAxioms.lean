@@ -98,7 +98,9 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 private theorem sentenceTruth_eq_truth (φ : Sentence) :
     sentenceTruth.{u, v} (𝔹 := 𝔹) φ =
-      truth φ (fun x : Empty => nomatch x) (fun i : Fin 0 => Fin.elim0 i) := by
+      truth φ
+        (fun x : Empty => nomatch x : BVSet.{u, v} 𝔹)
+        (fun i : Fin 0 => Fin.elim0 i) := by
   unfold sentenceTruth formulaTruth BooleanValued.FirstOrder.Formula.truth truth
   rfl
 
@@ -112,7 +114,7 @@ theorem sentenceTruth_extensionality :
           BVSet.bvEq x y := by
   rw [sentenceTruth_eq_truth]
   simp [extensionality, allF, equalF, iffFormula, bvar,
-    BoundedFormula.mem, Fin.snoc_last, Fin.snoc_castSucc]
+    BoundedFormula.mem, Fin.snoc]
 
 /-- Boolean-valued extensionality is valid. -/
 theorem isTrue_extensionality :
@@ -133,8 +135,7 @@ theorem sentenceTruth_emptySet :
       ⨆ x : BVSet.{u, v} 𝔹, ⨅ y : BVSet.{u, v} 𝔹,
         (BVSet.mem y x)ᶜ := by
   rw [sentenceTruth_eq_truth]
-  simp [emptySet, allF, exF, bvar, BoundedFormula.mem,
-    Fin.snoc_last, Fin.snoc_castSucc]
+  simp [emptySet, allF, exF, bvar, BoundedFormula.mem, Fin.snoc]
 
 /-- The ZF empty-set axiom is Boolean-valid, witnessed by `BVSet.empty`. -/
 theorem isTrue_emptySet :
@@ -156,7 +157,7 @@ theorem sentenceTruth_pairing :
             ((BVSet.bvEq a x ⊔ BVSet.bvEq a y) ⇨ BVSet.mem a z) := by
   rw [sentenceTruth_eq_truth]
   simp [pairing, allF, exF, equalF, iffFormula, bvar,
-    BoundedFormula.mem, Fin.snoc_last, Fin.snoc_castSucc]
+    BoundedFormula.mem, Fin.snoc]
 
 /-- The ZF pairing axiom is Boolean-valid, witnessed by `BVSet.pair`. -/
 theorem isTrue_pairing :
@@ -192,7 +193,7 @@ theorem sentenceTruth_union :
   congr 1
   funext z
   rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
-  simp [bvar, BoundedFormula.mem, Fin.snoc_last, Fin.snoc_castSucc]
+  simp [bvar, BoundedFormula.mem, Fin.snoc]
 
 /-- The ZF union axiom is Boolean-valid, witnessed by `BVSet.union`. -/
 theorem isTrue_union :
