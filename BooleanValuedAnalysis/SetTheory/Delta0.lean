@@ -74,9 +74,10 @@ theorem iSup_classicalValue {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       classicalValue (𝔹 := 𝔹) (∃ i, p i) := by
   classical
   by_cases h : ∃ i, p i
-  · obtain ⟨i, hi⟩ := h
+  · have hex : ∃ i, p i := h
+    obtain ⟨i, hi⟩ := h
     have htarget : classicalValue (𝔹 := 𝔹) (∃ i, p i) = ⊤ := by
-      simp [classicalValue, h]
+      simp [classicalValue, hex]
     rw [htarget]
     apply top_unique
     calc
@@ -108,6 +109,15 @@ theorem iInf_classicalValue {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
           classicalValue (𝔹 := 𝔹) (p i) :=
         iInf_le (fun j => classicalValue (𝔹 := 𝔹) (p j)) i
       _ = ⊥ := by simp [classicalValue, hi]
+
+/-- Classical values preserve Boolean implication. -/
+theorem himp_classicalValue {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+    (p q : Prop) :
+    classicalValue (𝔹 := 𝔹) p ⇨ classicalValue (𝔹 := 𝔹) q =
+      classicalValue (𝔹 := 𝔹) (p → q) := by
+  classical
+  by_cases hp : p <;> by_cases hq : q <;>
+    simp [classicalValue, hp, hq]
 
 /-- Term evaluation commutes with the canonical-name embedding. -/
 @[simp]
@@ -144,7 +154,7 @@ theorem boundedExists_check {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       ⨆ i : x.Type, f (check (𝔹 := 𝔹) (x.Func i)) := by
   cases x with
   | mk ι A =>
-      simp [boundedExists, check]
+      simp [boundedExists]
 
 /-- Weighted bounded universal quantification over a checked name reduces to
 its checked ground children. -/
@@ -155,7 +165,7 @@ theorem boundedForall_check {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
       ⨅ i : x.Type, f (check (𝔹 := 𝔹) (x.Func i)) := by
   cases x with
   | mk ι A =>
-      simp [boundedForall, check]
+      simp [boundedForall]
 
 end BVSet
 
@@ -232,10 +242,7 @@ theorem truth_check_of_delta0 {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
         simp [classicalValue, h]
   | imp hleft hright ihleft ihrigh =>
       rw [truth_imp, ihleft, ihrigh, groundTruth_imp]
-      classical
-      by_cases hp : groundTruth _ assignment boundAssignment <;>
-        by_cases hq : groundTruth _ assignment boundAssignment <;>
-          simp [classicalValue, hp, hq]
+      exact himp_classicalValue (𝔹 := 𝔹) _ _
   | boundedExists bound hbody ih =>
       rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
       rw [sumElim_check assignment boundAssignment]
