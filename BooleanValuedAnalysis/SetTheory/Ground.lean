@@ -63,7 +63,14 @@ theorem groundStructure_lawful :
           have hleft : b 0 ∈ a 1 :=
             (PSet.Mem.congr_left (hab 0)).mp hmem
           exact (PSet.Mem.congr_right (hab 1)).mp hleft
-        simpa only [groundStructure, iInf_Prop_eq, inf_Prop_eq] using h
+        simp only [groundStructure, iInf_Prop_eq, inf_Prop_eq]
+        apply le_iff_inf_eq.mpr
+        rw [inf_Prop_eq]
+        apply propext
+        constructor
+        · exact And.left
+        · intro ha
+          exact ⟨ha, h ha⟩
 
 /-- Evaluate a pure set-theory term in the ground pre-set universe. -/
 def groundEvalTerm {α : Type w}
