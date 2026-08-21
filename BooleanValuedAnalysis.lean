@@ -34,6 +34,7 @@ import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
 import BooleanValuedAnalysis.SetTheory.Delta0
 import BooleanValuedAnalysis.SetTheory.ZF.Constructors
 import BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms
+import BooleanValuedAnalysis.SetTheory.ZF.Separation
 
 /-!
 # Boolean-Valued Analysis
@@ -52,6 +53,7 @@ truth by Boolean-valued witnesses, the separated Boolean-valued universe with
 full Boolean equality and membership descended to top-equality classes,
 elementary descent by top-valued membership, intrinsic set-theory semantics on
 that separated universe together with exact comparison to raw formula truth
-under the quotient map, and direct raw constructors plus Boolean validity for
-extensionality, empty set, pairing, and union in the first ZF fragment.
+under the quotient map, direct raw constructors plus Boolean validity for
+extensionality, empty set, pairing, and union in the first ZF fragment, and
+direct Boolean-valued Separation for extensional predicates and formula bodies.
 -/
