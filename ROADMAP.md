@@ -27,7 +27,8 @@ The repository currently provides:
 - ordinary `Prop`-valued semantics for the same pure set-theory syntax on Mathlib `PSet`, lawful under extensional pre-set equivalence;
 - a Δ₀ predicate over the existing syntax and exact standard-name absoluteness for raw and separated canonical names, without a `Small` hypothesis;
 - direct raw constructors for pairing and union, exact semantic specifications for empty/pair/union membership, and a characterization of Boolean equality by universal membership agreement;
-- Boolean validity, on both raw and separated carriers, of ZF extensionality, empty set, pairing, and union.
+- Boolean validity, on both raw and separated carriers, of ZF extensionality, empty set, pairing, and union;
+- direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis.
 
 These components form the foundation for the milestones below.
 
@@ -202,9 +203,41 @@ M008 introduces no `[Small.{u} 𝔹]`, maximum-principle detour, `Shrink`, Zorn 
 
 Specification and completion record: [`docs/milestones/008-first-zf-fragment.md`](docs/milestones/008-first-zf-fragment.md)
 
-### Next ZF fragment — design before implementation
+### M009 — Boolean-valued Separation — complete
 
-The next ZF work should again be split by formal dependency rather than textbook order. **Separation and powerset** are the leading design targets because they test comprehension-style constructions and should expose the precise boundary between direct name construction and maximum-principle witness machinery. Infinity and foundation can remain separate if their representation dependencies differ; replacement and choice should wait until those dependencies are understood.
+Completed 2026-08-20.
+
+M009 adds Separation by a direct local construction on an existing raw name. `BVSet.separate x φ` keeps the source index and children and replaces each coefficient `x.weight i` by `x.weight i ⊓ φ (x.child i)`. For arbitrary `φ`, membership is exactly the corresponding weighted existential over source children; for extensional `φ`, this sharpens to
+
+```text
+BVSet.mem z (BVSet.separate x φ) = BVSet.mem z x ⊓ φ z.
+```
+
+The formula-specialized witness `SetTheory.separateFormula` uses the lawful-layer theorem `truth_snoc_extensional_core`, which was moved out of the maximum-principle dependency path so Separation imports no Zorn or `Small` machinery.
+
+`SetTheory.ZF.separationInstance φ` packages the result as a genuine formula in the existing Mathlib locally nameless syntax. For a one-bound-variable formula body `φ(z)` with arbitrary free parameters, it encodes
+
+```text
+∀ x, ∃ y, ∀ z, z ∈ y ↔ (z ∈ x ∧ φ z).
+```
+
+`ZF.formulaTruth_separationInstance_top` proves that every such instance has value `⊤` under every raw assignment. `ZF.separatedFormulaTruth_separationInstance_top` transports the same value to assignments obtained by quotienting raw parameters through M006; it does not select quotient representatives.
+
+M009 preserves independent name and Boolean-algebra universes and requires no `[Small.{u} 𝔹]`, maximum-principle witness extraction, `Shrink`, Zorn argument, general ascent, quotient representative selector, or second formula syntax. `Audit/M009Acceptance.lean` checks the direct constructor, exact semantic equations, formula specialization, semantic schema validity, genuine first-order schema packaging, and raw/separated top-valued results in both pinned CI and the live Tau Ceti architecture audit.
+
+Specification and completion record: [`docs/milestones/009-separation.md`](docs/milestones/009-separation.md)
+
+### M010 — Powerset size boundary — design before implementation
+
+Powerset is the next comprehension-style axiom, but unlike Separation its natural direct construction immediately raises a universe-size question. A naïve name collecting all Boolean-valued subobjects of `x` wants to enumerate coefficient assignments of shape roughly
+
+```text
+x.Index → 𝔹,
+```
+
+which generally lives in `Type (max u v)` rather than automatically in the immediate-child universe `Type u`. The next milestone should therefore determine the correct interface before implementing a powerset constructor: an explicit `Small` hypothesis, a larger name universe, a coding theorem for sufficiently many names, or another representation strategy are all possibilities, but M009 deliberately chooses none of them.
+
+Infinity and foundation can remain separate if their representation dependencies differ; replacement/collection and choice should wait until the relevant size and witness machinery is understood.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
