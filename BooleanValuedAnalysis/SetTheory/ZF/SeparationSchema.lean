@@ -79,6 +79,7 @@ private theorem truth_liftAt_two_zero_one
           z) =
       truth φ assignment (fun _ : Fin 1 => z) := by
   rw [truth_liftAt φ assignment _ (Nat.zero_le 1)]
+  congr 1
 
 /-- Direct Boolean semantics of a first-order Separation-schema instance. -/
 theorem formulaTruth_separationInstance
