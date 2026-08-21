@@ -106,7 +106,7 @@ theorem groundEvalTerm_liftAt_one_self
   | inl a => rfl
   | inr i =>
       simp only [Function.comp_apply, Sum.map_inr, Sum.elim_inr]
-      rw [if_pos i.isLt]
+      simp only [i.isLt]
       have hcast : Fin.castAdd 1 i = Fin.castSucc i := by
         apply Fin.ext
         rfl
