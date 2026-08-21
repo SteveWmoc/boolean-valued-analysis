@@ -128,7 +128,7 @@ theorem truth_liftAt_one_self
   apply congrArg (truth S φ assignment)
   funext i
   simp only [Function.comp_apply]
-  rw [if_pos i.is_lt]
+  simp [i.is_lt]
 
 end BoundedFormula
 

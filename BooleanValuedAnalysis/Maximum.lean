@@ -190,7 +190,7 @@ theorem exists_partition_of_iSup {X : Type w} [Small.{u} 𝔹]
       _ = p.1.1 ⊓ q.1.1 :=
         congrArg (fun c => p.1.1 ⊓ c) hpqcoeff
       _ = ⊥ := hdisjoint
-  letI : Small.{u} A := small_of_injective hcoeff_injective
+  let smallA : Small.{u} A := small_of_injective hcoeff_injective
   let ι : Type u := Shrink.{u} A
   let e : A ≃ ι := equivShrink A
   let a : ι → 𝔹 := fun i => (e.symm i).1.1
@@ -254,9 +254,10 @@ namespace SetTheory
 
 variable {α : Type w} {n : ℕ}
 
-/-- The truth value of a formula body is an extensional predicate in a freshly
-bound variable.  This is the M001 assignment-transport theorem specialized to
-two bound assignments that differ only in their final entry. -/
+/-- Compatibility name for formula-body extensionality used by the M004
+maximum-principle API. The proof itself lives in the lawful set-theory layer so
+direct constructions such as Separation can reuse it without importing
+maximum-principle machinery. -/
 theorem truth_snoc_extensional
     (φ : BoundedFormula α (n + 1))
     (assignment : α → BVSet.{u, v} 𝔹)
@@ -264,30 +265,7 @@ theorem truth_snoc_extensional
     BVSet.Extensional
       (fun x : BVSet.{u, v} 𝔹 =>
         truth φ assignment (Fin.snoc boundAssignment x)) := by
-  intro x y
-  have hfree : ∀ a,
-      BVSet.bvEq x y ≤ BVSet.bvEq (assignment a) (assignment a) := by
-    intro a
-    rw [BVSet.bvEq_refl]
-    exact le_top
-  have hbound : ∀ i : Fin (n + 1),
-      BVSet.bvEq x y ≤
-        BVSet.bvEq
-          ((Fin.snoc boundAssignment x : Fin (n + 1) → BVSet.{u, v} 𝔹) i)
-          ((Fin.snoc boundAssignment y : Fin (n + 1) → BVSet.{u, v} 𝔹) i) := by
-    intro i
-    refine Fin.lastCases ?_ (fun j => ?_) i
-    · simpa only [Fin.snoc_last] using
-        (show BVSet.bvEq x y ≤ BVSet.bvEq x y from le_rfl)
-    · simpa only [Fin.snoc_castSucc, BVSet.bvEq_refl] using
-        (show BVSet.bvEq x y ≤ (⊤ : 𝔹) from le_top)
-  simpa only [truth] using
-    BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le
-      (bvSetStructure (𝔹 := 𝔹))
-      (bvSetStructure_lawful (𝔹 := 𝔹))
-      φ assignment assignment
-      (Fin.snoc boundAssignment x) (Fin.snoc boundAssignment y)
-      (BVSet.bvEq x y) hfree hbound
+  exact truth_snoc_extensional_core φ assignment boundAssignment
 
 /-- Maximum principle for set-theoretic existential truth.
 

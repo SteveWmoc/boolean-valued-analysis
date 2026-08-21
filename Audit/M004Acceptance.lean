@@ -39,7 +39,7 @@ example [Small.{u} 𝔹]
 -- In particular, the constant-bottom predicate has a maximizer; the maximum
 -- principle does not silently require a nonzero existential value.
 example [Small.{u} 𝔹] :
-    ∃ x : BVSet.{u, v} 𝔹,
+    ∃ _ : BVSet.{u, v} 𝔹,
       (⊥ : 𝔹) = ⨆ _ : BVSet.{u, v} 𝔹, (⊥ : 𝔹) := by
   apply exists_maximum_of_extensional
     (fun _ : BVSet.{u, v} 𝔹 => (⊥ : 𝔹))
