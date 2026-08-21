@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, and a first Boolean-valid ZF fragment are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a first Boolean-valid ZF fragment, and the Boolean-valued Separation schema are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -35,7 +35,8 @@ The current development establishes that:
 - the same pure set-theory syntax has an ordinary `Prop`-valued interpretation on Mathlib `PSet`, lawful with respect to `PSet.Equiv`, and set-bounded ground quantifiers reduce to the actual children of the interpreted bounding pre-set;
 - the Δ₀ fragment is represented by a predicate over the existing syntax, and every Δ₀ formula evaluated on canonical names has exactly the classical Boolean value `⊤` or `⊥` of its ground truth; the same statement holds intrinsically on separated checked names through the M006 bridge;
 - direct raw pairing and union names satisfy exact Boolean membership equations, while Boolean-valued equality is exactly universal agreement of membership;
-- ZF extensionality, empty set, pairing, and union are encoded as genuine closed sentences and have Boolean truth value `⊤` for arbitrary raw names and, through the M006 bridge, on the separated carrier, without a `Small` hypothesis.
+- ZF extensionality, empty set, pairing, and union are encoded as genuine closed sentences and have Boolean truth value `⊤` for arbitrary raw names and, through the M006 bridge, on the separated carrier, without a `Small` hypothesis;
+- direct coefficient restriction gives a raw Separation constructor with exact membership semantics for every extensional predicate, and first-order Separation-schema instances with arbitrary free parameters have Boolean truth value `⊤` on both raw assignments and their separated images, again without a `Small` hypothesis.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -59,6 +60,8 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.SetTheory.Delta0` | Δ₀ syntax predicate, classical Boolean values, and exact raw/separated standard-name absoluteness |
 | `BooleanValuedAnalysis.SetTheory.ZF.Constructors` | Direct empty/pair/union semantic constructors and Boolean extensionality characterization |
 | `BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms` | Closed ZF extensionality, empty-set, pairing, and union sentences with raw/separated Boolean validity |
+| `BooleanValuedAnalysis.SetTheory.ZF.Separation` | Direct raw Separation constructor, exact membership semantics, formula-specialized witnesses, and separated compatibility |
+| `BooleanValuedAnalysis.SetTheory.ZF.SeparationSchema` | First-order Separation-schema instances and raw/separated top-valued validity |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
@@ -108,8 +111,9 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 6. **Ascent/descent core and separated semantics bridge (M006): complete.** The lawful separated set-theory structure, exact raw/separated formula-truth bridge, elementary descent, and checked-name compatibility are implemented. General ascent remains deliberately deferred until a Transfer-facing use fixes its size and representation requirements.
 7. **Ground semantics and Δ₀ standard-name absoluteness (M007): complete.** The same set-theory syntax is interpreted on ground `PSet`, and Δ₀ truth on `check`/`checkSeparated` parameters agrees exactly with classical ground truth without a `Small` hypothesis.
 8. **First Boolean-valid ZF fragment (M008): complete.** Extensionality, empty set, pairing, and union are Boolean-valid on raw and separated carriers using direct constructors and no maximum-principle smallness assumption.
-9. Design the next ZF fragment around separation/powerset and their actual construction dependencies before stating a theorem-level Transfer Principle.
-10. Connect the framework with forcing and applications in Boolean-valued analysis.
+9. **Boolean-valued Separation (M009): complete.** Direct coefficient restriction realizes Separation for arbitrary extensional predicates; genuine first-order schema instances with free parameters are Boolean-valid on raw assignments and their separated images, with no `Small` hypothesis.
+10. Design powerset as its own size-sensitive milestone before committing to a representation or smallness policy, then continue the remaining ZF/ZFC fragments and logical soundness needed for theorem-level Transfer.
+11. Connect the framework with forcing and applications in Boolean-valued analysis.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
@@ -127,9 +131,9 @@ The pull request template records this review without imposing the full process 
 
 ## Development standards
 
-Every pull request is checked by GitHub Actions. CI builds the library, runs the project linter baseline, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` acceptance files, and compiles the M001–M008 acceptance suites.
+Every pull request is checked by GitHub Actions. CI builds the library, runs the project linter baseline, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` acceptance files, and compiles the M001–M009 acceptance suites.
 
-A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds and lints the complete public library in that environment, and compiles the M001–M008 acceptance sequence there as well. Those production-API suites exercise the independent universe policy, structural substitution, bounded quantifiers, mixing, the maximum principle, the separated quotient, the separated formula-semantics bridge, elementary descent, ground semantics, Δ₀ standard-name absoluteness, and the first Boolean-valid ZF fragment without maintaining a second parallel model under `Audit/`. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
+A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds and lints the complete public library in that environment, and compiles the M001–M009 acceptance sequence there as well. Those production-API suites exercise the independent universe policy, structural substitution, bounded quantifiers, mixing, the maximum principle, the separated quotient, the separated formula-semantics bridge, elementary descent, ground semantics, Δ₀ standard-name absoluteness, the first Boolean-valid ZF fragment, and Separation without maintaining a second parallel model under `Audit/`. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
