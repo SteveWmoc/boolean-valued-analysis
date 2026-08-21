@@ -24,8 +24,8 @@ jobs:
       - name: Reject unfinished proofs
         run: |
           if grep -RInE --include='*.lean' '(^|[^[:alnum:]_])(sorry|admit)([^[:alnum:]_]|$)' \
-              BooleanValuedAnalysis BooleanValuedAnalysis.lean Audit; then
-            echo "Lean proof placeholders are not permitted in the public library or audit probes."
+              BooleanValuedAnalysis BooleanValuedAnalysis.lean Audit docs; then
+            echo "Lean proof placeholders are not permitted in public code, acceptance probes, or documentation probes."
             exit 1
           fi
 
@@ -48,29 +48,22 @@ jobs:
           build: true
           lint: true
 
-      - name: Compile M001 acceptance probe
-        run: lake env lean Audit/M001Acceptance.lean
+      - name: Compile milestone acceptance probes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for probe in Audit/M*Acceptance.lean; do
+            echo "::group::$probe"
+            lake env lean "$probe"
+            echo "::endgroup::"
+          done
 
-      - name: Compile M002 acceptance probe
-        run: lake env lean Audit/M002Acceptance.lean
-
-      - name: Compile M003 acceptance probe
-        run: lake env lean Audit/M003Acceptance.lean
-
-      - name: Compile M004 acceptance probe
-        run: lake env lean Audit/M004Acceptance.lean
-
-      - name: Compile M005 acceptance probe
-        run: lake env lean Audit/M005Acceptance.lean
-
-      - name: Compile M006 acceptance probe
-        run: lake env lean Audit/M006Acceptance.lean
-
-      - name: Compile M007 acceptance probe
-        run: lake env lean Audit/M007Acceptance.lean
-
-      - name: Compile M008 acceptance probe
-        run: lake env lean Audit/M008Acceptance.lean
-
-      - name: Compile M009 acceptance probe
-        run: lake env lean Audit/M009Acceptance.lean
+      - name: Compile documentation Lean probes
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r probe; do
+            echo "::group::$probe"
+            lake env lean "$probe"
+            echo "::endgroup::"
+          done < <(find docs -type f -name '*.lean' | sort)
