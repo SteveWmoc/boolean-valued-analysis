@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Steven Sabean
 -/
 
+import BooleanValuedAnalysis.SetTheory.BoundedQuantifier
 import BooleanValuedAnalysis.SetTheory.Lift
 import BooleanValuedAnalysis.SetTheory.ZF.Separation
 
@@ -82,7 +83,6 @@ private theorem truth_liftAt_two_zero_one
   funext i
   have hi : i = 0 := Fin.eq_zero i
   subst i
-  rfl
 
 /-- Direct Boolean semantics of a first-order Separation-schema instance. -/
 theorem formulaTruth_separationInstance
