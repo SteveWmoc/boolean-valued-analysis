@@ -190,7 +190,7 @@ theorem exists_partition_of_iSup {X : Type w} [Small.{u} 𝔹]
       _ = p.1.1 ⊓ q.1.1 :=
         congrArg (fun c => p.1.1 ⊓ c) hpqcoeff
       _ = ⊥ := hdisjoint
-  letI : Small.{u} A := small_of_injective hcoeff_injective
+  let smallA : Small.{u} A := small_of_injective hcoeff_injective
   let ι : Type u := Shrink.{u} A
   let e : A ≃ ι := equivShrink A
   let a : ι → 𝔹 := fun i => (e.symm i).1.1
