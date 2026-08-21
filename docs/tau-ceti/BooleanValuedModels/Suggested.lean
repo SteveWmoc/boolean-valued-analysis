@@ -19,8 +19,6 @@ by accepted Tau Ceti layers, rather than importing this repository.
 universe u v w x
 
 open BooleanValued
-open BooleanValued.BVSet
-open scoped BooleanValued.BVSet
 
 namespace TauCetiInvestigation.BooleanValuedModels
 
@@ -41,27 +39,32 @@ variable {α : Type w} {β : Type x} {n : ℕ}
 /-! ## Atomic semantics already witnessed by the prototype -/
 
 /-- **Layer 4 target shape:** Boolean-valued equality is reflexive. -/
-example (x : CandidateName 𝔹) : x =ᴮ x = ⊤ :=
-  bvEq_refl x
+example (x : CandidateName 𝔹) :
+    BooleanValued.BVSet.bvEq x x = ⊤ :=
+  BooleanValued.BVSet.bvEq_refl x
 
 /-- **Layer 4 target shape:** Boolean-valued equality is symmetric. -/
-example (x y : CandidateName 𝔹) : x =ᴮ y = y =ᴮ x :=
-  bvEq_symm x y
+example (x y : CandidateName 𝔹) :
+    BooleanValued.BVSet.bvEq x y = BooleanValued.BVSet.bvEq y x :=
+  BooleanValued.BVSet.bvEq_symm x y
 
 /-- **Layer 4 target shape:** Boolean-valued equality is transitive in order form. -/
 example (x y z : CandidateName 𝔹) :
-    (x =ᴮ y) ⊓ (y =ᴮ z) ≤ x =ᴮ z :=
-  bvEq_trans x y z
+    BooleanValued.BVSet.bvEq x y ⊓ BooleanValued.BVSet.bvEq y z ≤
+      BooleanValued.BVSet.bvEq x z :=
+  BooleanValued.BVSet.bvEq_trans x y z
 
 /-- **Layer 4 target shape:** equality substitutes in the element argument of membership. -/
 example (x y z : CandidateName 𝔹) :
-    (x =ᴮ y) ⊓ (x ∈ᴮ z) ≤ y ∈ᴮ z :=
-  mem_congr_left x y z
+    BooleanValued.BVSet.bvEq x y ⊓ BooleanValued.BVSet.mem x z ≤
+      BooleanValued.BVSet.mem y z :=
+  BooleanValued.BVSet.mem_congr_left x y z
 
 /-- **Layer 4 target shape:** equality substitutes in the set argument of membership. -/
 example (x y z : CandidateName 𝔹) :
-    (x =ᴮ y) ⊓ (z ∈ᴮ x) ≤ z ∈ᴮ y :=
-  mem_congr_right x y z
+    BooleanValued.BVSet.bvEq x y ⊓ BooleanValued.BVSet.mem z x ≤
+      BooleanValued.BVSet.mem z y :=
+  BooleanValued.BVSet.mem_congr_right x y z
 
 /-! ## Formula extensionality discharged by M001 -/
 
@@ -70,12 +73,12 @@ an internal statement probe. A stable implementation may use another name or pac
 notion differently. -/
 def freeAssignmentAgreement
     (ρ σ : α → CandidateName 𝔹) : 𝔹 :=
-  ⨅ a, ρ a =ᴮ σ a
+  ⨅ a, BooleanValued.BVSet.bvEq (ρ a) (σ a)
 
 /-- Boolean degree to which two bound-variable assignments agree pointwise. -/
 def boundAssignmentAgreement
     (η θ : Fin n → CandidateName 𝔹) : 𝔹 :=
-  ⨅ i, η i =ᴮ θ i
+  ⨅ i, BooleanValued.BVSet.bvEq (η i) (θ i)
 
 /-- **Layer 6 target:** the truth value of a bounded formula is extensional in both free and
 bound assignments. This directional statement is a projection of the stronger symmetric
@@ -86,8 +89,7 @@ example (φ : CandidateBoundedFormula α n)
     freeAssignmentAgreement ρ σ ⊓ boundAssignmentAgreement η θ ≤
       (BooleanValued.SetTheory.truth φ ρ η ⇨
         BooleanValued.SetTheory.truth φ σ θ) := by
-  simpa [freeAssignmentAgreement, boundAssignmentAgreement] using
-    (BooleanValued.SetTheory.truth_congr φ ρ σ η θ).trans inf_le_left
+  exact (BooleanValued.SetTheory.truth_congr φ ρ σ η θ).trans inf_le_left
 
 /-- **Layer 6 target:** formula truth is extensional in its free-variable assignment. The
 prototype proves the stronger Boolean equivalence of the two truth values. -/
@@ -98,8 +100,7 @@ example (φ : CandidateFormula α)
         BooleanValued.SetTheory.formulaTruth φ σ) ⊓
       (BooleanValued.SetTheory.formulaTruth φ σ ⇨
         BooleanValued.SetTheory.formulaTruth φ ρ) := by
-  simpa [freeAssignmentAgreement] using
-    BooleanValued.SetTheory.formulaTruth_congr φ ρ σ
+  exact BooleanValued.SetTheory.formulaTruth_congr φ ρ σ
 
 /-! ## Structural formula semantics discharged by M001 -/
 
