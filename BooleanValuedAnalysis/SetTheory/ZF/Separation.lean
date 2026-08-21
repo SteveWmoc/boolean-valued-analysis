@@ -55,7 +55,7 @@ theorem mem_separate_eq_boundedExists
     mem z (separate x φ) =
       boundedExists x (fun y => bvEq z y ⊓ φ y) := by
   unfold separate boundedExists
-  simp only [mem_mk, mk_index, mk_child, mk_weight]
+  simp only [mem_mk]
   apply le_antisymm
   · apply iSup_le
     intro i
@@ -191,7 +191,10 @@ theorem separated_mem_separateFormula
       BVSet.Separated.mem (BVSet.toSeparated z) (BVSet.toSeparated x) ⊓
         separatedTruth φ
           (fun a => BVSet.toSeparated (assignment a))
-          (fun i => BVSet.toSeparated ((Fin.snoc boundAssignment z) i)) := by
+          (fun i : Fin (n + 1) =>
+            BVSet.toSeparated
+              ((Fin.snoc boundAssignment z :
+                Fin (n + 1) → BVSet.{u, v} 𝔹) i)) := by
   rw [BVSet.Separated.mem_toSeparated, BVSet.Separated.mem_toSeparated]
   rw [separatedTruth_toSeparated]
   exact mem_separateFormula z x φ assignment boundAssignment
