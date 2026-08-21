@@ -104,8 +104,8 @@ theorem truth_congr
 
 /-- The truth value of a formula body is an extensional predicate in a freshly
 bound variable. This assignment-transport theorem belongs to the lawful
-formula layer and is reused by both the maximum principle and Separation. -/
-theorem truth_snoc_extensional
+formula layer and can be reused without importing the maximum principle. -/
+theorem truth_snoc_extensional_core
     (φ : BoundedFormula α (n + 1))
     (assignment : α → BVSet.{u, v} 𝔹)
     (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
