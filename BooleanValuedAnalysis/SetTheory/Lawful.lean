@@ -5,7 +5,7 @@ Authors: Steven Sabean
 -/
 
 import BooleanValuedAnalysis.Formula
-import BooleanValuedAnalysis.Equality
+import BooleanValuedAnalysis.Extensional
 import BooleanValuedAnalysis.FirstOrder.Extensional
 
 /-!
@@ -101,6 +101,41 @@ theorem truth_congr
       (bvSetStructure (𝔹 := 𝔹))
       (bvSetStructure_lawful (𝔹 := 𝔹))
       φ assignment₁ assignment₂ boundAssignment₁ boundAssignment₂
+
+/-- The truth value of a formula body is an extensional predicate in a freshly
+bound variable. This assignment-transport theorem belongs to the lawful
+formula layer and is reused by both the maximum principle and Separation. -/
+theorem truth_snoc_extensional
+    (φ : BoundedFormula α (n + 1))
+    (assignment : α → BVSet.{u, v} 𝔹)
+    (boundAssignment : Fin n → BVSet.{u, v} 𝔹) :
+    BVSet.Extensional
+      (fun x : BVSet.{u, v} 𝔹 =>
+        truth φ assignment (Fin.snoc boundAssignment x)) := by
+  intro x y
+  have hfree : ∀ a,
+      BVSet.bvEq x y ≤ BVSet.bvEq (assignment a) (assignment a) := by
+    intro a
+    rw [BVSet.bvEq_refl]
+    exact le_top
+  have hbound : ∀ i : Fin (n + 1),
+      BVSet.bvEq x y ≤
+        BVSet.bvEq
+          ((Fin.snoc boundAssignment x : Fin (n + 1) → BVSet.{u, v} 𝔹) i)
+          ((Fin.snoc boundAssignment y : Fin (n + 1) → BVSet.{u, v} 𝔹) i) := by
+    intro i
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · simpa only [Fin.snoc_last] using
+        (show BVSet.bvEq x y ≤ BVSet.bvEq x y from le_rfl)
+    · simpa only [Fin.snoc_castSucc, BVSet.bvEq_refl] using
+        (show BVSet.bvEq x y ≤ (⊤ : 𝔹) from le_top)
+  simpa only [truth] using
+    BooleanValued.FirstOrder.BoundedFormula.truth_transport_of_le
+      (bvSetStructure (𝔹 := 𝔹))
+      (bvSetStructure_lawful (𝔹 := 𝔹))
+      φ assignment assignment
+      (Fin.snoc boundAssignment x) (Fin.snoc boundAssignment y)
+      (BVSet.bvEq x y) hfree hbound
 
 /-- The meet of the pointwise equality values of two assignments lies below the
 Boolean equivalence of the corresponding set-theoretic formula truth values. -/
