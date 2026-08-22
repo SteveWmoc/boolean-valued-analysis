@@ -24,17 +24,27 @@ open BooleanValued.BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-/-- Candidate exact Boolean value of inclusion. -/
+/-- Candidate exact Boolean value of inclusion, defined by the existing M002
+weighted-child bounded universal. -/
 def subsetValue (z x : BVSet.{u, v} 𝔹) : 𝔹 :=
-  ⨅ y : BVSet.{u, v} 𝔹, BVSet.mem y z ⇨ BVSet.mem y x
+  BVSet.boundedForall z (fun y => BVSet.mem y x)
 
-/-- The logical inclusion value is exactly M002 weighted-child bounded
-universal semantics. -/
-theorem subsetValue_eq_boundedForall
+/-- The computational inclusion value is exactly the unrestricted first-order
+universal implication meet. -/
+theorem subsetValue_eq_iInf_mem
     (z x : BVSet.{u, v} 𝔹) :
-    subsetValue z x = BVSet.boundedForall z (fun y => BVSet.mem y x) := by
-  symm
+    subsetValue z x =
+      ⨅ y : BVSet.{u, v} 𝔹, BVSet.mem y z ⇨ BVSet.mem y x := by
   exact BVSet.boundedForall_eq_iInf_mem (BVSet.extensional_mem_left x)
+
+/-- With the weighted definition of inclusion, the recursive Boolean equality
+is exactly mutual inclusion. -/
+theorem bvEq_eq_subsetValue_inf
+    (x y : BVSet.{u, v} 𝔹) :
+    BVSet.bvEq x y = subsetValue x y ⊓ subsetValue y x := by
+  cases x
+  cases y
+  rfl
 
 /-- Candidate raw coefficient restriction used by the powerset construction. -/
 def coefficientRestriction
@@ -59,6 +69,7 @@ theorem mem_coefficientRestriction_le
 theorem coefficientRestriction_subset_top
     (x : BVSet.{u, v} 𝔹) (c : x.Index → 𝔹) :
     subsetValue (coefficientRestriction x c) x = ⊤ := by
+  rw [subsetValue_eq_iInf_mem]
   apply top_unique
   apply le_iInf
   intro z
@@ -81,8 +92,10 @@ theorem subsetValue_le_bvEq_normalizeSubset
   · rw [normalizeSubset, BVSet.mem_separate y x (BVSet.extensional_mem_left z)]
     rw [le_himp_iff]
     apply le_inf
-    · exact le_himp_iff.mp (iInf_le (fun w : BVSet.{u, v} 𝔹 =>
-        BVSet.mem w z ⇨ BVSet.mem w x) y)
+    · have hsub : subsetValue z x ≤ BVSet.mem y z ⇨ BVSet.mem y x := by
+        rw [subsetValue_eq_iInf_mem]
+        exact iInf_le _ y
+      exact le_himp_iff.mp hsub
     · exact inf_le_right
   · rw [normalizeSubset, BVSet.mem_separate y x (BVSet.extensional_mem_left z)]
     rw [le_himp_iff]
