@@ -45,9 +45,11 @@ is exactly mutual inclusion. -/
 theorem bvEq_eq_subsetValue_inf
     (x y : BVSet.{u, v} 𝔹) :
     BVSet.bvEq x y = subsetValue x y ⊓ subsetValue y x := by
-  cases x
-  cases y
-  rfl
+  cases x with
+  | mk ι A w =>
+      cases y with
+      | mk κ C v =>
+          simp [subsetValue, BVSet.boundedForall]
 
 /-- Candidate raw coefficient restriction used by the powerset construction. -/
 def coefficientRestriction
@@ -167,7 +169,7 @@ theorem mem_powersetShape [Small.{u} 𝔹]
 
 -- The crucial universe check: no equality or ordering relation between `u` and
 -- `v` is required by the proposed constructor shape.
-example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
+noncomputable example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
     BVSet.{u, v} 𝔹 :=
   powersetShape x
 
