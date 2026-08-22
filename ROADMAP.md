@@ -227,15 +227,45 @@ M009 preserves independent name and Boolean-algebra universes and requires no `[
 
 Specification and completion record: [`docs/milestones/009-separation.md`](docs/milestones/009-separation.md)
 
-### M010 — Powerset size boundary — design before implementation
+### M010 — Powerset size boundary and implementation design — complete
 
-Powerset is the next comprehension-style axiom, but unlike Separation its natural direct construction immediately raises a universe-size question. A naïve name collecting all Boolean-valued subobjects of `x` wants to enumerate coefficient assignments of shape roughly
+Completed 2026-08-22.
+
+M010 resolves the first explicit size boundary encountered by the direct ZF constructors. Boolean inclusion should reuse M002 weighted bounded universal semantics,
 
 ```text
-x.Index → 𝔹,
+subsetValue z x := boundedForall z (fun y => mem y x),
 ```
 
-which generally lives in `Type (max u v)` rather than automatically in the immediate-child universe `Type u`. The next milestone should therefore determine the correct interface before implementing a powerset constructor: an explicit `Small` hypothesis, a larger name universe, a coding theorem for sufficiently many names, or another representation strategy are all possibilities, but M009 deliberately chooses none of them.
+with its exact unrestricted form `⨅ y, mem y z ⇨ mem y x`. M009 then normalizes every potential subset `z` to `separate x (fun y => mem y z)` and M008 extensionality gives the key lower bound
+
+```text
+subsetValue z x ≤ bvEq z (normalizeSubset x z).
+```
+
+The raw powerset witness only needs to collect coefficient restrictions of the existing children of `x`. The family of all coefficient assignments has shape `x.Index → 𝔹`, which need not lie in `Type u`; M010 therefore chooses the local interface `[Small.{u} 𝔹]` and internally reindexes coefficients through `Shrink.{u} 𝔹`. This preserves independent name/coefficient universes and does not globalize smallness to the size-free semantics or earlier ZF fragments.
+
+`docs/probes/M010PowersetDesign.lean` is an executable feasibility proof rather than a signature-only sketch. It constructs the proposed small-coded powerset shape and proves the exact candidate equation
+
+```text
+mem z (powersetShape x) = subsetValue z x.
+```
+
+The probe imports the direct constructor/Separation path plus `Mathlib.Logic.Small.Basic`; it does not use the M004 maximum-principle/Zorn route or select quotient representatives. Representation-sensitive coefficient restrictions and `Shrink` codes are intentionally implementation details rather than the proposed semantic public API.
+
+Specification and completion record: [`docs/milestones/010-powerset-design.md`](docs/milestones/010-powerset-design.md)
+
+### M011 — Powerset constructor and Boolean validity — next
+
+Promote the M010 feasibility proof into the public set-theory API. The milestone should add semantic `BVSet.subsetValue`, its unrestricted first-order characterization, M009-based subset normalization, a raw powerset constructor under `[Small.{u} 𝔹]`, and the exact theorem
+
+```text
+BVSet.mem z (BVSet.powerset x) = BVSet.subsetValue z x.
+```
+
+Package powerset as a genuine closed ZF sentence and prove raw and separated Boolean validity under the same local smallness hypothesis, using the explicit constructor and the M006 sentence bridge. Keep `Shrink`, coefficient codes, and raw coefficient restrictions internal unless later mathematics provides an independent reason to expose them. The implementation should not import the maximum-principle/Zorn path merely because both milestones happen to use `Small`.
+
+The acceptance suite should preserve independent universes, check exact rather than top-fiber membership semantics, cover degenerate/empty edge cases without adding `Nontrivial 𝔹`, and verify that no quotient representative selector enters the powerset path.
 
 Infinity and foundation can remain separate if their representation dependencies differ; replacement/collection and choice should wait until the relevant size and witness machinery is understood.
 
