@@ -4,14 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Steven Sabean
 -/
 
-import BooleanValuedAnalysis
+import BooleanValuedAnalysis.SetTheory.ZF.Constructors
+import BooleanValuedAnalysis.SetTheory.ZF.Separation
 import Mathlib.Logic.Small.Basic
 
 /-!
 # M010 powerset design probe
 
 This executable documentation file checks the central representation claims in
-the M010 design before the powerset constructor enters the public library.
+the M010 design before the powerset constructor enters the public library. It
+imports the direct constructor/Separation path rather than the maximum-principle
+module, so the prototype also checks the intended dependency boundary.
 -/
 
 universe u v
@@ -122,6 +125,15 @@ theorem decode_membershipCode [Small.{u} 𝔹]
     decodeCode x (membershipCode x z) i = BVSet.mem (x.child i) z := by
   simp [decodeCode, membershipCode]
 
+/-- The small code obtained from membership values decodes to exactly the M009
+normalization restriction. -/
+theorem coefficientRestriction_membershipCode [Small.{u} 𝔹]
+    (x z : BVSet.{u, v} 𝔹) :
+    coefficientRestriction x (decodeCode x (membershipCode x z)) =
+      normalizeSubset x z := by
+  simp [coefficientRestriction, decodeCode, membershipCode,
+    normalizeSubset, BVSet.separate]
+
 /-- The proposed powerset node shape lives in the original raw-name carrier;
 `Shrink` appears only in the internal immediate-child code. -/
 noncomputable def powersetShape [Small.{u} 𝔹]
@@ -129,6 +141,29 @@ noncomputable def powersetShape [Small.{u} 𝔹]
   BVSet.mk (CoefficientCode x)
     (fun code => coefficientRestriction x (decodeCode x code))
     (fun _ => ⊤)
+
+/-- The proposed constructor shape already has the exact powerset membership
+semantics. This remains a documentation prototype until M011 promotes the API. -/
+theorem mem_powersetShape [Small.{u} 𝔹]
+    (z x : BVSet.{u, v} 𝔹) :
+    BVSet.mem z (powersetShape x) = subsetValue z x := by
+  rw [BVSet.mem_eq_iSup z (powersetShape x)]
+  simp only [powersetShape, BVSet.mk_index, BVSet.mk_weight, BVSet.mk_child,
+    top_inf_eq]
+  apply le_antisymm
+  · apply iSup_le
+    intro code
+    rw [subsetValue_eq_iInf_mem]
+    apply le_iInf
+    intro y
+    rw [le_himp_iff]
+    exact
+      (BVSet.mem_congr_right z
+        (coefficientRestriction x (decodeCode x code)) y).trans
+        (mem_coefficientRestriction_le y x (decodeCode x code))
+  · apply le_iSup_of_le (membershipCode x z)
+    rw [coefficientRestriction_membershipCode]
+    exact subsetValue_le_bvEq_normalizeSubset z x
 
 -- The crucial universe check: no equality or ordering relation between `u` and
 -- `v` is required by the proposed constructor shape.
