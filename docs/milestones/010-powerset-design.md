@@ -38,11 +38,7 @@ subsetValue z x =
   ⨅ y, mem y z ⇨ mem y x.
 ```
 
-Thus one public notion supports both the computational recursion used by raw constructors and the logical semantics of `∀ y, y ∈ z → y ∈ x`. With this orientation the recursive definition of Boolean equality is also exactly mutual inclusion:
-
-```text
-bvEq x y = subsetValue x y ⊓ subsetValue y x.
-```
+Thus one public notion supports both the computational recursion used by raw constructors and the logical semantics of `∀ y, y ∈ z → y ∈ x`. No separate logical subset relation is needed.
 
 The eventual constructor should satisfy the exact semantic equation
 
@@ -91,7 +87,7 @@ The present project can sharpen that construction using M009: meeting those memb
 
 ## Coefficient restrictions
 
-Introduce the raw helper shape
+The implementation uses the raw helper shape
 
 ```text
 coefficientRestriction x c :=
@@ -108,6 +104,8 @@ c i = mem (x.child i) z.
 ```
 
 Thus a powerset witness only needs to contain all coefficient restrictions of `x`; it does not need to enumerate arbitrary raw `BVSet` names.
+
+This helper is representation-sensitive: its input is indexed by the particular raw child type `x.Index`, and it may distinguish duplicate raw children. It therefore belongs to the constructor implementation rather than the principal semantic API unless a later use demonstrates a genuine public need.
 
 ## Size decision
 
@@ -127,13 +125,13 @@ x.Index → Shrink.{u} 𝔹
 
 as its immediate-child index type. This lies in `Type u` and preserves the existing independence of the name-index universe `u` and coefficient universe `v`.
 
-A code is decoded pointwise through `(equivShrink 𝔹).symm`; its child is the corresponding `coefficientRestriction x c`; every child has outer coefficient `⊤`.
+A code is decoded pointwise through `(equivShrink 𝔹).symm`; its child is the corresponding coefficient restriction; every child has outer coefficient `⊤`.
 
 ### Public-policy consequence
 
 `[Small.{u} 𝔹]` is a genuine assumption of the powerset constructor in the current raw-name representation. It must remain local to APIs that need it; M001–M003, M005–M009, and other size-free results should not acquire it transitively.
 
-`Shrink` is an implementation mechanism, not intended as part of the principal semantic theorem statements. Downstream users should see the `Small` assumption and exact `mem_powerset` specification, not have to manipulate coefficient codes.
+`Shrink`, coefficient codes, and raw coefficient restrictions are implementation mechanisms, not intended as part of the principal semantic theorem statements. Downstream users should see the `Small` assumption and exact `mem_powerset` specification, not have to manipulate raw coding data.
 
 ### Why not enlarge the raw name universe here?
 
@@ -149,14 +147,11 @@ This milestone does not prove that no clever alternative representation could av
 
 ## Proposed implementation API
 
-Names may be adjusted during implementation, but the intended public layer is:
+Names may be adjusted during implementation, but the intended public layer is deliberately semantic:
 
 ```text
 BVSet.subsetValue
 BVSet.subsetValue_eq_iInf_mem
-BVSet.bvEq_eq_subsetValue_inf
-BVSet.coefficientRestriction
-BVSet.coefficientRestriction_subset_top
 BVSet.normalizeSubset
 BVSet.subsetValue_le_bvEq_normalizeSubset
 BVSet.powerset
@@ -173,12 +168,8 @@ theorem subsetValue_eq_iInf_mem
     (z x : BVSet.{u, v} 𝔹) :
     subsetValue z x = ⨅ y, mem y z ⇨ mem y x
 
-theorem bvEq_eq_subsetValue_inf
-    (x y : BVSet.{u, v} 𝔹) :
-    bvEq x y = subsetValue x y ⊓ subsetValue y x
-
-def coefficientRestriction
-    (x : BVSet.{u, v} 𝔹) (c : x.Index → 𝔹) : BVSet.{u, v} 𝔹
+def normalizeSubset (x z : BVSet.{u, v} 𝔹) : BVSet.{u, v} 𝔹 :=
+  separate x (fun y => mem y z)
 
 theorem subsetValue_le_bvEq_normalizeSubset
     (z x : BVSet.{u, v} 𝔹) :
@@ -192,7 +183,7 @@ noncomputable def powerset [Small.{u} 𝔹]
     mem z (powerset x) = subsetValue z x
 ```
 
-The exact names of internal code/decode helpers should remain private unless later constructions genuinely reuse them.
+Coefficient restriction, coefficient-code, encode/decode, and similar helpers should remain private or otherwise implementation-facing unless later constructions genuinely reuse them. M010 specifically avoids promoting raw representation details simply because the powerset proof needs them internally.
 
 ## Proof plan for `mem_powerset`
 
@@ -256,14 +247,13 @@ under `[Small.{u} 𝔹]`, using the explicit raw `BVSet.powerset` witness and M0
 The eventual `Audit/M011Acceptance.lean` should check at least:
 
 1. `subsetValue` uses M002 weighted bounded universal semantics and agrees exactly with the unrestricted implication meet.
-2. Boolean equality is exactly mutual `subsetValue`.
-3. Every coefficient restriction is included in its source with value `⊤`.
-4. The M009 normalization inequality holds for arbitrary `z` and `x`.
-5. `powerset x` remains in `BVSet.{u, v} 𝔹` for independent `u` and `v` under `[Small.{u} 𝔹]`.
-6. `mem z (powerset x) = subsetValue z x` exactly, not merely at the top fiber.
-7. The empty name and full source restriction appear as edge cases without assuming `Nontrivial 𝔹`.
-8. The closed powerset sentence has raw and separated truth value `⊤` under the same explicit `Small` assumption.
-9. No maximum-principle, Zorn, or quotient-representative API is required by the powerset modules beyond the small-code mechanism itself.
+2. The internal coefficient-restriction construction gives subsets of its source with value `⊤` without becoming required public API.
+3. The M009 normalization inequality holds for arbitrary `z` and `x`.
+4. `powerset x` remains in `BVSet.{u, v} 𝔹` for independent `u` and `v` under `[Small.{u} 𝔹]`.
+5. `mem z (powerset x) = subsetValue z x` exactly, not merely at the top fiber.
+6. The empty name and full source restriction appear as edge cases without assuming `Nontrivial 𝔹`.
+7. The closed powerset sentence has raw and separated truth value `⊤` under the same explicit `Small` assumption.
+8. No maximum-principle, Zorn, or quotient-representative API is required by the powerset modules beyond the small-code mechanism itself.
 
 ## Non-goals
 
@@ -281,6 +271,6 @@ M010 does not implement the powerset constructor or axiom theorem. It also does 
 - Does its exact unrestricted theorem match the intended first-order inclusion formula?
 - Does M009 normalization really supply all representatives needed for the lower bound?
 - Is `[Small.{u} 𝔹]` the narrowest honest size interface for the chosen raw representation?
-- Can `Shrink` remain hidden from the principal public semantics?
+- Are `Shrink` and representation-sensitive coefficient helpers sufficiently hidden from the public semantic API?
 - Does the proposed proof avoid accidentally importing the maximum-principle/Zorn path?
 - Will the raw powerset theorem transport to the separated carrier solely through M006?
