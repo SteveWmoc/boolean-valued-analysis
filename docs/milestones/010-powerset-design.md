@@ -18,20 +18,31 @@ Since `x.Index : Type u` and `𝔹 : Type v`, that function space lives in `Type
 
 ## Mathematical target
 
-Define the Boolean truth value of inclusion by
+Define the Boolean truth value of inclusion by reusing M002 weighted bounded universal semantics:
 
 ```text
 subsetValue z x :=
+  boundedForall z (fun y => mem y x).
+```
+
+This is the standard recursive form
+
+```text
+⨅ i : z.Index, z.weight i ⇨ mem (z.child i) x.
+```
+
+Because membership in the fixed target `x` is extensional, M002 immediately gives the exact unrestricted first-order view
+
+```text
+subsetValue z x =
   ⨅ y, mem y z ⇨ mem y x.
 ```
 
-This is the unrestricted first-order semantics of `∀ y, y ∈ z → y ∈ x`. M002 already shows that, because membership in the fixed target `x` is extensional, the same value is the weighted-child bounded universal
+Thus one public notion supports both the computational recursion used by raw constructors and the logical semantics of `∀ y, y ∈ z → y ∈ x`. With this orientation the recursive definition of Boolean equality is also exactly mutual inclusion:
 
 ```text
-boundedForall z (fun y => mem y x).
+bvEq x y = subsetValue x y ⊓ subsetValue y x.
 ```
-
-The public inclusion API should expose one notion with both these exact views rather than duplicating a logical and a computational definition.
 
 The eventual constructor should satisfy the exact semantic equation
 
@@ -142,7 +153,8 @@ Names may be adjusted during implementation, but the intended public layer is:
 
 ```text
 BVSet.subsetValue
-BVSet.subsetValue_eq_boundedForall
+BVSet.subsetValue_eq_iInf_mem
+BVSet.bvEq_eq_subsetValue_inf
 BVSet.coefficientRestriction
 BVSet.coefficientRestriction_subset_top
 BVSet.normalizeSubset
@@ -154,11 +166,16 @@ BVSet.mem_powerset
 with the principal signatures morally
 
 ```lean
-def subsetValue (z x : BVSet.{u, v} 𝔹) : 𝔹
+def subsetValue (z x : BVSet.{u, v} 𝔹) : 𝔹 :=
+  boundedForall z (fun y => mem y x)
 
-theorem subsetValue_eq_boundedForall
+theorem subsetValue_eq_iInf_mem
     (z x : BVSet.{u, v} 𝔹) :
-    subsetValue z x = boundedForall z (fun y => mem y x)
+    subsetValue z x = ⨅ y, mem y z ⇨ mem y x
+
+theorem bvEq_eq_subsetValue_inf
+    (x y : BVSet.{u, v} 𝔹) :
+    bvEq x y = subsetValue x y ⊓ subsetValue y x
 
 def coefficientRestriction
     (x : BVSet.{u, v} 𝔹) (c : x.Index → 𝔹) : BVSet.{u, v} 𝔹
@@ -238,14 +255,15 @@ under `[Small.{u} 𝔹]`, using the explicit raw `BVSet.powerset` witness and M0
 
 The eventual `Audit/M011Acceptance.lean` should check at least:
 
-1. `subsetValue` is exactly the universal implication meet and agrees with M002 weighted bounded universal semantics.
-2. Every coefficient restriction is included in its source with value `⊤`.
-3. The M009 normalization inequality holds for arbitrary `z` and `x`.
-4. `powerset x` remains in `BVSet.{u, v} 𝔹` for independent `u` and `v` under `[Small.{u} 𝔹]`.
-5. `mem z (powerset x) = subsetValue z x` exactly, not merely at the top fiber.
-6. The empty name and full source restriction appear as edge cases without assuming `Nontrivial 𝔹`.
-7. The closed powerset sentence has raw and separated truth value `⊤` under the same explicit `Small` assumption.
-8. No maximum-principle, Zorn, or quotient-representative API is required by the powerset modules beyond the small-code mechanism itself.
+1. `subsetValue` uses M002 weighted bounded universal semantics and agrees exactly with the unrestricted implication meet.
+2. Boolean equality is exactly mutual `subsetValue`.
+3. Every coefficient restriction is included in its source with value `⊤`.
+4. The M009 normalization inequality holds for arbitrary `z` and `x`.
+5. `powerset x` remains in `BVSet.{u, v} 𝔹` for independent `u` and `v` under `[Small.{u} 𝔹]`.
+6. `mem z (powerset x) = subsetValue z x` exactly, not merely at the top fiber.
+7. The empty name and full source restriction appear as edge cases without assuming `Nontrivial 𝔹`.
+8. The closed powerset sentence has raw and separated truth value `⊤` under the same explicit `Small` assumption.
+9. No maximum-principle, Zorn, or quotient-representative API is required by the powerset modules beyond the small-code mechanism itself.
 
 ## Non-goals
 
@@ -259,8 +277,8 @@ M010 does not implement the powerset constructor or axiom theorem. It also does 
 
 ## Review prompts
 
-- Is `subsetValue` the correct exact Boolean semantics of inclusion?
-- Does M002 give the right weighted-child computational view without creating a second subset notion?
+- Is defining `subsetValue` through M002 weighted bounded semantics the right computational API?
+- Does its exact unrestricted theorem match the intended first-order inclusion formula?
 - Does M009 normalization really supply all representatives needed for the lower bound?
 - Is `[Small.{u} 𝔹]` the narrowest honest size interface for the chosen raw representation?
 - Can `Shrink` remain hidden from the principal public semantics?
