@@ -1,8 +1,9 @@
 # M010 — Powerset size boundary and implementation design
 
-**Status:** design milestone  
+**Status:** complete  
+**Completed:** 2026-08-22  
 **Depends on:** M002, M005, M006, M008, M009  
-**Implementation milestone:** deferred to the next PR after this design is accepted
+**Implementation milestone:** M011 — powerset constructor and Boolean validity
 
 ## Purpose
 
@@ -264,6 +265,16 @@ M010 does not implement the powerset constructor or axiom theorem. It also does 
 - prove the `Small` assumption unavoidable for every conceivable representation;
 - add Infinity, Foundation, Replacement/Collection, Choice, logical soundness, or a Transfer Principle;
 - solve general ascent of arbitrary separated external families.
+
+## Completion record
+
+The executable probe `docs/probes/M010PowersetDesign.lean` validates the selected representation in the pinned Lean/Mathlib environment and in the live Tau Ceti environment. In particular it checks independent universes, the M002 inclusion interface, the M009 normalization estimate, the small coefficient-code type, and the exact candidate equation
+
+```text
+mem z (powersetShape x) = subsetValue z x.
+```
+
+The probe imports the direct constructor/Separation path plus `Mathlib.Logic.Small.Basic`, not the maximum-principle module. M010 therefore closes the design question without adding a public powerset declaration; that promotion and the closed ZF axiom belong to M011.
 
 ## Review prompts
 
