@@ -1,7 +1,7 @@
 # M010 — Powerset size boundary and implementation design
 
 **Status:** design milestone  
-**Depends on:** M005, M006, M008, M009  
+**Depends on:** M002, M005, M006, M008, M009  
 **Implementation milestone:** deferred to the next PR after this design is accepted
 
 ## Purpose
@@ -24,6 +24,14 @@ Define the Boolean truth value of inclusion by
 subsetValue z x :=
   ⨅ y, mem y z ⇨ mem y x.
 ```
+
+This is the unrestricted first-order semantics of `∀ y, y ∈ z → y ∈ x`. M002 already shows that, because membership in the fixed target `x` is extensional, the same value is the weighted-child bounded universal
+
+```text
+boundedForall z (fun y => mem y x).
+```
+
+The public inclusion API should expose one notion with both these exact views rather than duplicating a logical and a computational definition.
 
 The eventual constructor should satisfy the exact semantic equation
 
@@ -63,6 +71,12 @@ subsetValue z x ≤ bvEq z (normalizeSubset x z).
 This is the decisive structural observation for powerset: every potential subset is forced equal, to at least its inclusion value, to a name obtained merely by changing the coefficients on the existing children of `x`.
 
 No maximum-principle witness extraction is needed for this normalization.
+
+### Alignment with the standard Boolean-valued proof
+
+The standard construction in Kusraev–Kutateladze, *Boolean Valued Universes*, §2.4.4, likewise forms the powerset witness by ranging over Boolean coefficient assignments on `dom(x)`. Given an arbitrary `z`, their proof replaces it by a name on `dom(x)` whose coefficient at `t` is `⟦t ∈ z⟧`. Thus the two ingredients driving this Lean design—the coefficient-function family and normalization by membership values—are the standard powerset argument.
+
+The present project can sharpen that construction using M009: meeting those membership coefficients with the existing source coefficients produces `normalizeSubset x z`, so every coded child is already a subset of `x` with value `⊤`. This lets the outer powerset coefficients all be `⊤` and keeps the proof local to M008–M009 semantics.
 
 ## Coefficient restrictions
 
@@ -128,6 +142,7 @@ Names may be adjusted during implementation, but the intended public layer is:
 
 ```text
 BVSet.subsetValue
+BVSet.subsetValue_eq_boundedForall
 BVSet.coefficientRestriction
 BVSet.coefficientRestriction_subset_top
 BVSet.normalizeSubset
@@ -140,6 +155,10 @@ with the principal signatures morally
 
 ```lean
 def subsetValue (z x : BVSet.{u, v} 𝔹) : 𝔹
+
+theorem subsetValue_eq_boundedForall
+    (z x : BVSet.{u, v} 𝔹) :
+    subsetValue z x = boundedForall z (fun y => mem y x)
 
 def coefficientRestriction
     (x : BVSet.{u, v} 𝔹) (c : x.Index → 𝔹) : BVSet.{u, v} 𝔹
@@ -219,7 +238,7 @@ under `[Small.{u} 𝔹]`, using the explicit raw `BVSet.powerset` witness and M0
 
 The eventual `Audit/M011Acceptance.lean` should check at least:
 
-1. `subsetValue` is exactly the universal implication meet.
+1. `subsetValue` is exactly the universal implication meet and agrees with M002 weighted bounded universal semantics.
 2. Every coefficient restriction is included in its source with value `⊤`.
 3. The M009 normalization inequality holds for arbitrary `z` and `x`.
 4. `powerset x` remains in `BVSet.{u, v} 𝔹` for independent `u` and `v` under `[Small.{u} 𝔹]`.
@@ -241,6 +260,7 @@ M010 does not implement the powerset constructor or axiom theorem. It also does 
 ## Review prompts
 
 - Is `subsetValue` the correct exact Boolean semantics of inclusion?
+- Does M002 give the right weighted-child computational view without creating a second subset notion?
 - Does M009 normalization really supply all representatives needed for the lower bound?
 - Is `[Small.{u} 𝔹]` the narrowest honest size interface for the chosen raw representation?
 - Can `Shrink` remain hidden from the principal public semantics?
