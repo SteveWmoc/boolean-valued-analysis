@@ -28,6 +28,14 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 def subsetValue (z x : BVSet.{u, v} 𝔹) : 𝔹 :=
   ⨅ y : BVSet.{u, v} 𝔹, BVSet.mem y z ⇨ BVSet.mem y x
 
+/-- The logical inclusion value is exactly M002 weighted-child bounded
+universal semantics. -/
+theorem subsetValue_eq_boundedForall
+    (z x : BVSet.{u, v} 𝔹) :
+    subsetValue z x = BVSet.boundedForall z (fun y => BVSet.mem y x) := by
+  symm
+  exact BVSet.boundedForall_eq_iInf_mem (BVSet.extensional_mem_left x)
+
 /-- Candidate raw coefficient restriction used by the powerset construction. -/
 def coefficientRestriction
     (x : BVSet.{u, v} 𝔹) (c : x.Index → 𝔹) : BVSet.{u, v} 𝔹 :=
