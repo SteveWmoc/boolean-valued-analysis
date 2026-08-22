@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a first Boolean-valid ZF fragment, and the Boolean-valued Separation schema are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a first Boolean-valid ZF fragment, the Boolean-valued Separation schema, and an executable powerset implementation design are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -36,7 +36,8 @@ The current development establishes that:
 - the Δ₀ fragment is represented by a predicate over the existing syntax, and every Δ₀ formula evaluated on canonical names has exactly the classical Boolean value `⊤` or `⊥` of its ground truth; the same statement holds intrinsically on separated checked names through the M006 bridge;
 - direct raw pairing and union names satisfy exact Boolean membership equations, while Boolean-valued equality is exactly universal agreement of membership;
 - ZF extensionality, empty set, pairing, and union are encoded as genuine closed sentences and have Boolean truth value `⊤` for arbitrary raw names and, through the M006 bridge, on the separated carrier, without a `Small` hypothesis;
-- direct coefficient restriction gives a raw Separation constructor with exact membership semantics for every extensional predicate, and first-order Separation-schema instances with arbitrary free parameters have Boolean truth value `⊤` on both raw assignments and their separated images, again without a `Small` hypothesis.
+- direct coefficient restriction gives a raw Separation constructor with exact membership semantics for every extensional predicate, and first-order Separation-schema instances with arbitrary free parameters have Boolean truth value `⊤` on both raw assignments and their separated images, again without a `Small` hypothesis;
+- the powerset size boundary has an executable design: M009 normalization reduces arbitrary Boolean subsets to coefficient restrictions of a fixed source, and under local `[Small.{u} 𝔹]` those restrictions can be small-coded while preserving independent universes; the documentation probe proves the exact candidate powerset membership equation without importing the maximum-principle/Zorn path.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -112,8 +113,9 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 7. **Ground semantics and Δ₀ standard-name absoluteness (M007): complete.** The same set-theory syntax is interpreted on ground `PSet`, and Δ₀ truth on `check`/`checkSeparated` parameters agrees exactly with classical ground truth without a `Small` hypothesis.
 8. **First Boolean-valid ZF fragment (M008): complete.** Extensionality, empty set, pairing, and union are Boolean-valid on raw and separated carriers using direct constructors and no maximum-principle smallness assumption.
 9. **Boolean-valued Separation (M009): complete.** Direct coefficient restriction realizes Separation for arbitrary extensional predicates; genuine first-order schema instances with free parameters are Boolean-valid on raw assignments and their separated images, with no `Small` hypothesis.
-10. Design powerset as its own size-sensitive milestone before committing to a representation or smallness policy, then continue the remaining ZF/ZFC fragments and logical soundness needed for theorem-level Transfer.
-11. Connect the framework with forcing and applications in Boolean-valued analysis.
+10. **Powerset size boundary and implementation design (M010): complete.** M009 normalization plus small coefficient codes give a validated direct construction under local `[Small.{u} 𝔹]`; an executable documentation probe proves the exact candidate powerset membership equation in pinned and live Tau Ceti environments without the maximum-principle path.
+11. **Powerset constructor and Boolean validity (M011): next.** Promote the M010 design into the public semantic API and package the powerset axiom as raw and separated Boolean-valid ZF under the same explicit local smallness hypothesis.
+12. Continue the remaining ZF/ZFC fragments and logical soundness needed for theorem-level Transfer, then connect the framework with forcing and applications in Boolean-valued analysis.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
@@ -131,9 +133,9 @@ The pull request template records this review without imposing the full process 
 
 ## Development standards
 
-Every pull request is checked by GitHub Actions. CI builds the library, runs the project linter baseline, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in both the public library and `Audit/` acceptance files, and compiles the M001–M009 acceptance suites.
+Every pull request is checked by GitHub Actions. CI builds the library, runs the project linter baseline, verifies that every public module is exported by the main import file, rejects unfinished `sorry` or `admit` placeholders in public code, milestone acceptance probes, and executable documentation, auto-discovers all `Audit/M*Acceptance.lean` suites, and compiles every Lean probe under `docs/`.
 
-A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds and lints the complete public library in that environment, and compiles the M001–M009 acceptance sequence there as well. Those production-API suites exercise the independent universe policy, structural substitution, bounded quantifiers, mixing, the maximum principle, the separated quotient, the separated formula-semantics bridge, elementary descent, ground semantics, Δ₀ standard-name absoluteness, the first Boolean-valid ZF fragment, and Separation without maintaining a second parallel model under `Audit/`. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
+A separate architecture audit snapshots the current `TauCetiProject/TauCeti` `main` branch at the start of each run, reads its Lean toolchain and exact Mathlib revision from that same commit, logs the Tau Ceti commit and dependency versions, builds and lints the complete public library in that environment, and then auto-discovers the milestone acceptance sequence and documentation Lean probes there as well. Those production-API suites exercise the independent universe policy, structural substitution, bounded quantifiers, mixing, the maximum principle, the separated quotient, the separated formula-semantics bridge, elementary descent, ground semantics, Δ₀ standard-name absoluteness, the Boolean-valid ZF fragments, and executable architecture experiments without maintaining a second parallel model under `Audit/`. The compatibility environment is therefore discovered at run time rather than pinned in this repository.
 
 Focused contributions and mathematical corrections are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
