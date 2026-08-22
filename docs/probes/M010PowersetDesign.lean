@@ -40,18 +40,8 @@ theorem subsetValue_eq_iInf_mem
       ⨅ y : BVSet.{u, v} 𝔹, BVSet.mem y z ⇨ BVSet.mem y x := by
   exact BVSet.boundedForall_eq_iInf_mem (BVSet.extensional_mem_left x)
 
-/-- With the weighted definition of inclusion, the recursive Boolean equality
-is exactly mutual inclusion. -/
-theorem bvEq_eq_subsetValue_inf
-    (x y : BVSet.{u, v} 𝔹) :
-    BVSet.bvEq x y = subsetValue x y ⊓ subsetValue y x := by
-  cases x with
-  | mk ι A w =>
-      cases y with
-      | mk κ C v =>
-          simp [subsetValue, BVSet.boundedForall]
-
-/-- Candidate raw coefficient restriction used by the powerset construction. -/
+/-- Candidate raw coefficient restriction used internally by the powerset
+construction. -/
 def coefficientRestriction
     (x : BVSet.{u, v} 𝔹) (c : x.Index → 𝔹) : BVSet.{u, v} 𝔹 :=
   BVSet.mk x.Index x.child (fun i => x.weight i ⊓ c i)
