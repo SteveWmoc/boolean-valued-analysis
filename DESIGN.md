@@ -208,6 +208,33 @@ The standard ground objects in this stage are Mathlib `PSet` values. Their canon
 - a first ZF-fragment proof demonstrates that general ascent is already unavoidable;
 - Mathlib provides an ordinary set-theory semantic interface that should replace the proposed ground structure.
 
+## D009 — Use small coefficient codes only at the powerset collection boundary
+
+**Status:** accepted by M010
+
+For `x : BVSet.{u, v} 𝔹`, Boolean inclusion is defined semantically by the existing weighted bounded universal, while the raw powerset construction ranges internally over coefficient restrictions of the children of `x`. The family of all Boolean coefficient assignments has shape `x.Index → 𝔹`, which need not lie in `Type u`. M010 therefore chooses the local hypothesis `[Small.{u} 𝔹]` and codes coefficients internally through `Shrink.{u} 𝔹` so the powerset index type remains in `Type u`.
+
+### Rationale
+
+- M009 normalization shows that every potential subset `z` is forced, to at least its inclusion value in `x`, equal to a coefficient restriction of `x`; arbitrary raw names therefore do not need to be enumerated.
+- Under `[Small.{u} 𝔹]`, the code type `x.Index → Shrink.{u} 𝔹` lies in `Type u` while keeping the name-index and coefficient universes independent.
+- An executable M010 probe proves the complete candidate equation `mem z (powersetShape x) = subsetValue z x` in both the pinned environment and the live Tau Ceti environment.
+- The direct proof imports the constructor/Separation path and `Mathlib.Logic.Small.Basic`; it does not require the M004 maximum-principle/Zorn path or a quotient representative selector.
+
+### Consequences
+
+- `subsetValue`, its unrestricted first-order characterization, and the M009 normalization lemma remain size-free.
+- `[Small.{u} 𝔹]` is required only when collecting all coefficient restrictions into one raw powerset node under the current representation.
+- `Shrink`, coefficient codes, and representation-sensitive coefficient restrictions are implementation details and should not dominate the public semantic API.
+- M011 should expose exact powerset membership semantics and raw/separated ZF validity under the same explicit local `Small` assumption.
+- This decision does not claim that `Small` is logically necessary for every possible representation of Boolean-valued names.
+
+### Reconsider when
+
+- `BVSet` is redesigned so immediate children can be indexed in a larger or cumulative universe;
+- a representation-independent coding theorem supplies the required family in `Type u` without `[Small.{u} 𝔹]`;
+- later ZF constructions reveal that a different global size policy is substantially cleaner and can be adopted without infecting size-free milestones.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001
