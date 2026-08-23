@@ -47,7 +47,8 @@ example (z x : BVSet.{u, v} 𝔹) :
 -- that the Boolean algebra is nontrivial.
 example (x : BVSet.{u, v} 𝔹) :
     subsetValue (∅ : BVSet.{u, v} 𝔹) x = ⊤ := by
-  simp [subsetValue, boundedForall, empty]
+  rw [subsetValue_eq_iInf_mem]
+  simp
 
 -- Only the collection step needs the explicit smallness boundary.
 noncomputable example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
@@ -64,8 +65,8 @@ example [Small.{u} 𝔹] (z x : BVSet.{u, v} 𝔹) :
 -- with no `Nontrivial 𝔹` assumption.
 example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
     mem (∅ : BVSet.{u, v} 𝔹) (powerset x) = ⊤ := by
-  rw [mem_powerset]
-  simp [subsetValue, boundedForall, empty]
+  rw [mem_powerset, subsetValue_eq_iInf_mem]
+  simp
 
 end BVSet
 
