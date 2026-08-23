@@ -1,14 +1,15 @@
 # M011 — Powerset constructor and Boolean validity
 
-**Status:** implementation milestone  
+**Status:** complete  
+**Completed:** 2026-08-22  
 **Depends on:** M002, M006, M008, M009, M010  
 **Size boundary:** local `[Small.{u} 𝔹]` only at powerset collection/validity
 
 ## Purpose
 
-Promote the executable M010 powerset design into the stable public set-theory API and prove the ZF powerset axiom Boolean-valid on raw and separated names.
+M011 promotes the executable M010 powerset design into the stable public set-theory API and proves the ZF powerset axiom Boolean-valid on raw and separated names.
 
-The mathematical target is the exact equation
+The principal exact equation is
 
 ```text
 mem z (powerset x) = subsetValue z x,
@@ -114,7 +115,7 @@ For the upper bound, every coded restriction has membership below `x`; Boolean e
 ∀ x, ∃ p, ∀ z, z ∈ p ↔ ∀ y, y ∈ z → y ∈ x.
 ```
 
-The locally nameless syntax is reduced to
+The locally nameless syntax reduces exactly to
 
 ```text
 ⨅ x, ⨆ p, ⨅ z,
@@ -136,7 +137,17 @@ The locally nameless syntax is reduced to
 6. the powerset axiom is an actual `Sentence`;
 7. its direct sentence semantics reduces to the public inclusion value;
 8. raw and separated Boolean validity require only the explicit local `Small` hypothesis;
-9. degenerate/empty subset behavior does not require `Nontrivial 𝔹`.
+9. `∅` is included in every source, and therefore belongs to every powerset, with value `⊤` without assuming `Nontrivial 𝔹`.
+
+## Dependency result
+
+M011 confirms the M010 boundary rather than widening it:
+
+- inclusion and normalization remain size-free;
+- `Small` is required only for collecting the coefficient family into a raw powerset name and for the validity theorem that uses that witness;
+- `Shrink` remains private implementation machinery;
+- the powerset path imports neither the M004 maximum-principle/Zorn module nor any quotient representative selector;
+- independent name-index and Boolean-algebra universes are preserved.
 
 ## Non-goals
 
