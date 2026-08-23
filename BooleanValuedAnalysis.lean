@@ -36,6 +36,8 @@ import BooleanValuedAnalysis.SetTheory.ZF.Constructors
 import BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms
 import BooleanValuedAnalysis.SetTheory.ZF.Separation
 import BooleanValuedAnalysis.SetTheory.ZF.SeparationSchema
+import BooleanValuedAnalysis.SetTheory.ZF.Powerset
+import BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom
 
 /-!
 # Boolean-Valued Analysis
@@ -56,6 +58,8 @@ elementary descent by top-valued membership, intrinsic set-theory semantics on
 that separated universe together with exact comparison to raw formula truth
 under the quotient map, direct raw constructors plus Boolean validity for
 extensionality, empty set, pairing, and union in the first ZF fragment, direct
-Boolean-valued Separation for extensional predicates and formula bodies, and
-genuine first-order Separation-schema instances in the existing syntax.
+Boolean-valued Separation for extensional predicates and formula bodies,
+genuine first-order Separation-schema instances in the existing syntax, and a
+Boolean-valued powerset constructor with exact inclusion semantics plus raw and
+separated validity of the ZF powerset axiom under its local smallness hypothesis.
 -/
