@@ -28,7 +28,8 @@ The repository currently provides:
 - a Δ₀ predicate over the existing syntax and exact standard-name absoluteness for raw and separated canonical names, without a `Small` hypothesis;
 - direct raw constructors for pairing and union, exact semantic specifications for empty/pair/union membership, and a characterization of Boolean equality by universal membership agreement;
 - Boolean validity, on both raw and separated carriers, of ZF extensionality, empty set, pairing, and union;
-- direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis.
+- direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis;
+- Boolean inclusion, size-free subset normalization, and a small-coded raw powerset constructor with exact membership semantics, together with raw and separated Boolean validity of the ZF powerset axiom under local `[Small.{u} 𝔹]`.
 
 These components form the foundation for the milestones below.
 
@@ -255,17 +256,33 @@ The probe imports the direct constructor/Separation path plus `Mathlib.Logic.Sma
 
 Specification and completion record: [`docs/milestones/010-powerset-design.md`](docs/milestones/010-powerset-design.md)
 
-### M011 — Powerset constructor and Boolean validity — next
+### M011 — Powerset constructor and Boolean validity — complete
 
-Promote the M010 feasibility proof into the public set-theory API. The milestone should add semantic `BVSet.subsetValue`, its unrestricted first-order characterization, M009-based subset normalization, a raw powerset constructor under `[Small.{u} 𝔹]`, and the exact theorem
+Completed 2026-08-22.
+
+M011 promotes the M010 feasibility proof into the public set-theory API. `BVSet.subsetValue` is definitionally the M002 weighted bounded universal and `BVSet.subsetValue_eq_iInf_mem` gives the exact unrestricted first-order inclusion semantics. The size-free normalization
+
+```text
+BVSet.normalizeSubset x z := BVSet.separate x (fun y => BVSet.mem y z)
+```
+
+satisfies
+
+```text
+BVSet.subsetValue z x ≤ BVSet.bvEq z (BVSet.normalizeSubset x z).
+```
+
+Under the local hypothesis `[Small.{u} 𝔹]`, `BVSet.powerset x` collects the internally coded coefficient restrictions while keeping all `Shrink` and raw representation machinery private. Its principal theorem is exact:
 
 ```text
 BVSet.mem z (BVSet.powerset x) = BVSet.subsetValue z x.
 ```
 
-Package powerset as a genuine closed ZF sentence and prove raw and separated Boolean validity under the same local smallness hypothesis, using the explicit constructor and the M006 sentence bridge. Keep `Shrink`, coefficient codes, and raw coefficient restrictions internal unless later mathematics provides an independent reason to expose them. The implementation should not import the maximum-principle/Zorn path merely because both milestones happen to use `Small`.
+`SetTheory.ZF.powerset` is the genuine closed sentence `∀ x, ∃ p, ∀ z, z ∈ p ↔ ∀ y, y ∈ z → y ∈ x`. `ZF.sentenceTruth_powerset` reduces it to the public inclusion semantics, `ZF.isTrue_powerset` uses the explicit raw powerset witness, and `SetTheory.separatedIsTrue_powerset` transports validity through the exact M006 sentence bridge.
 
-The acceptance suite should preserve independent universes, check exact rather than top-fiber membership semantics, cover degenerate/empty edge cases without adding `Nontrivial 𝔹`, and verify that no quotient representative selector enters the powerset path.
+M011 confirms D009: inclusion and normalization remain size-free; `[Small.{u} 𝔹]` occurs only at the collection/validity boundary; independent universes are preserved; and the powerset path imports neither the M004 maximum-principle/Zorn machinery nor a quotient representative selector. `Audit/M011Acceptance.lean` checks exact membership semantics, the sentence packaging, raw/separated validity, and the empty-subset edge case without `Nontrivial 𝔹`.
+
+Specification and completion record: [`docs/milestones/011-powerset.md`](docs/milestones/011-powerset.md)
 
 Infinity and foundation can remain separate if their representation dependencies differ; replacement/collection and choice should wait until the relevant size and witness machinery is understood.
 
