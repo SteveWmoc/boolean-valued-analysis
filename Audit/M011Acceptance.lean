@@ -43,6 +43,12 @@ example (z x : BVSet.{u, v} 𝔹) :
     subsetValue z x ≤ bvEq z (normalizeSubset x z) :=
   subsetValue_le_bvEq_normalizeSubset z x
 
+-- The empty name is included in every source with value top, without assuming
+-- that the Boolean algebra is nontrivial.
+example (x : BVSet.{u, v} 𝔹) :
+    subsetValue (∅ : BVSet.{u, v} 𝔹) x = ⊤ := by
+  simp [subsetValue, boundedForall, empty]
+
 -- Only the collection step needs the explicit smallness boundary.
 noncomputable example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
     BVSet.{u, v} 𝔹 :=
@@ -53,6 +59,13 @@ noncomputable example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
 example [Small.{u} 𝔹] (z x : BVSet.{u, v} 𝔹) :
     mem z (powerset x) = subsetValue z x :=
   mem_powerset z x
+
+-- Consequently the empty name belongs to every powerset with value top, still
+-- with no `Nontrivial 𝔹` assumption.
+example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
+    mem (∅ : BVSet.{u, v} 𝔹) (powerset x) = ⊤ := by
+  rw [mem_powerset]
+  simp [subsetValue, boundedForall, empty]
 
 end BVSet
 
