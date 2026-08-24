@@ -25,7 +25,7 @@ namespace BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-/-- The direct von Neumann successor `x ∪ {x}`.  Existing children keep their
+/-- The direct von Neumann successor `x ∪ {x}`. Existing children keep their
 coefficients and the new child `x` has coefficient `⊤`. -/
 def succ (x : BVSet.{u, v} 𝔹) : BVSet.{u, v} 𝔹 :=
   BVSet.mk (Option x.Index)
@@ -51,7 +51,10 @@ theorem mem_succ (z x : BVSet.{u, v} 𝔹) :
     | none =>
         simp
     | some j =>
-        exact (le_iSup_of_le j le_rfl).trans le_sup_left
+        have hj : x.weight j ⊓ bvEq z (x.child j) ≤ mem z x := by
+          rw [mem_eq_iSup z x]
+          exact le_iSup_of_le j le_rfl
+        exact hj.trans le_sup_left
   · apply sup_le
     · rw [mem_eq_iSup z x]
       apply iSup_le
@@ -64,7 +67,7 @@ theorem mem_succ (z x : BVSet.{u, v} 𝔹) :
 /-- Boolean equality is preserved from below by von Neumann successor. -/
 theorem bvEq_le_bvEq_succ (x y : BVSet.{u, v} 𝔹) :
     bvEq x y ≤ bvEq (succ x) (succ y) := by
-  rw [bvEq_eq_iInf_mem_iff]
+  rw [bvEq_eq_iInf_mem_iff (succ x) (succ y)]
   apply le_iInf
   intro z
   rw [mem_succ, mem_succ]
@@ -99,17 +102,17 @@ def natName : ℕ → BVSet.{u, v} 𝔹
   | n + 1 => succ (natName n)
 
 @[simp]
-theorem natName_zero : natName (𝔹 := 𝔹) (u := u) 0 =
-    (∅ : BVSet.{u, v} 𝔹) :=
+theorem natName_zero :
+    natName (𝔹 := 𝔹) 0 = (∅ : BVSet.{u, v} 𝔹) :=
   rfl
 
 @[simp]
 theorem natName_succ (n : ℕ) :
-    natName (𝔹 := 𝔹) (u := u) (n + 1) = succ (natName n) :=
+    natName (𝔹 := 𝔹) (n + 1) = succ (natName n) :=
   rfl
 
 /-- The direct Boolean-valued `ω`, whose finite von Neumann names all carry
-coefficient `⊤`.  `ULift ℕ` keeps the immediate-child index in `Type u` without
+coefficient `⊤`. `ULift ℕ` keeps the immediate-child index in `Type u` without
 any smallness hypothesis on the Boolean algebra. -/
 def omega : BVSet.{u, v} 𝔹 :=
   BVSet.mk (ULift.{u} ℕ)
@@ -140,7 +143,7 @@ theorem mem_empty_omega :
   rw [mem_omega]
   apply top_unique
   apply le_iSup_of_le 0
-  simp
+  rw [natName_zero, bvEq_refl]
 
 /-- Membership in direct `ω` forces membership of the direct successor to at
 least the same Boolean degree. -/
@@ -150,7 +153,8 @@ theorem mem_le_mem_succ_omega (z : BVSet.{u, v} 𝔹) :
   apply iSup_le
   intro n
   apply le_iSup_of_le (n + 1)
-  simpa using bvEq_le_bvEq_succ z (natName n)
+  rw [natName_succ]
+  exact bvEq_le_bvEq_succ z (natName n)
 
 /-- The direct successor relation has the expected extensional membership
 specification with Boolean value `⊤`. -/
@@ -188,35 +192,45 @@ private def iffFormula {n : ℕ}
     (φ ψ : BoundedFormula Empty n) : BoundedFormula Empty n :=
   _root_.FirstOrder.Language.BoundedFormula.iff φ ψ
 
+/-- With bound variables `I = 0`, `e = 1`, the body asserting that `e` is empty
+and belongs to `I`. -/
+private def infinityEmptyBody : BoundedFormula Empty 2 :=
+  (allF ((BoundedFormula.mem
+    (bvar (Fin.last 2))
+    (bvar (Fin.castSucc (Fin.last 1)))).not)) ⊓
+  BoundedFormula.mem
+    (bvar (Fin.last 1))
+    (bvar (Fin.castSucc (Fin.last 0)))
+
+/-- With bound variables `I = 0`, `y = 1`, `s = 2`, the body asserting that
+`s ∈ I` and `s = y ∪ {y}`. -/
+private def infinitySuccessorBody : BoundedFormula Empty 3 :=
+  (BoundedFormula.mem
+    (bvar (Fin.last 2))
+    (bvar (Fin.castSucc (Fin.castSucc (Fin.last 0))))) ⊓
+  allF (iffFormula
+    (BoundedFormula.mem
+      (bvar (Fin.last 3))
+      (bvar (Fin.castSucc (Fin.last 2))))
+    ((BoundedFormula.mem
+        (bvar (Fin.last 3))
+        (bvar (Fin.castSucc (Fin.castSucc (Fin.last 1))))) ⊔
+      equalF
+        (bvar (Fin.last 3))
+        (bvar (Fin.castSucc (Fin.castSucc (Fin.last 1))))))
+
+/-- With bound variables `I = 0`, `y = 1`, the closure body
+`y ∈ I → ∃ s, s ∈ I ∧ s = y ∪ {y}`. -/
+private def infinityClosureBody : BoundedFormula Empty 2 :=
+  (BoundedFormula.mem
+    (bvar (Fin.last 1))
+    (bvar (Fin.castSucc (Fin.last 0)))).imp
+  (exF infinitySuccessorBody)
+
 /-- ZF Infinity, in the pure membership language:
 there is a set containing an empty set and closed under von Neumann successor. -/
 def infinity : Sentence :=
-  exF (
-    (exF (
-      (allF ((BoundedFormula.mem
-        (bvar (Fin.last 2))
-        (bvar (Fin.castSucc (Fin.last 1)))).not)) ⊓
-      BoundedFormula.mem
-        (bvar (Fin.last 1))
-        (bvar (Fin.castSucc (Fin.last 0))))) ⊓
-    allF (
-      (BoundedFormula.mem
-        (bvar (Fin.last 1))
-        (bvar (Fin.castSucc (Fin.last 0)))).imp
-      (exF (
-        (BoundedFormula.mem
-          (bvar (Fin.last 2))
-          (bvar (Fin.castSucc (Fin.castSucc (Fin.last 0))))) ⊓
-        allF (iffFormula
-          (BoundedFormula.mem
-            (bvar (Fin.last 3))
-            (bvar (Fin.castSucc (Fin.last 2))))
-          ((BoundedFormula.mem
-              (bvar (Fin.last 3))
-              (bvar (Fin.castSucc (Fin.castSucc (Fin.last 1))))) ⊔
-            equalF
-              (bvar (Fin.last 3))
-              (bvar (Fin.castSucc (Fin.castSucc (Fin.last 1)))))))))))
+  exF ((exF infinityEmptyBody) ⊓ allF infinityClosureBody)
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
@@ -244,7 +258,8 @@ theorem sentenceTruth_infinity :
                       ((BVSet.mem a y ⊔ BVSet.bvEq a y) ⇨
                         BVSet.mem a s)))) := by
   rw [sentenceTruth_eq_truth]
-  simp [infinity, allF, exF, equalF, iffFormula, bvar,
+  simp [infinity, infinityEmptyBody, infinitySuccessorBody,
+    infinityClosureBody, allF, exF, equalF, iffFormula, bvar,
     BoundedFormula.mem, Fin.snoc]
 
 /-- The ZF Infinity axiom is Boolean-valid, witnessed by direct `BVSet.omega`. -/
@@ -261,31 +276,13 @@ theorem isTrue_infinity :
     · rw [BVSet.mem_empty_omega]
   · apply le_iInf
     intro y
-    have hle :
-        BVSet.mem y (BVSet.omega (𝔹 := 𝔹)) ≤
-          ⨆ s : BVSet.{u, v} 𝔹,
-            BVSet.mem s (BVSet.omega (𝔹 := 𝔹)) ⊓
-              (⨅ a : BVSet.{u, v} 𝔹,
-                (BVSet.mem a s ⇨
-                    (BVSet.mem a y ⊔ BVSet.bvEq a y)) ⊓
-                  ((BVSet.mem a y ⊔ BVSet.bvEq a y) ⇨
-                    BVSet.mem a s)) := by
-      apply le_iSup_of_le (BVSet.succ y)
-      apply le_inf
-      · exact BVSet.mem_le_mem_succ_omega y
-      · rw [BVSet.successor_value_top]
-        exact le_top
-    have htop :
-        (BVSet.mem y (BVSet.omega (𝔹 := 𝔹)) ⇨
-          (⨆ s : BVSet.{u, v} 𝔹,
-            BVSet.mem s (BVSet.omega (𝔹 := 𝔹)) ⊓
-              (⨅ a : BVSet.{u, v} 𝔹,
-                (BVSet.mem a s ⇨
-                    (BVSet.mem a y ⊔ BVSet.bvEq a y)) ⊓
-                  ((BVSet.mem a y ⊔ BVSet.bvEq a y) ⇨
-                    BVSet.mem a s))) = ⊤ :=
-      himp_eq_top_iff.mpr hle
-    rw [htop]
+    rw [le_himp_iff]
+    simp only [top_inf_eq]
+    apply le_iSup_of_le (BVSet.succ y)
+    apply le_inf
+    · exact BVSet.mem_le_mem_succ_omega y
+    · rw [BVSet.successor_value_top]
+      exact le_top
 
 end ZF
 
