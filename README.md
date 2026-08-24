@@ -4,7 +4,7 @@
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a first Boolean-valid ZF fragment, the Boolean-valued Separation schema, and a Boolean-valued powerset constructor with raw/separated ZF validity are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a growing Boolean-valid ZF fragment, the Boolean-valued Separation schema, a Boolean-valued powerset constructor, and direct Boolean-valued Infinity are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
 
 ## Mathematical overview
 
@@ -38,7 +38,9 @@ The current development establishes that:
 - ZF extensionality, empty set, pairing, and union are encoded as genuine closed sentences and have Boolean truth value `⊤` for arbitrary raw names and, through the M006 bridge, on the separated carrier, without a `Small` hypothesis;
 - direct coefficient restriction gives a raw Separation constructor with exact membership semantics for every extensional predicate, and first-order Separation-schema instances with arbitrary free parameters have Boolean truth value `⊤` on both raw assignments and their separated images, again without a `Small` hypothesis;
 - Boolean inclusion `BVSet.subsetValue` is the M002 weighted bounded universal and agrees exactly with unrestricted first-order inclusion; M009 normalization gives a size-free representative theorem, while under local `[Small.{u} 𝔹]` the public `BVSet.powerset` constructor satisfies `BVSet.mem z (BVSet.powerset x) = BVSet.subsetValue z x` exactly;
-- the ZF powerset axiom is a genuine closed sentence and has Boolean truth value `⊤` on raw and separated names under that same local smallness hypothesis, without using the maximum-principle/Zorn path or selecting quotient representatives.
+- the ZF powerset axiom is a genuine closed sentence and has Boolean truth value `⊤` on raw and separated names under that same local smallness hypothesis, without using the maximum-principle/Zorn path or selecting quotient representatives;
+- direct von Neumann successor satisfies `BVSet.mem z (BVSet.succ x) = BVSet.mem z x ⊔ BVSet.bvEq z x`, finite von Neumann names iterate this successor from `∅`, and a size-free `ULift ℕ`-indexed `BVSet.omega` has exact membership `⨆ n, BVSet.bvEq z (BVSet.natName n)`;
+- membership in direct `omega` is closed under successor at the same Boolean degree, so the genuine ZF Infinity sentence has Boolean truth value `⊤` on raw and separated names without `Small`, `Nontrivial`, maximum-principle, or quotient-representative assumptions.
 
 This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
 
@@ -66,6 +68,7 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.SetTheory.ZF.SeparationSchema` | First-order Separation-schema instances and raw/separated top-valued validity |
 | `BooleanValuedAnalysis.SetTheory.ZF.Powerset` | Boolean inclusion, size-free subset normalization, small-coded powerset construction, and exact membership semantics |
 | `BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom` | Closed ZF powerset sentence with raw/separated Boolean validity under local `Small` |
+| `BooleanValuedAnalysis.SetTheory.ZF.Infinity` | Direct von Neumann successor and omega names, exact successor/omega semantics, and raw/separated Boolean validity of ZF Infinity |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
@@ -118,7 +121,8 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 9. **Boolean-valued Separation (M009): complete.** Direct coefficient restriction realizes Separation for arbitrary extensional predicates; genuine first-order schema instances with free parameters are Boolean-valid on raw assignments and their separated images, with no `Small` hypothesis.
 10. **Powerset size boundary and implementation design (M010): complete.** M009 normalization plus small coefficient codes give a validated direct construction under local `[Small.{u} 𝔹]`; an executable documentation probe proves the exact candidate powerset membership equation in pinned and live Tau Ceti environments without the maximum-principle path.
 11. **Powerset constructor and Boolean validity (M011): complete.** The M010 construction is public with exact inclusion semantics, and the genuine ZF powerset sentence is Boolean-valid on raw and separated names under the same local `[Small.{u} 𝔹]` hypothesis.
-12. Continue the remaining ZF/ZFC fragments and logical soundness needed for theorem-level Transfer, then connect the framework with forcing and applications in Boolean-valued analysis.
+12. **Boolean-valued Infinity (M012): complete.** Direct von Neumann successor and a `ULift ℕ`-indexed omega witness give exact raw semantics and raw/separated Boolean validity of ZF Infinity without a smallness hypothesis.
+13. **Foundation and the remaining ZF/ZFC fragments: next.** Investigate Foundation as the next representation-sensitive axiom; defer Replacement/Collection and Choice until their size and witness requirements are explicit, then add the logical soundness needed for theorem-level Transfer and applications.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
