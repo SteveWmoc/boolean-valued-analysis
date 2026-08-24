@@ -35,11 +35,12 @@ example (x y : BVSet.{u, v} 𝔹) :
   bvEq_le_bvEq_succ x y
 
 -- Finite von Neumann names start at empty and iterate successor.
-example : natName (𝔹 := 𝔹) (u := u) 0 = (∅ : BVSet.{u, v} 𝔹) :=
+example :
+    natName (𝔹 := 𝔹) 0 = (∅ : BVSet.{u, v} 𝔹) :=
   natName_zero
 
 example (n : ℕ) :
-    natName (𝔹 := 𝔹) (u := u) (n + 1) = succ (natName n) :=
+    (natName (𝔹 := 𝔹) (n + 1) : BVSet.{u, v} 𝔹) = succ (natName n) :=
   natName_succ n
 
 -- Direct omega is small for every index universe without any Small hypothesis
