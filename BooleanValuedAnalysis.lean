@@ -38,6 +38,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.Separation
 import BooleanValuedAnalysis.SetTheory.ZF.SeparationSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Powerset
 import BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom
+import BooleanValuedAnalysis.SetTheory.ZF.Infinity
 
 /-!
 # Boolean-Valued Analysis
@@ -59,7 +60,9 @@ that separated universe together with exact comparison to raw formula truth
 under the quotient map, direct raw constructors plus Boolean validity for
 extensionality, empty set, pairing, and union in the first ZF fragment, direct
 Boolean-valued Separation for extensional predicates and formula bodies,
-genuine first-order Separation-schema instances in the existing syntax, and a
+genuine first-order Separation-schema instances in the existing syntax, a
 Boolean-valued powerset constructor with exact inclusion semantics plus raw and
-separated validity of the ZF powerset axiom under its local smallness hypothesis.
+separated validity of the ZF powerset axiom under its local smallness hypothesis,
+and direct Boolean-valued von Neumann successor and omega constructions proving
+raw and separated validity of ZF Infinity without a smallness hypothesis.
 -/
