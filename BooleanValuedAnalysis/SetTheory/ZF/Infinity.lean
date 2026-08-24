@@ -256,7 +256,7 @@ theorem sentenceTruth_infinity :
                     (BVSet.mem a s ⇨
                         (BVSet.mem a y ⊔ BVSet.bvEq a y)) ⊓
                       ((BVSet.mem a y ⊔ BVSet.bvEq a y) ⇨
-                        BVSet.mem a s)))) := by
+                        BVSet.mem a s))))) := by
   rw [sentenceTruth_eq_truth]
   simp [infinity, infinityEmptyBody, infinitySuccessorBody,
     infinityClosureBody, allF, exF, equalF, iffFormula, bvar,
