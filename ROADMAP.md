@@ -29,7 +29,8 @@ The repository currently provides:
 - direct raw constructors for pairing and union, exact semantic specifications for empty/pair/union membership, and a characterization of Boolean equality by universal membership agreement;
 - Boolean validity, on both raw and separated carriers, of ZF extensionality, empty set, pairing, and union;
 - direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis;
-- Boolean inclusion, size-free subset normalization, and a small-coded raw powerset constructor with exact membership semantics, together with raw and separated Boolean validity of the ZF powerset axiom under local `[Small.{u} 𝔹]`.
+- Boolean inclusion, size-free subset normalization, and a small-coded raw powerset constructor with exact membership semantics, together with raw and separated Boolean validity of the ZF powerset axiom under local `[Small.{u} 𝔹]`;
+- direct von Neumann successor and a `ULift ℕ`-indexed Boolean-valued `ω`, with exact membership semantics and raw/separated Boolean validity of ZF Infinity without a `Small` hypothesis.
 
 These components form the foundation for the milestones below.
 
@@ -284,7 +285,39 @@ M011 confirms D009: inclusion and normalization remain size-free; `[Small.{u} �
 
 Specification and completion record: [`docs/milestones/011-powerset.md`](docs/milestones/011-powerset.md)
 
-Infinity and foundation can remain separate if their representation dependencies differ; replacement/collection and choice should wait until the relevant size and witness machinery is understood.
+### M012 — Boolean-valued Infinity — complete
+
+Completed 2026-08-24.
+
+M012 proves Infinity by a direct construction inside the Boolean-valued universe. `BVSet.succ x` is the von Neumann successor with exact semantics
+
+```text
+BVSet.mem z (BVSet.succ x) = BVSet.mem z x ⊔ BVSet.bvEq z x.
+```
+
+Boolean equality is preserved from below by successor, so iterating `succ` from `∅` gives finite von Neumann names that interact correctly with arbitrary Boolean-valued approximations. `BVSet.omega` collects these names over `ULift.{u} ℕ`, with every coefficient equal to `⊤`, and satisfies
+
+```text
+BVSet.mem z BVSet.omega = ⨆ n : ℕ, BVSet.bvEq z (BVSet.natName n).
+```
+
+In particular, `∅` belongs to `omega` with value `⊤`, and arbitrary membership is successor-closed at the same Boolean degree:
+
+```text
+BVSet.mem z BVSet.omega ≤ BVSet.mem (BVSet.succ z) BVSet.omega.
+```
+
+`SetTheory.ZF.infinity` is a genuine closed sentence asserting the existence of a set containing an empty set and closed under von Neumann successor. The syntax is factored into typed locally nameless helper bodies for reviewability. `ZF.isTrue_infinity` is witnessed by direct `BVSet.omega`, while `SetTheory.separatedIsTrue_infinity` follows through the exact M006 sentence bridge.
+
+M012 is size-free with respect to the Boolean algebra: it introduces no `[Small.{u} 𝔹]`, `Shrink`, maximum-principle/Zorn dependency, quotient representative selector, ground-model `PSet.omega` witness, universe equality, or `Nontrivial 𝔹` assumption. `Audit/M012Acceptance.lean` checks the exact successor and omega semantics, independent universes, arbitrary-degree closure, genuine sentence packaging, and raw/separated validity.
+
+Specification and completion record: [`docs/milestones/012-infinity.md`](docs/milestones/012-infinity.md)
+
+### M013 — Foundation — design next
+
+Investigate the most natural Boolean-valued formulation of Foundation and its proof against the current raw well-founded-tree representation before committing to a constructor/API. The key review question is whether structural well-foundedness of raw names gives a direct semantic proof for arbitrary Boolean-valued nonempty sets, or whether a rank/minimal-member argument introduces a new size or choice boundary.
+
+Replacement/Collection and Choice should remain deferred until their size and witness requirements are explicit. In particular, do not silently globalize the M004/M011 smallness assumptions merely because later existential constructions may need controlled indexing.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
