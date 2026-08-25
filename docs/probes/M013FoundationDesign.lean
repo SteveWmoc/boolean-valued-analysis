@@ -60,7 +60,7 @@ theorem mem_le_minimalSup :
       intro x
       let y : BVSet.{u, v} 𝔹 := BVSet.mk ι A w
       let d : 𝔹 := disjointValue y x
-      rw [← sup_inf_inf_compl (mem y x) d]
+      rw [← sup_inf_inf_compl (x := mem y x) (y := d)]
       apply sup_le
       · exact le_iSup_of_le y le_rfl
       · dsimp [d, disjointValue]
