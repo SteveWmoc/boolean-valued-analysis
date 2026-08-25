@@ -30,7 +30,8 @@ The repository currently provides:
 - Boolean validity, on both raw and separated carriers, of ZF extensionality, empty set, pairing, and union;
 - direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis;
 - Boolean inclusion, size-free subset normalization, and a small-coded raw powerset constructor with exact membership semantics, together with raw and separated Boolean validity of the ZF powerset axiom under local `[Small.{u} 𝔹]`;
-- direct von Neumann successor and a `ULift ℕ`-indexed Boolean-valued `ω`, with exact membership semantics and raw/separated Boolean validity of ZF Infinity without a `Small` hypothesis.
+- direct von Neumann successor and a `ULift ℕ`-indexed Boolean-valued `ω`, with exact membership semantics and raw/separated Boolean validity of ZF Infinity without a `Small` hypothesis;
+- a validated size-free Foundation proof design in which structural induction on raw names forces arbitrary membership truth below the truth value of having a membership-minimal member, with no rank or witness-selection machinery.
 
 These components form the foundation for the milestones below.
 
@@ -313,9 +314,39 @@ M012 is size-free with respect to the Boolean algebra: it introduces no `[Small.
 
 Specification and completion record: [`docs/milestones/012-infinity.md`](docs/milestones/012-infinity.md)
 
-### M013 — Foundation — design next
+### M013 — Foundation proof design — complete
 
-Investigate the most natural Boolean-valued formulation of Foundation and its proof against the current raw well-founded-tree representation before committing to a constructor/API. The key review question is whether structural well-foundedness of raw names gives a direct semantic proof for arbitrary Boolean-valued nonempty sets, or whether a rank/minimal-member argument introduces a new size or choice boundary.
+Completed 2026-08-24.
+
+M013 resolves the representation question raised after Infinity. The standard minimal-member form
+
+```text
+∀ x,
+  (∃ y, y ∈ x) →
+    ∃ y, y ∈ x ∧ ∀ z, z ∈ y → z ∉ x
+```
+
+admits a direct proof from the inductive raw-name representation. At the semantic level the executable probe defines the Boolean value that a candidate `y` is a minimal member of `x` and proves the stronger structural estimate
+
+```text
+BVSet.mem y x ≤ minimalSup x,
+```
+
+where `minimalSup x` is the supremum of the Boolean values contributed by membership-minimal members of `x`.
+
+The proof is structural induction on `y`. On the Boolean region where `y` is already disjoint from `x`, `y` itself contributes to the minimal-member supremum. On the complementary region, Boolean De Morgan laws expose a common member of `y` and `x`; unfolding membership in `y` reduces that overlap to an immediate child of `y`, atomic substitution transports the overlap to membership of that literal child in `x`, and the induction hypothesis descends.
+
+Consequently the Boolean nonemptiness value of `x` is below its minimal-member value, so the Foundation implication is `⊤`. The same probe packages the genuine closed Foundation sentence in the existing Mathlib syntax and proves its exact reduction to this semantic value.
+
+This route introduces no `[Small.{u} 𝔹]`, `Shrink`, rank object, least-rank selection, mixture, maximum-principle/Zorn dependency, ground-model reduction, quotient representative selector, universe equality, or `Nontrivial 𝔹` assumption. The design therefore confirms that the well-foundedness built into raw `BVSet` is visible semantically and is sufficient for Foundation.
+
+The complete executable experiment is `docs/probes/M013FoundationDesign.lean`; it passed pinned CI and the live Tau Ceti architecture audit. The design record is [`docs/milestones/013-foundation-design.md`](docs/milestones/013-foundation-design.md).
+
+### M014 — Boolean-valued Foundation — implementation next
+
+Promote the validated M013 proof into a focused public module, tentatively `BooleanValuedAnalysis.SetTheory.ZF.Foundation`. The intended public surface should center on the genuine closed sentence, its exact raw semantic reduction, raw validity, separated validity through the M006 bridge, and the stronger structural membership estimate where that theorem is useful downstream.
+
+M014 should preserve the M013 dependency boundary: no `Small`, `Shrink`, rank minimization, mixture, maximum principle, Zorn, ascent, quotient representative selection, or equality between universes. Add an `Audit/M014Acceptance.lean` suite covering binder semantics, the structural estimate, raw/separated validity, and independent universes.
 
 Replacement/Collection and Choice should remain deferred until their size and witness requirements are explicit. In particular, do not silently globalize the M004/M011 smallness assumptions merely because later existential constructions may need controlled indexing.
 
