@@ -31,7 +31,7 @@ The repository currently provides:
 - direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis;
 - Boolean inclusion, size-free subset normalization, and a small-coded raw powerset constructor with exact membership semantics, together with raw and separated Boolean validity of the ZF powerset axiom under local `[Small.{u} 𝔹]`;
 - direct von Neumann successor and a `ULift ℕ`-indexed Boolean-valued `ω`, with exact membership semantics and raw/separated Boolean validity of ZF Infinity without a `Small` hypothesis;
-- a validated size-free Foundation proof design in which structural induction on raw names forces arbitrary membership truth below the truth value of having a membership-minimal member, with no rank or witness-selection machinery.
+- a public size-free structural proof of ZF Foundation in which induction on raw names forces arbitrary membership truth below the truth value of having a membership-minimal member, with raw and separated Boolean validity and no rank or witness-selection machinery.
 
 These components form the foundation for the milestones below.
 
@@ -342,13 +342,44 @@ This route introduces no `[Small.{u} 𝔹]`, `Shrink`, rank object, least-rank s
 
 The complete executable experiment is `docs/probes/M013FoundationDesign.lean`; it passed pinned CI and the live Tau Ceti architecture audit. The design record is [`docs/milestones/013-foundation-design.md`](docs/milestones/013-foundation-design.md).
 
-### M014 — Boolean-valued Foundation — implementation next
+### M014 — Boolean-valued Foundation — complete
 
-Promote the validated M013 proof into a focused public module, tentatively `BooleanValuedAnalysis.SetTheory.ZF.Foundation`. The intended public surface should center on the genuine closed sentence, its exact raw semantic reduction, raw validity, separated validity through the M006 bridge, and the stronger structural membership estimate where that theorem is useful downstream.
+Completed 2026-08-25.
 
-M014 should preserve the M013 dependency boundary: no `Small`, `Shrink`, rank minimization, mixture, maximum principle, Zorn, ascent, quotient representative selection, or equality between universes. Add an `Audit/M014Acceptance.lean` suite covering binder semantics, the structural estimate, raw/separated validity, and independent universes.
+M014 promotes the M013 design into the public module `BooleanValuedAnalysis.SetTheory.ZF.Foundation`. The raw API uses Foundation-prefixed semantic values and exposes the stronger structural theorem
 
-Replacement/Collection and Choice should remain deferred until their size and witness requirements are explicit. In particular, do not silently globalize the M004/M011 smallness assumptions merely because later existential constructions may need controlled indexing.
+```text
+BVSet.mem_le_foundationMinimalSup :
+  ∀ y x, BVSet.mem y x ≤ BVSet.foundationMinimalSup x.
+```
+
+Taking the supremum over candidate members gives
+
+```text
+BVSet.foundationNonemptyValue x ≤ BVSet.foundationMinimalSup x,
+```
+
+so the fixed-name implication `BVSet.foundationValue x` is always `⊤`.
+
+`SetTheory.ZF.foundation` is the genuine closed minimal-member sentence
+
+```text
+∀ x,
+  (∃ y, y ∈ x) →
+    ∃ y, y ∈ x ∧ ∀ z, z ∈ y → z ∉ x.
+```
+
+`ZF.sentenceTruth_foundation` reduces its truth exactly to `⨅ x, BVSet.foundationValue x`, `ZF.isTrue_foundation` proves raw validity, and `SetTheory.separatedIsTrue_foundation` transports the same value through the exact M006 sentence bridge.
+
+The focused Foundation module imports the direct `ZF.BasicAxioms` path, not the root aggregate. M014 therefore confirms D010 without introducing `[Small.{u} 𝔹]`, `Shrink`, rank minimization, mixing, maximum-principle/Zorn machinery, ascent, representative selection, universe equality, or `Nontrivial 𝔹`. `Audit/M014Acceptance.lean` imports that focused module directly and checks independent universes, the structural estimate, exact sentence semantics, and raw/separated validity.
+
+Specification and completion record: [`docs/milestones/014-foundation.md`](docs/milestones/014-foundation.md)
+
+### M015 — Replacement/Collection design — next
+
+Determine the correct first-order schema interface and the exact size/witness-collection boundary before implementing Replacement or Collection. In particular, investigate whether direct image construction from an existing raw domain suffices, whether formula-defined functionality can avoid or localize maximum-principle witness selection, and where the resulting family of witnesses can be indexed inside `Type u`.
+
+The design must keep separate the object-level Replacement/Collection principle, metatheoretic witness selection used by a Lean proof, and universe-size assumptions such as `[Small.{u} 𝔹]`. Choice remains deferred until this boundary is understood rather than being smuggled into the Replacement proof architecture.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
