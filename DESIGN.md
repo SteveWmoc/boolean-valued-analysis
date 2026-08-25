@@ -235,6 +235,41 @@ For `x : BVSet.{u, v} 𝔹`, Boolean inclusion is defined semantically by the ex
 - a representation-independent coding theorem supplies the required family in `Type u` without `[Small.{u} 𝔹]`;
 - later ZF constructions reveal that a different global size policy is substantially cleaner and can be adopted without infecting size-free milestones.
 
+## D010 — Prove Foundation by structural descent on raw names
+
+**Status:** accepted by M013 design
+
+Use the minimal-member form of Foundation and prove it directly from the inductive `BVSet` representation. For an ambient name `x`, let `minimalSup x` denote the supremum of the Boolean values with which candidates are both members of `x` and membership-disjoint from `x`. The key theorem is the stronger estimate
+
+```text
+BVSet.mem y x ≤ minimalSup x
+```
+
+for every raw candidate `y`.
+
+### Rationale
+
+- Structural induction on `y` is exactly the well-founded recursion exposed by D001; no external ordinal rank is needed.
+- Splitting the membership value by the Boolean value that `y` is disjoint from `x` separates the already-minimal region from the region where descent is required.
+- On the complementary region, complete Boolean-algebra De Morgan laws expose a common member of `y` and `x`.
+- Unfolding membership in `y` expresses that overlap through literal immediate children, and atomic equality substitution transports each contribution to membership of the corresponding child in `x`.
+- The induction hypothesis therefore descends without selecting a least-rank member or assembling different witnesses by mixing.
+- The complete executable M013 probe, including the genuine closed Foundation sentence and exact semantic reduction, passes both pinned CI and the live Tau Ceti architecture audit.
+
+### Consequences
+
+- Foundation introduces no new size boundary: M014 should require no `[Small.{u} 𝔹]` or `Shrink`.
+- The Foundation path should not import the M004 maximum-principle/Zorn machinery or use M003 mixing merely to realize an existential witness.
+- No ground-model rank, ordinal-valued rank function, least-rank choice, quotient representative selector, universe equality, or `Nontrivial 𝔹` assumption is needed.
+- The public implementation should remain on raw names for the structural proof and obtain separated validity through the exact M006 sentence bridge.
+- This result strengthens D001: raw well-foundedness is not only implementation infrastructure but directly controls an object-language ZF axiom at the Boolean semantic level.
+
+### Reconsider when
+
+- the raw-name representation is replaced by one whose well-founded recursion is no longer exposed structurally;
+- a future constructive/Heyting-valued generalization cannot reproduce the Boolean complement decomposition used in the descent argument;
+- a stronger Foundation/induction API for applications requires an explicit rank abstraction for reasons independent of the ZF axiom proof.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001
