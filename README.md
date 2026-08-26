@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml)
 
+The center of gravity of this project is epistemic, not social. If AI generated or AI assisted code bothers you, please go away.
+
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
 > **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a growing Boolean-valid ZF fragment, the Boolean-valued Separation schema, a Boolean-valued powerset constructor, direct Boolean-valued Infinity, and Boolean-valued Foundation are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
