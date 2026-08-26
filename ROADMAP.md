@@ -375,11 +375,21 @@ The focused Foundation module imports the direct `ZF.BasicAxioms` path, not the 
 
 Specification and completion record: [`docs/milestones/014-foundation.md`](docs/milestones/014-foundation.md)
 
-### M015 — Replacement/Collection design — next
+### M015 — Replacement/Collection design — complete
 
-Determine the correct first-order schema interface and the exact size/witness-collection boundary before implementing Replacement or Collection. In particular, investigate whether direct image construction from an existing raw domain suffices, whether formula-defined functionality can avoid or localize maximum-principle witness selection, and where the resulting family of witnesses can be indexed inside `Type u`.
+Completed 2026-08-26.
 
-The design must keep separate the object-level Replacement/Collection principle, metatheoretic witness selection used by a Lean proof, and universe-size assumptions such as `[Small.{u} 𝔹]`. Choice remains deferred until this boundary is understood rather than being smuggled into the Replacement proof architecture.
+For each literal child of a source name, M004 selects a maximizer for the formula-defined output predicate. The collecting name reuses the source's own index and coefficients, so the selected witness family already lies in `Type u`. The executable probe proves the weighted-child Collection kernel. This requires the existing local `[Small.{u} 𝔹]` maximum-principle boundary and metatheoretic classical selection, but no additional rank bound, `Shrink`, reindexing, universe equality, or object-language Choice.
+
+Collection is the preferred primary schema because functionality is unnecessary for the direct construction. Replacement should be derived from Collection, a functionality antecedent, and M009 Separation of the collected codomain by the range predicate.
+
+Design record: [`docs/milestones/015-replacement-collection-design.md`](docs/milestones/015-replacement-collection-design.md)
+
+### M016 — Boolean-valued Collection and Replacement — next
+
+Promote the M015 design into a focused public module. Package Collection and Replacement as genuine schema instances in the existing Mathlib syntax, prove exact raw semantics and top-valued validity under local `[Small.{u} 𝔹]`, derive Replacement through functionality plus M009 Separation, and transport the corresponding results to quotient images of raw parameter assignments through the exact M006 bridge.
+
+Keep the M004 dependency explicit and do not introduce a global `Small` hypothesis, rank hierarchy, general ascent, quotient representative selector, or object-language Choice.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 

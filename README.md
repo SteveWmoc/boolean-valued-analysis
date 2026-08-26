@@ -128,7 +128,8 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 12. **Boolean-valued Infinity (M012): complete.** Direct von Neumann successor and a `ULift ℕ`-indexed omega witness give exact raw semantics and raw/separated Boolean validity of ZF Infinity without a smallness hypothesis.
 13. **Foundation proof design (M013): complete.** An executable probe validates a direct structural-induction proof of the minimal-member Foundation sentence. The stronger estimate `BVSet.mem y x ≤ BVSet.foundationMinimalSup x` eliminates rank minimization, witness mixing, maximum-principle use, and any new smallness boundary.
 14. **Boolean-valued Foundation (M014): complete.** The M013 structural proof is public with exact sentence semantics and raw/separated validity; the focused module and acceptance suite preserve the no-`Small`, no-maximum-principle dependency boundary.
-15. **Replacement/Collection design (M015): next.** Determine the correct schema interface and the precise size and witness-collection boundary before adding a public constructor or validity theorem; Choice remains deferred.
+15. **Replacement/Collection design (M015): complete.** Per-source-child M004 maximizers form a collecting name on the source's own index type. Collection requires the existing local `[Small.{u} 𝔹]` maximum-principle boundary but no new rank, reindexing, or universe assumption; Replacement should be derived using functionality and M009 Separation.
+16. **Boolean-valued Collection and Replacement (M016): next.** Promote the M015 construction into a focused public schema API with exact raw and separated validity.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
