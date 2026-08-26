@@ -270,6 +270,51 @@ for every raw candidate `y`.
 - a future constructive/Heyting-valued generalization cannot reproduce the Boolean complement decomposition used in the descent argument;
 - a stronger Foundation/induction API for applications requires an explicit rank abstraction for reasons independent of the ZF axiom proof.
 
+## D011 — Build Collection from per-child maximum-principle witnesses
+
+**Status:** accepted by M015 design
+
+Treat Collection as the primary schema.  For each literal child `a.child i` of
+the source name, use M004 to select a maximizer of the output predicate and
+form the collecting name with index `a.Index`, those selected witnesses as
+children, and `a.weight` as coefficients.
+
+### Rationale
+
+- The M004 maximizer realizes the entire existential Boolean value for each
+  input child, including witnesses assembled from different Boolean regions.
+- The source index already lies in `Type u`; once one maximizer is selected per
+  source child, collecting the family creates no further size problem.
+- Weighted bounded quantification reduces Collection to a direct coefficient
+  calculation, validated by the executable M015 probe.
+- Functionality is unnecessary for Collection.  Replacement is more cleanly
+  obtained from Collection plus M009 Separation of the collected codomain.
+- The design parallels the bounding step in standard Boolean-valued proofs of
+  Replacement while exploiting the project's weighted-tree representation to
+  avoid an explicit cumulative-rank bound.
+
+### Consequences
+
+- Collection and Replacement inherit the local `[Small.{u} 𝔹]` assumption and
+  metatheoretic classical-choice boundary of M004.
+- The additional choice of a maximizer for every `i : a.Index` is proof-level
+  Lean selection, not object-language Choice.
+- Functionality does not eliminate the need to assemble a full Boolean-valued
+  witness; it therefore does not remove the M004 boundary.
+- No new `Shrink`, rank hierarchy, reindexing, universe equality, general
+  ascent, quotient representative selector, or `Nontrivial 𝔹` assumption is
+  introduced.
+- M016 should expose formula-schema validity while keeping the raw constructor
+  and its noncomputability appropriately encapsulated.
+
+### Reconsider when
+
+- a constructive maximum principle becomes available under weaker hypotheses;
+- a cumulative-universe representation makes a rank-bounded collection proof
+  more natural or removes the current `Small` assumption;
+- the formula syntax makes the Collection-to-Replacement derivation materially
+  less stable than a direct Replacement encoding.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001
