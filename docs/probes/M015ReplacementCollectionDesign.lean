@@ -84,10 +84,11 @@ theorem boundedForall_exists_le_boundedForall_collect
         (a.weight i ⇨ ⨆ y, φ (a.child i) y) ⊓ a.weight i := by
       exact inf_le_inf_right _ (iInf_le _ i)
     _ ≤ a.weight i ⊓ (⨆ y, φ (a.child i) y) := by
-      rw [inf_comm]
-      exact himp_inf_le
+      apply le_inf
+      · exact inf_le_right
+      · exact himp_inf_le
     _ = a.weight i ⊓ φ (a.child i) (selectedWitness φ hφ (a.child i)) := by
-      rw [selectedWitness_spec]
+      rw [selectedWitness_spec (φ := φ) (hφ := hφ) (x := a.child i)]
     _ ≤ boundedExists (collect a φ hφ) (φ (a.child i)) := by
       unfold boundedExists
       apply le_iSup_of_le i
