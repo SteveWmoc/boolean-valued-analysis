@@ -86,7 +86,7 @@ milestone. -/
 inductive CoreDerivation
     (Axiom : {n : ℕ} → L.BoundedFormula α n → Prop) :
     {n : ℕ} → L.BoundedFormula α n → Prop
-  | axiom {n : ℕ} {φ : L.BoundedFormula α n} :
+  | ofAxiom {n : ℕ} {φ : L.BoundedFormula α n} :
       Axiom φ → CoreDerivation Axiom φ
   | modusPonens {n : ℕ} {φ ψ : L.BoundedFormula α n} :
       CoreDerivation Axiom φ →
@@ -108,7 +108,7 @@ theorem CoreDerivation.valid
     {n : ℕ} {φ : L.BoundedFormula α n}
     (d : CoreDerivation Axiom φ) : Valid S φ := by
   induction d with
-  | axiom h => exact hAxiom h
+  | ofAxiom h => exact hAxiom h
   | modusPonens _ _ hφ hφψ =>
       exact valid_modusPonens S hφ hφψ
   | subst _ σ hφ =>
@@ -190,8 +190,13 @@ private theorem truth_allDistribution
     BoundedFormula.truth S (allDistribution φ ψ)
         assignment boundAssignment = ⊤ := by
   simp only [allDistribution, BoundedFormula.truth_imp,
-    BoundedFormula.truth_all, BoundedFormula.truth_liftAt_one_self,
-    Function.comp_apply, Fin.snoc_castSucc]
+    BoundedFormula.truth_all, BoundedFormula.truth_liftAt_one_self]
+  have hdrop :
+      ∀ x : M, Fin.snoc boundAssignment x ∘ Fin.castSucc = boundAssignment := by
+    intro x
+    funext i
+    simp
+  simp_rw [hdrop]
   apply himp_eq_top_iff.mpr
   rw [le_himp_iff]
   apply le_iInf
