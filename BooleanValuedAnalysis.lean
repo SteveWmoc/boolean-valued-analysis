@@ -43,6 +43,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Replacement
+import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
 
 /-!
 # Boolean-Valued Analysis
