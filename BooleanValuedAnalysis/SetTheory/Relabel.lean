@@ -50,6 +50,18 @@ theorem truth_relabel
     BooleanValued.FirstOrder.BoundedFormula.truth_relabel
       (bvSetStructure (𝔹 := 𝔹)) φ g assignment boundAssignment
 
+/-- Converting bound variables to free variables preserves set-theoretic
+Boolean truth under the corresponding sum assignment. -/
+@[simp]
+theorem formulaTruth_toFormula
+    {n : ℕ} (φ : BoundedFormula α n)
+    (assignment : α ⊕ Fin n → BVSet.{u, v} 𝔹) :
+    formulaTruth φ.toFormula assignment =
+      truth φ (assignment ∘ Sum.inl) (assignment ∘ Sum.inr) := by
+  simpa only [formulaTruth, truth] using
+    BooleanValued.FirstOrder.BoundedFormula.truth_toFormula
+      (bvSetStructure (𝔹 := 𝔹)) φ assignment
+
 /-- Truth of a set-theoretic formula commutes with relabeling its free
 variables. -/
 @[simp]
