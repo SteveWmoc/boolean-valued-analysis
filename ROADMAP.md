@@ -397,11 +397,23 @@ M016 adds no global `Small` hypothesis, new rank or reindexing construction, gen
 
 Completion record: [`docs/milestones/016-collection-replacement.md`](docs/milestones/016-collection-replacement.md)
 
-### M017 — Boolean-valued logical soundness design — next
+### M017 — Boolean-valued logical soundness design — complete
 
-Choose the smallest stable theorem/derivation interface for first-order logical soundness and validate the assignment invariants required by quantifier introduction and substitution. The design should identify exactly which Mathlib proof-system rules are needed to turn the now broad Boolean-valid ZF fragment into theorem-level consequences, and whether any nonemptiness, size, or sentence-closure assumptions arise.
+Completed 2026-08-28.
 
-M017 should end with an executable probe and a precise implementation target. It should not yet advertise a Transfer Principle, add object-language Choice, or begin general and typed ascent before the logical preservation theorem is available.
+Mathlib `v4.32.1` provides the project's locally nameless formulas and ordinary semantic theory consequence, but no syntactic derivation object. M017 therefore chooses a small project-owned bounded Hilbert kernel parameterized by an axiom family and closed under modus ponens, free-variable substitution, and universal generalization. Its soundness invariant is value `⊤` uniformly over every free- and bound-variable assignment.
+
+The executable probe also constructs newest-bound-variable instantiation from native `toFormula`, substitution, and relabeling; proves the universal-instantiation and quantifier-distribution axioms top-valued; isolates `LawfulStructure` as exactly the equality-axiom boundary; and validates deterministic closure of bounded judgments to sentences. The logical kernel needs no `Small`, nonemptiness, ultrafilter, `Nontrivial 𝔹`, universe-equality, representative-choice, or ascent assumption.
+
+Design record: [`docs/milestones/017-logical-soundness-design.md`](docs/milestones/017-logical-soundness-design.md)
+
+### M018 — Boolean-valued logical soundness — next
+
+Promote the M017 prototype into a focused public `FirstOrder` API. Implement the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas.
+
+Specialize the result to Boolean-valued set theory so that a derivation from a sentence theory whose axioms are raw top-valued has a raw top-valued conclusion, with separated consequences transported through the exact M006 bridge. Keep the logic layer free of `Small`; any local `Small` assumption must enter only when the selected set-theory axiom family includes powerset, Collection, or Replacement.
+
+M018 should not yet advertise a Transfer Principle, prove completeness, add object-language Choice, or begin general and typed ascent. A following milestone should package the precise ZF theory and theorem-consequence statement before using the Transfer name.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
