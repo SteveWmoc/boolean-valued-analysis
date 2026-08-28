@@ -80,7 +80,9 @@ private theorem truth_liftAt_one_zero_two
         (Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) x) y) =
       collectionFormulaValue φ assignment emptyBound x y := by
   rw [truth_liftAt φ assignment _ (Nat.zero_le 2)]
-  congr 1
+  apply congrArg (truth φ assignment)
+  funext i
+  fin_cases i <;> rfl
 
 private theorem truth_liftAt_two_zero_two
     (φ : BoundedFormula α 2)
@@ -91,7 +93,9 @@ private theorem truth_liftAt_two_zero_two
           (Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) b) x) y) =
       collectionFormulaValue φ assignment emptyBound x y := by
   rw [truth_liftAt φ assignment _ (Nat.zero_le 2)]
-  congr 1
+  apply congrArg (truth φ assignment)
+  funext i
+  fin_cases i <;> rfl
 
 private theorem truth_collectionAntecedent
     (φ : BoundedFormula α 2)
