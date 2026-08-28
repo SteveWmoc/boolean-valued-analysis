@@ -45,9 +45,12 @@ private def iffFormula {α : Type w} {n : ℕ}
 positions in an existing bound-variable context. -/
 private def pairFormula {α : Type w} {n : ℕ}
     (φ : BoundedFormula α 2) (x y : Fin n) : BoundedFormula α n :=
-  φ.toFormula.relabel fun
-    | .inl p => .inl p
-    | .inr i => .inr (Fin.cases x (fun _ => y) i)
+  _root_.FirstOrder.Language.BoundedFormula.relabel
+    (β := α) (n := n)
+    (fun
+      | .inl p => Sum.inl p
+      | .inr i => Sum.inr (Fin.cases x (fun _ => y) i))
+    φ.toFormula
 
 /-- In context `[a]`, totality of `φ` on `a`. -/
 private def replacementTotalFormula {α : Type w}
@@ -135,7 +138,7 @@ private theorem truth_replacementTotalFormula
   congr 1
   funext y
   exact truth_pairFormula φ assignment
-    (Fin.snoc (Fin.snoc emptyBound a) x) 1 2
+    (Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) x) y) 1 2
 
 private theorem truth_replacementFunctionalFormula
     (φ : BoundedFormula α 2)
@@ -156,7 +159,7 @@ private theorem truth_replacementFunctionalFormula
   funext z
   rw [truth_pairFormula φ assignment _ 1 2,
     truth_pairFormula φ assignment _ 1 3]
-  simp [bvar]
+  simp [bvar, Fin.snoc]
 
 private theorem truth_replacementAntecedentFormula
     (φ : BoundedFormula α 2)
@@ -189,14 +192,24 @@ private theorem truth_replacementConclusionFormula
   funext b
   congr 1
   funext y
-  rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
-  unfold BVSet.replacementRangeValue
-  congr 1
-  · simp [bvar]
-  · funext x
-    exact truth_pairFormula φ assignment
-      (Fin.snoc
-        (Fin.snoc (Fin.snoc emptyBound a) b) y) 3 2
+  let bounds := Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) b) y
+  have hmem :
+      truth (BoundedFormula.mem
+          (bvar (α := α) 2) (bvar (α := α) 1)) assignment bounds =
+        BVSet.mem y b := by
+    simp [bounds, bvar, BoundedFormula.mem, Fin.snoc]
+  have hrange :
+      truth (BoundedFormula.boundedExists
+          (bvar (α := α) 0) (pairFormula φ 3 2)) assignment bounds =
+        BVSet.replacementRangeValue a
+          (collectionFormulaValue φ assignment emptyBound) y := by
+    rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
+    unfold BVSet.replacementRangeValue
+    congr 1
+    · simp [bounds, bvar, Fin.snoc]
+    · funext x
+      exact truth_pairFormula φ assignment (Fin.snoc bounds x) 3 2
+  rw [hmem, hrange]
 
 /-- Exact Boolean semantics of a standard Replacement-schema instance. -/
 theorem formulaTruth_replacementInstance
