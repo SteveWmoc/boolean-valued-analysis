@@ -316,6 +316,63 @@ children, and `a.weight` as coefficients.
 - the formula syntax makes the Collection-to-Replacement derivation materially
   less stable than a direct Replacement encoding.
 
+## D012 — Use a project-owned bounded Hilbert kernel for logical soundness
+
+**Status:** accepted by M017 design
+
+Build logical soundness over Mathlib's existing locally nameless
+`BoundedFormula` syntax, but use a small project-owned derivation datatype.
+The pinned Mathlib version exposes semantic theory consequence rather than a
+syntactic proof object, so there is no external derivation tree on which to
+perform the required Boolean-soundness induction.
+
+The kernel is parameterized by an abstract axiom family and closes it under
+modus ponens, capture-avoiding free-variable substitution, and universal
+generalization over the newest in-scope bound variable.  Its semantic
+invariant is value `⊤` for every free- and bound-variable assignment.
+
+### Rationale
+
+- The uniform-assignment invariant makes universal generalization immediate
+  and eliminates a named-variable freshness side condition.
+- A conventional classical Hilbert axiom layer fits Mathlib's primitive
+  implication, falsum, and universal-quantifier syntax without introducing a
+  parallel formula representation.
+- Universal instantiation can be assembled from native `toFormula`,
+  substitution, and relabeling.  The exact semantics follow from the M001 and
+  M016 structural truth theorems.
+- Quantifier distribution encodes the “not free” side condition by lifting the
+  independent premise above the fresh final coordinate.
+- Propositional and quantifier soundness use only the complete Boolean algebra.
+  Equality soundness uses exactly `FirstOrder.LawfulStructure`.
+- A sentence theory remains Mathlib's `Set Sentence`; theory axioms are lifted
+  structurally into the current variable context, while `Fin n`-parameter
+  schemas receive a deterministic universal closure with `alls`.
+
+### Consequences
+
+- M018 should implement the derivation kernel, logical and equality axiom
+  families, exact newest-variable instantiation, and generic soundness before
+  any theorem is advertised as Transfer.
+- The logical layer introduces no `Small`, maximum-principle, ultrafilter,
+  `Nontrivial 𝔹`, universe-equality, representative-choice, or ascent boundary.
+- Any later `Small` assumption on ZF consequences comes only from the existing
+  Boolean validity of powerset, Collection, and Replacement.
+- Nonemptiness is not needed by the direct soundness induction.  It becomes
+  relevant only for comparison with an external model-theory or completeness
+  convention; the Boolean-valued set carrier is already inhabited.
+- The name **Transfer Principle** remains reserved for a subsequent milestone
+  that packages a precise ZF theory after logical soundness is public.
+
+### Reconsider when
+
+- Mathlib acquires a stable syntactic first-order derivation calculus with the
+  required substitution and equality interfaces;
+- a sequent or natural-deduction presentation materially simplifies the public
+  theory-consequence API without reintroducing fragile freshness conditions;
+- a later completeness theorem requires a calculus different from the minimal
+  soundness kernel.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001
