@@ -113,7 +113,7 @@ private theorem truth_pairFormula
       collectionFormulaValue φ assignment emptyBound
         (boundAssignment x) (boundAssignment y) := by
   unfold pairFormula
-  rw [truth_relabel]
+  rw [BooleanValued.SetTheory.truth_relabel]
   change formulaTruth φ.toFormula _ = _
   rw [formulaTruth_toFormula]
   unfold collectionFormulaValue
@@ -192,7 +192,8 @@ private theorem truth_replacementConclusionFormula
   funext b
   congr 1
   funext y
-  let bounds := Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) b) y
+  let bounds : Fin 3 → BVSet.{u, v} 𝔹 :=
+    Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) b) y
   have hmem :
       truth (BoundedFormula.mem
           (bvar (α := α) 2) (bvar (α := α) 1)) assignment bounds =
