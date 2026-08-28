@@ -114,6 +114,12 @@ private theorem truth_pairFormula
         (boundAssignment x) (boundAssignment y) := by
   unfold pairFormula
   rw [BooleanValued.SetTheory.truth_relabel]
+  have hzero :
+      boundAssignment ∘ Fin.natAdd n =
+        (fun i : Fin 0 => Fin.elim0 i) := by
+    funext i
+    exact Fin.elim0 i
+  rw [hzero]
   change formulaTruth φ.toFormula _ = _
   rw [formulaTruth_toFormula]
   unfold collectionFormulaValue
