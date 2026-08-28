@@ -123,7 +123,7 @@ end BVSet
 
 namespace SetTheory
 
-variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] [Small.{u} 𝔹]
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 variable {α : Type w} {n : ℕ}
 
 /-- The output truth value of a two-distinguished-variable formula.  The input
@@ -137,6 +137,7 @@ def collectionFormulaValue
 
 /-- The formula-specialized collecting name. -/
 noncomputable def collectFormula
+    [Small.{u} 𝔹]
     (a : BVSet.{u, v} 𝔹)
     (φ : BoundedFormula α (n + 2))
     (assignment : α → BVSet.{u, v} 𝔹)
@@ -149,6 +150,7 @@ noncomputable def collectFormula
 /-- Formula-specialized Collection has the expected weighted semantic
 inequality. -/
 theorem collection_formula_le_collectFormula
+    [Small.{u} 𝔹]
     (a : BVSet.{u, v} 𝔹)
     (φ : BoundedFormula α (n + 2))
     (assignment : α → BVSet.{u, v} 𝔹)
