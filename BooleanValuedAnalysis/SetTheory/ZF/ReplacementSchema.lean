@@ -124,10 +124,8 @@ private theorem truth_pairFormula
   rw [formulaTruth_toFormula]
   unfold collectionFormulaValue
   congr 1
-  · funext p
-    rfl
-  · funext i
-    fin_cases i <;> rfl
+  funext i
+  fin_cases i <;> rfl
 
 private theorem truth_replacementTotalFormula
     (φ : BoundedFormula α 2)
