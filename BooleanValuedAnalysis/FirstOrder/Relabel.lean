@@ -102,6 +102,48 @@ theorem truth_relabel
         (boundAssignment ∘ Fin.natAdd m) := by
   apply truth_mapTermRel_add_castLE <;> simp
 
+/-- Turning all in-scope bound variables into free variables preserves Boolean
+truth when the resulting free assignment is split back into its original free
+and bound components. -/
+@[simp]
+theorem truth_toFormula
+    (S : Structure L 𝔹 M)
+    {n : ℕ} (φ : L.BoundedFormula α n)
+    (assignment : α ⊕ Fin n → M) :
+    Formula.truth S φ.toFormula assignment =
+      truth S φ (assignment ∘ Sum.inl) (assignment ∘ Sum.inr) := by
+  induction φ with
+  | falsum => rfl
+  | equal =>
+      simp [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        _root_.FirstOrder.Language.Term.equal, Formula.truth, truth]
+  | rel =>
+      simp [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        _root_.FirstOrder.Language.Relations.formula, Formula.truth, truth]
+  | imp _ _ ih₁ ih₂ =>
+      simp [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        Formula.truth, truth, ih₁, ih₂]
+  | all ψ ih =>
+      rw [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        Formula.truth, truth_all, truth_all]
+      congr 1
+      funext x
+      have h := ih
+        (Sum.elim (assignment ∘ Sum.inl)
+          (Fin.snoc (assignment ∘ Sum.inr) x))
+      simp only [Sum.elim_comp_inl, Sum.elim_comp_inr] at h
+      rw [← h, truth_relabel]
+      apply congrArg (Formula.truth S ψ.toFormula)
+      funext i
+      rcases i with i | i
+      · simp
+      · refine Fin.lastCases ?_ (fun j => ?_) i
+        · simp [Fin.snoc]
+        · simp only [Fin.castSucc, Sum.elim_inr,
+            Fin.finSumFinEquiv_symm_apply_castAdd, Sum.map_inl, Sum.elim_inl]
+          rw [← Fin.castSucc]
+          simp
+
 end BoundedFormula
 
 namespace Formula
