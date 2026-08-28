@@ -129,6 +129,7 @@ theorem truth_toFormula
         (Formula.truth S φ.toFormula assignment ⇨
             Formula.truth S ψ.toFormula assignment) = _
       rw [ihφ assignment, ihψ assignment]
+      rfl
   | all ψ ih =>
       rw [_root_.FirstOrder.Language.BoundedFormula.toFormula,
         Formula.truth, truth_all, truth_all]
@@ -147,7 +148,7 @@ theorem truth_toFormula
         · refine Fin.lastCases ?_ (fun j => ?_) i
           · simp [Fin.snoc]
           · simp only [Fin.castSucc, Sum.elim_inr,
-              Fin.finSumFinEquiv_symm_apply_castAdd, Sum.map_inl, Sum.elim_inl]
+              finSumFinEquiv_symm_apply_castAdd]
             rw [← Fin.castSucc]
             simp
       · funext i
