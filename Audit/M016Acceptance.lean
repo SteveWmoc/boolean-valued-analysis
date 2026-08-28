@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Steven Sabean
 -/
 
+import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
 import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
 
 /-!
