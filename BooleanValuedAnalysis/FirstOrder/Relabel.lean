@@ -147,8 +147,7 @@ theorem truth_toFormula
         · simp
         · refine Fin.lastCases ?_ (fun j => ?_) i
           · simp [Fin.snoc]
-          · simp only [Fin.castSucc, Sum.elim_inr,
-              finSumFinEquiv_symm_apply_castAdd]
+          · simp only [Fin.castSucc, Sum.elim_inr]
             rw [← Fin.castSucc]
             simp
       · funext i
