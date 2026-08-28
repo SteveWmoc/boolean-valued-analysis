@@ -272,7 +272,7 @@ for every raw candidate `y`.
 
 ## D011 — Build Collection from per-child maximum-principle witnesses
 
-**Status:** accepted by M015 design
+**Status:** accepted by M015 design and confirmed by M016
 
 Treat Collection as the primary schema.  For each literal child `a.child i` of
 the source name, use M004 to select a maximizer of the output predicate and
@@ -304,8 +304,9 @@ children, and `a.weight` as coefficients.
 - No new `Shrink`, rank hierarchy, reindexing, universe equality, general
   ascent, quotient representative selector, or `Nontrivial 𝔹` assumption is
   introduced.
-- M016 should expose formula-schema validity while keeping the raw constructor
-  and its noncomputability appropriately encapsulated.
+- M016 exposes Collection and the derived exact functional range as focused raw
+  APIs, together with genuine Collection and Replacement schema validity, while
+  keeping the constructor's noncomputability explicit.
 
 ### Reconsider when
 

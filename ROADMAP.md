@@ -385,11 +385,23 @@ Collection is the preferred primary schema because functionality is unnecessary 
 
 Design record: [`docs/milestones/015-replacement-collection-design.md`](docs/milestones/015-replacement-collection-design.md)
 
-### M016 — Boolean-valued Collection and Replacement — next
+### M016 — Boolean-valued Collection and Replacement — complete
 
-Promote the M015 design into a focused public module. Package Collection and Replacement as genuine schema instances in the existing Mathlib syntax, prove exact raw semantics and top-valued validity under local `[Small.{u} 𝔹]`, derive Replacement through functionality plus M009 Separation, and transport the corresponding results to quotient images of raw parameter assignments through the exact M006 bridge.
+Completed 2026-08-28.
 
-Keep the M004 dependency explicit and do not introduce a global `Small` hypothesis, rank hierarchy, general ascent, quotient representative selector, or object-language Choice.
+The public collecting name applies M004 independently to every literal child of the source and reuses that source's index type and coefficients. The resulting weighted Collection kernel is packaged as a genuine schema instance with exact raw semantics and raw/separated value `⊤` under local `[Small.{u} 𝔹]`.
+
+Replacement is derived through the planned route: totality supplies the selected witnesses, functionality forces every competing output equal to the corresponding selected witness on its Boolean region, and M009 Separation cuts the collecting superset down to the exact semantic range. The standard total-functional Replacement schema is encoded in the existing Mathlib syntax and is raw/separated top-valued under the same local boundary.
+
+M016 adds no global `Small` hypothesis, new rank or reindexing construction, general ascent, quotient representative selector, `Nontrivial 𝔹`, universe equality, or object-language Choice.
+
+Completion record: [`docs/milestones/016-collection-replacement.md`](docs/milestones/016-collection-replacement.md)
+
+### M017 — Boolean-valued logical soundness design — next
+
+Choose the smallest stable theorem/derivation interface for first-order logical soundness and validate the assignment invariants required by quantifier introduction and substitution. The design should identify exactly which Mathlib proof-system rules are needed to turn the now broad Boolean-valid ZF fragment into theorem-level consequences, and whether any nonemptiness, size, or sentence-closure assumptions arise.
+
+M017 should end with an executable probe and a precise implementation target. It should not yet advertise a Transfer Principle, add object-language Choice, or begin general and typed ascent before the logical preservation theorem is available.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 

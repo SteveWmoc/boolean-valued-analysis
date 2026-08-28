@@ -71,6 +71,7 @@ separated validity of the ZF powerset axiom under its local smallness hypothesis
 direct Boolean-valued von Neumann successor and omega constructions proving raw
 and separated validity of ZF Infinity, the structural raw-name proof of ZF
 Foundation with raw and separated validity and no additional smallness
-hypothesis, and Boolean-valued Collection built from per-source-child
-maximum-principle witnesses with genuine raw and separated schema validity.
+hypothesis, Boolean-valued Collection built from per-source-child
+maximum-principle witnesses, and exact functional Replacement derived by
+Separation, both with genuine raw and separated schema validity.
 -/
