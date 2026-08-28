@@ -40,6 +40,10 @@ import BooleanValuedAnalysis.SetTheory.ZF.Powerset
 import BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom
 import BooleanValuedAnalysis.SetTheory.ZF.Infinity
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
+import BooleanValuedAnalysis.SetTheory.ZF.Collection
+import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
+import BooleanValuedAnalysis.SetTheory.ZF.Replacement
+import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
 
 /-!
 # Boolean-Valued Analysis
@@ -65,7 +69,9 @@ genuine first-order Separation-schema instances in the existing syntax, a
 Boolean-valued powerset constructor with exact inclusion semantics plus raw and
 separated validity of the ZF powerset axiom under its local smallness hypothesis,
 direct Boolean-valued von Neumann successor and omega constructions proving raw
-and separated validity of ZF Infinity, and the structural raw-name proof of ZF
+and separated validity of ZF Infinity, the structural raw-name proof of ZF
 Foundation with raw and separated validity and no additional smallness
-hypothesis.
+hypothesis, Boolean-valued Collection built from per-source-child
+maximum-principle witnesses, and exact functional Replacement derived by
+Separation, both with genuine raw and separated schema validity.
 -/

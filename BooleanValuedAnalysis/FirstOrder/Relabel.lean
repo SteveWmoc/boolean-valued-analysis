@@ -102,6 +102,57 @@ theorem truth_relabel
         (boundAssignment ∘ Fin.natAdd m) := by
   apply truth_mapTermRel_add_castLE <;> simp
 
+/-- Turning all in-scope bound variables into free variables preserves Boolean
+truth when the resulting free assignment is split back into its original free
+and bound components. -/
+@[simp]
+theorem truth_toFormula
+    (S : Structure L 𝔹 M)
+    {n : ℕ} (φ : L.BoundedFormula α n)
+    (assignment : α ⊕ Fin n → M) :
+    Formula.truth S φ.toFormula assignment =
+      truth S φ (assignment ∘ Sum.inl) (assignment ∘ Sum.inr) := by
+  induction φ with
+  | falsum => rfl
+  | equal =>
+      simp [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        _root_.FirstOrder.Language.Term.equal,
+        _root_.FirstOrder.Language.Term.bdEqual, Formula.truth, truth]
+  | rel =>
+      simp [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        _root_.FirstOrder.Language.Relations.formula,
+        _root_.FirstOrder.Language.Relations.boundedFormula,
+        Formula.truth, truth]
+  | imp φ ψ ihφ ihψ =>
+      rw [_root_.FirstOrder.Language.BoundedFormula.toFormula]
+      change
+        (Formula.truth S φ.toFormula assignment ⇨
+            Formula.truth S ψ.toFormula assignment) = _
+      rw [ihφ assignment, ihψ assignment]
+      rfl
+  | all ψ ih =>
+      rw [_root_.FirstOrder.Language.BoundedFormula.toFormula,
+        Formula.truth, truth_all, truth_all]
+      congr 1
+      funext x
+      have h := ih
+        (Sum.elim (assignment ∘ Sum.inl)
+          (Fin.snoc (assignment ∘ Sum.inr) x))
+      simp only [Sum.elim_comp_inl, Sum.elim_comp_inr] at h
+      rw [← h, truth_relabel]
+      unfold Formula.truth
+      apply congrArg₂ (truth S ψ.toFormula)
+      · funext i
+        rcases i with i | i
+        · simp
+        · refine Fin.lastCases ?_ (fun j => ?_) i
+          · simp [Fin.snoc]
+          · simp only [Fin.castSucc, Sum.elim_inr]
+            rw [← Fin.castSucc]
+            simp
+      · funext i
+        exact Fin.elim0 i
+
 end BoundedFormula
 
 namespace Formula
