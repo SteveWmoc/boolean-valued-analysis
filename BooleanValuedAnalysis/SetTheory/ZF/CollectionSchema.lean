@@ -5,6 +5,7 @@ Authors: Steven Sabean
 -/
 
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
+import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
 
 /-!
 # First-order Collection schema
@@ -59,7 +60,7 @@ def collectionInstance {α : Type w}
     (φ : BoundedFormula α 2) : Formula α :=
   allF ((collectionAntecedent φ).imp (collectionConclusion φ))
 
-variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] [Small.{u} 𝔹]
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 variable {α : Type w}
 
 private def emptyBound : Fin 0 → BVSet.{u, v} 𝔹 :=
@@ -79,7 +80,7 @@ private theorem truth_liftAt_one_zero_two
         (Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) x) y) =
       collectionFormulaValue φ assignment emptyBound x y := by
   rw [truth_liftAt φ assignment _ (Nat.zero_le 2)]
-  rfl
+  congr 1
 
 private theorem truth_liftAt_two_zero_two
     (φ : BoundedFormula α 2)
@@ -90,7 +91,7 @@ private theorem truth_liftAt_two_zero_two
           (Fin.snoc (Fin.snoc (Fin.snoc emptyBound a) b) x) y) =
       collectionFormulaValue φ assignment emptyBound x y := by
   rw [truth_liftAt φ assignment _ (Nat.zero_le 2)]
-  rfl
+  congr 1
 
 private theorem truth_collectionAntecedent
     (φ : BoundedFormula α 2)
@@ -102,12 +103,11 @@ private theorem truth_collectionAntecedent
   unfold collectionAntecedent
   rw [BoundedFormula.truth_boundedForall_eq_boundedForall]
   congr 1
-  · simp [bvar, emptyBound, Fin.snoc]
-  · funext x
-    simp only [exF, truth_ex]
-    congr 1
-    funext y
-    exact truth_liftAt_one_zero_two φ assignment a x y
+  funext x
+  simp only [exF, truth_ex]
+  congr 1
+  funext y
+  exact truth_liftAt_one_zero_two φ assignment a x y
 
 private theorem truth_collectionConclusion
     (φ : BoundedFormula α 2)
@@ -124,13 +124,11 @@ private theorem truth_collectionConclusion
   funext b
   rw [BoundedFormula.truth_boundedForall_eq_boundedForall]
   congr 1
-  · simp [bvar, emptyBound, Fin.snoc]
-  · funext x
-    rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
-    congr 1
-    · simp [bvar, emptyBound, Fin.snoc]
-    · funext y
-      exact truth_liftAt_two_zero_two φ assignment a b x y
+  funext x
+  rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
+  congr 1
+  funext y
+  exact truth_liftAt_two_zero_two φ assignment a b x y
 
 /-- Exact weighted Boolean semantics of a Collection-schema instance. -/
 theorem formulaTruth_collectionInstance
@@ -154,6 +152,7 @@ theorem formulaTruth_collectionInstance
 /-- Every first-order Collection-schema instance has Boolean truth value `⊤`
 under every assignment of its free parameters. -/
 theorem formulaTruth_collectionInstance_top
+    [Small.{u} 𝔹]
     (φ : BoundedFormula α 2)
     (assignment : α → BVSet.{u, v} 𝔹) :
     formulaTruth (collectionInstance φ) assignment = ⊤ := by
@@ -163,11 +162,13 @@ theorem formulaTruth_collectionInstance_top
   intro a
   rw [le_himp_iff]
   apply le_iSup_of_le (collectFormula a φ assignment emptyBound)
-  exact collection_formula_le_collectFormula a φ assignment emptyBound
+  simpa only [top_inf_eq] using
+    collection_formula_le_collectFormula a φ assignment emptyBound
 
 /-- Collection is also top-valued on the separated carrier for every free
 assignment obtained from raw parameters. -/
 theorem separatedFormulaTruth_collectionInstance_top
+    [Small.{u} 𝔹]
     (φ : BoundedFormula α 2)
     (assignment : α → BVSet.{u, v} 𝔹) :
     separatedFormulaTruth (collectionInstance φ)
