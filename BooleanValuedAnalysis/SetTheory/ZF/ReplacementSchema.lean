@@ -113,7 +113,7 @@ private theorem truth_pairFormula
       collectionFormulaValue φ assignment emptyBound
         (boundAssignment x) (boundAssignment y) := by
   unfold pairFormula
-  rw [BooleanValued.SetTheory.truth_relabel]
+  rw [BooleanValued.SetTheory.truth_relabel (𝔹 := 𝔹)]
   have hzero :
       boundAssignment ∘ Fin.natAdd n =
         (fun i : Fin 0 => Fin.elim0 i) := by
@@ -213,9 +213,9 @@ private theorem truth_replacementConclusionFormula
     rw [BoundedFormula.truth_boundedExists_eq_boundedExists]
     unfold BVSet.replacementRangeValue
     congr 1
-    · simp [bounds, bvar, Fin.snoc]
-    · funext x
-      exact truth_pairFormula φ assignment (Fin.snoc bounds x) 3 2
+    funext x
+    simpa [bounds, Fin.snoc] using
+      truth_pairFormula φ assignment (Fin.snoc bounds x) 3 2
   rw [hmem, hrange]
 
 /-- Exact Boolean semantics of a standard Replacement-schema instance. -/
