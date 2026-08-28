@@ -23,7 +23,7 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] [Small.{u} 𝔹]
 
 namespace BVSet
 
-example (a : BVSet.{u, v} 𝔹)
+noncomputable example (a : BVSet.{u, v} 𝔹)
     (φ : BVSet.{u, v} 𝔹 → BVSet.{u, v} 𝔹 → 𝔹)
     (hφ : ∀ x, Extensional (φ x)) : BVSet.{u, v} 𝔹 :=
   collect a φ hφ
