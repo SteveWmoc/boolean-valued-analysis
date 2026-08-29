@@ -6,7 +6,7 @@ The center of gravity of this project is epistemic, not social. If AI generated 
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a growing Boolean-valid ZF fragment, the Boolean-valued Separation schema, a Boolean-valued powerset constructor, direct Boolean-valued Infinity, and Boolean-valued Foundation are usable. The APIs may change as further ZF fragments, transfer, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a growing Boolean-valid ZF fragment, the Boolean-valued Separation schema, a Boolean-valued powerset constructor, direct Boolean-valued Infinity, Boolean-valued Foundation, and generic Boolean-valued logical soundness are usable. The APIs may change as the precise ZF theory, transfer statement, and applications are developed.
 
 ## Mathematical overview
 
@@ -23,6 +23,7 @@ The current development establishes that:
 - first-order set-theoretic formulas have Boolean truth values, with logical connectives and quantifiers interpreted by the corresponding complete Boolean-algebra operations;
 - Boolean-valued first-order semantics is generic over explicit structure objects, with equality-sensitive congruence isolated in `LawfulStructure`;
 - term and formula semantics commute with Mathlib-native relabeling, bound-variable lifting, and capture-avoiding syntactic substitution;
+- a project-owned bounded Hilbert calculus has a conventional classical logical and equality basis, with every derivation from a top-valued sentence theory uniformly top-valued and no logic-level `Small` assumption;
 - bounded-formula and formula truth are extensional under pointwise Boolean-valued equality of assignments, with ordinary pointwise Lean equality available as a simpler corollary;
 - syntactic set-bounded existential and universal quantifiers use Mathlib's locally nameless binders, have the standard restricted Boolean semantics, and agree with the existing weighted-child bounded quantifiers;
 - free-variable substitution through syntactic set-bounded quantifiers agrees with M001 semantic substitution at the weighted-child level;
@@ -58,12 +59,14 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.FirstOrder.Lift` | Generic locally nameless bound-variable lifting semantics |
 | `BooleanValuedAnalysis.FirstOrder.Substitution` | Generic syntactic substitution semantics |
 | `BooleanValuedAnalysis.FirstOrder.Lawful` | Equality and congruence laws for generic structures |
+| `BooleanValuedAnalysis.FirstOrder.Soundness` | Bounded Hilbert calculus, logical/equality axioms, deterministic closure, and generic Boolean-valued soundness |
 | `BooleanValuedAnalysis.FirstOrder.Extensional` | Boolean-valued assignment extensionality for formula truth |
 | `BooleanValuedAnalysis.FirstOrder.Structural` | Structural convenience corollaries, including pointwise Lean equality |
 | `BooleanValuedAnalysis.Formula` | Pure set-theory language and Boolean-valued set-theoretic formula semantics |
 | `BooleanValuedAnalysis.SetTheory.*` | Set-theory specializations of structural semantics plus syntactic bounded quantifiers and their weighted semantics |
 | `BooleanValuedAnalysis.SetTheory.Ground` | Ordinary `Prop`-valued semantics on Mathlib `PSet`, extensionality, and bounded-quantifier child semantics |
 | `BooleanValuedAnalysis.SetTheory.SeparatedSemantics` | Lawful set-theory semantics on separated names and exact raw/separated truth comparison |
+| `BooleanValuedAnalysis.SetTheory.LogicalSoundness` | Raw and separated consequences of derivations from top-valued set-theory sentence theories |
 | `BooleanValuedAnalysis.SetTheory.Delta0` | Δ₀ syntax predicate, classical Boolean values, and exact raw/separated standard-name absoluteness |
 | `BooleanValuedAnalysis.SetTheory.ZF.Constructors` | Direct empty/pair/union semantic constructors and Boolean extensionality characterization |
 | `BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms` | Closed ZF extensionality, empty-set, pairing, and union sentences with raw/separated Boolean validity |
@@ -131,7 +134,8 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 15. **Replacement/Collection design (M015): complete.** Per-source-child M004 maximizers form a collecting name on the source's own index type. Collection requires the existing local `[Small.{u} 𝔹]` maximum-principle boundary but no new rank, reindexing, or universe assumption; Replacement should be derived using functionality and M009 Separation.
 16. **Boolean-valued Collection and Replacement (M016): complete.** Per-source-child M004 maximizers give a public collecting name and genuine Collection schema; functionality plus M009 Separation yields the exact Replacement range and genuine raw/separated Replacement validity under the same local `Small` boundary.
 17. **Boolean-valued logical soundness design (M017): complete.** The pinned Mathlib syntax has no syntactic proof calculus, so a project-owned bounded Hilbert kernel is the induction target. An executable probe validates its uniform-`⊤` invariant, modus ponens/substitution/generalization rules, native newest-variable instantiation, quantifier axioms, equality boundary, and deterministic sentence closure without new foundational assumptions.
-18. **Boolean-valued logical soundness (M018): next.** Promote the M017 kernel and logical/equality axiom families into a focused public API, prove generic derivation soundness, and connect Boolean-valid sentence theories to raw and separated consequences while continuing to reserve “Transfer Principle” for the following theory-packaging milestone.
+18. **Boolean-valued logical soundness (M018): complete.** The public bounded Hilbert calculus supplies conventional classical logical and equality axioms, exact newest-variable instantiation, uniform derivation soundness, deterministic parameter closure, and raw/separated set-theory consequences without a logic-level `Small` assumption.
+19. **Boolean-valid ZF theory packaging and Transfer (M019): next.** Package the exact currently validated ZF fragment as a sentence theory, prove its raw and separated top-valued validity with local size assumptions visible at the selected axioms, and state the resulting theorem-consequence result under the reserved Transfer name.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 

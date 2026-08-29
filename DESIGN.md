@@ -318,7 +318,7 @@ children, and `a.weight` as coefficients.
 
 ## D012 — Use a project-owned bounded Hilbert kernel for logical soundness
 
-**Status:** accepted by M017 design
+**Status:** implemented by M018
 
 Build logical soundness over Mathlib's existing locally nameless
 `BoundedFormula` syntax, but use a small project-owned derivation datatype.
@@ -351,9 +351,9 @@ invariant is value `⊤` for every free- and bound-variable assignment.
 
 ### Consequences
 
-- M018 should implement the derivation kernel, logical and equality axiom
-  families, exact newest-variable instantiation, and generic soundness before
-  any theorem is advertised as Transfer.
+- M018 implements the derivation kernel, logical and equality axiom families,
+  exact newest-variable instantiation, deterministic parameter closure, and
+  generic soundness before any theorem is advertised as Transfer.
 - The logical layer introduces no `Small`, maximum-principle, ultrafilter,
   `Nontrivial 𝔹`, universe-equality, representative-choice, or ascent boundary.
 - Any later `Small` assumption on ZF consequences comes only from the existing
@@ -361,8 +361,8 @@ invariant is value `⊤` for every free- and bound-variable assignment.
 - Nonemptiness is not needed by the direct soundness induction.  It becomes
   relevant only for comparison with an external model-theory or completeness
   convention; the Boolean-valued set carrier is already inhabited.
-- The name **Transfer Principle** remains reserved for a subsequent milestone
-  that packages a precise ZF theory after logical soundness is public.
+- The name **Transfer Principle** remains reserved for M019, which packages a
+  precise ZF theory now that logical soundness is public.
 
 ### Reconsider when
 

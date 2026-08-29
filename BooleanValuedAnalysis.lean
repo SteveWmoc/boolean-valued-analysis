@@ -11,6 +11,7 @@ import BooleanValuedAnalysis.FirstOrder.Relabel
 import BooleanValuedAnalysis.FirstOrder.Lift
 import BooleanValuedAnalysis.FirstOrder.Substitution
 import BooleanValuedAnalysis.FirstOrder.Lawful
+import BooleanValuedAnalysis.FirstOrder.Soundness
 import BooleanValuedAnalysis.FirstOrder.Extensional
 import BooleanValuedAnalysis.FirstOrder.Structural
 import BooleanValuedAnalysis.Formula
@@ -31,6 +32,7 @@ import BooleanValuedAnalysis.Maximum
 import BooleanValuedAnalysis.Separated
 import BooleanValuedAnalysis.Descent
 import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
+import BooleanValuedAnalysis.SetTheory.LogicalSoundness
 import BooleanValuedAnalysis.SetTheory.Delta0
 import BooleanValuedAnalysis.SetTheory.ZF.Constructors
 import BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms
@@ -73,5 +75,7 @@ and separated validity of ZF Infinity, the structural raw-name proof of ZF
 Foundation with raw and separated validity and no additional smallness
 hypothesis, Boolean-valued Collection built from per-source-child
 maximum-principle witnesses, and exact functional Replacement derived by
-Separation, both with genuine raw and separated schema validity.
+Separation, both with genuine raw and separated schema validity, together with
+a bounded Hilbert calculus, generic Boolean-valued logical soundness, and raw
+and separated set-theory consequence theorems.
 -/
