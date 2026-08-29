@@ -407,13 +407,23 @@ The executable probe also constructs newest-bound-variable instantiation from na
 
 Design record: [`docs/milestones/017-logical-soundness-design.md`](docs/milestones/017-logical-soundness-design.md)
 
-### M018 — Boolean-valued logical soundness — next
+### M018 — Boolean-valued logical soundness — complete
 
-Promote the M017 prototype into a focused public `FirstOrder` API. Implement the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas.
+Completed 2026-08-29.
 
-Specialize the result to Boolean-valued set theory so that a derivation from a sentence theory whose axioms are raw top-valued has a raw top-valued conclusion, with separated consequences transported through the exact M006 bridge. Keep the logic layer free of `Small`; any local `Small` assumption must enter only when the selected set-theory axiom family includes powerset, Collection, or Replacement.
+The public `FirstOrder.Soundness` module implements the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled exactly by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas. The derivation invariant is uniform value `⊤` over every free- and bound-variable assignment.
 
-M018 should not yet advertise a Transfer Principle, prove completeness, add object-language Choice, or begin general and typed ascent. A following milestone should package the precise ZF theory and theorem-consequence statement before using the Transfer name.
+`SetTheory.LogicalSoundness` specializes the result to raw Boolean-valued names and transports provable consequences to the separated universe through the exact M006 sentence bridge. The logic layer contains no `Small`; any later size assumption enters only through whichever Boolean-valid set-theory axioms are selected. M018 adds no completeness theorem, object-language Choice, general ascent, or typed ascent, and continues to reserve the Transfer name for precise theory packaging.
+
+Completion record: [`docs/milestones/018-logical-soundness.md`](docs/milestones/018-logical-soundness.md)
+
+### M019 — Boolean-valid ZF theory packaging and Transfer — next
+
+Package the exact currently proved ZF axioms and universally closed schema instances as a concrete sentence theory. Prove every theory member raw top-valued and separated top-valued, keeping local `[Small.{u} 𝔹]` assumptions attached only to powerset, Collection, and Replacement membership in the selected fragment.
+
+Combine that packaged theory validity with M018 soundness to state the first theorem-consequence result deserving the name **Transfer Principle**. The statement should make the exact object theory, derivability relation, size boundary, and raw/separated conclusions explicit rather than suggesting completeness or validity for all of ZF/ZFC.
+
+M019 should not add new ZF axiom proofs, object-language Choice, logical completeness, general ascent, or typed ascent. If universally closing arbitrary schema parameters reveals a representation or universe boundary not already covered by M018, resolve that boundary explicitly before expanding the selected theory.
 
 A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
 
