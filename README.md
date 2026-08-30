@@ -6,7 +6,7 @@ The center of gravity of this project is epistemic, not social. If AI generated 
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, a growing Boolean-valid ZF fragment, the Boolean-valued Separation schema, a Boolean-valued powerset constructor, direct Boolean-valued Infinity, Boolean-valued Foundation, and generic Boolean-valued logical soundness are usable. The APIs may change as the precise ZF theory, transfer statement, and applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, the Boolean-valid ZF axiom and schema constructions, generic Boolean-valued logical soundness, and a concrete ZF sentence theory with raw/separated theorem-consequence Transfer Principles are usable. The APIs may change as applications are developed.
 
 ## Mathematical overview
 
@@ -44,9 +44,12 @@ The current development establishes that:
 - the ZF powerset axiom is a genuine closed sentence and has Boolean truth value `⊤` on raw and separated names under that same local smallness hypothesis, without using the maximum-principle/Zorn path or selecting quotient representatives;
 - direct von Neumann successor satisfies `BVSet.mem z (BVSet.succ x) = BVSet.mem z x ⊔ BVSet.bvEq z x`, finite von Neumann names iterate this successor from `∅`, and a size-free `ULift ℕ`-indexed `BVSet.omega` has exact membership `⨆ n, BVSet.bvEq z (BVSet.natName n)`;
 - membership in direct `omega` is closed under successor at the same Boolean degree, so the genuine ZF Infinity sentence has Boolean truth value `⊤` on raw and separated names without `Small`, `Nontrivial`, maximum-principle, or quotient-representative assumptions;
-- structural induction on raw names proves `BVSet.mem y x ≤ BVSet.foundationMinimalSup x`; consequently the genuine minimal-member ZF Foundation sentence has Boolean truth value `⊤` on raw and separated names without `Small`, `Shrink`, rank minimization, mixing, maximum-principle, Zorn, `Nontrivial`, or representative-selection machinery.
+- structural induction on raw names proves `BVSet.mem y x ≤ BVSet.foundationMinimalSup x`; consequently the genuine minimal-member ZF Foundation sentence has Boolean truth value `⊤` on raw and separated names without `Small`, `Shrink`, rank minimization, mixing, maximum-principle, Zorn, `Nontrivial`, or representative-selection machinery;
+- per-source-child maximizers give genuine first-order Collection instances, while functionality and Separation give exact total-functional Replacement instances; both schema families are raw/separated top-valued under the existing local `[Small.{u} 𝔹]` boundary;
+- `ZF.IsAxiom` packages extensionality, empty set, pairing, union, powerset, Infinity, Foundation, and every deterministically closed finite-parameter Separation, Collection, and Replacement instance as the explicit assumption-free sentence set `ZF.theory`;
+- every member of `ZF.theory` is raw and separated top-valued under `[Small.{u} 𝔹]`, and M018 syntactic soundness yields `ZF.transfer` and `ZF.separatedTransfer`: any sentence with an explicit project-calculus derivation from that exact theory has Boolean value `⊤` on the corresponding carrier.
 
-This is not yet a complete Boolean-valued model of ZFC or a finished formalization of the transfer principle.
+This does not yet establish a Boolean-valued model of ZFC: no object-language Choice axiom is included.  The implemented Transfer Principles are explicit syntactic theorem-consequence results; they do not assert logical completeness or semantic consequence.
 
 ## Repository layout
 
@@ -76,6 +79,9 @@ This is not yet a complete Boolean-valued model of ZFC or a finished formalizati
 | `BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom` | Closed ZF powerset sentence with raw/separated Boolean validity under local `Small` |
 | `BooleanValuedAnalysis.SetTheory.ZF.Infinity` | Direct von Neumann successor and omega names, exact successor/omega semantics, and raw/separated Boolean validity of ZF Infinity |
 | `BooleanValuedAnalysis.SetTheory.ZF.Foundation` | Structural minimal-member semantics and raw/separated Boolean validity of ZF Foundation |
+| `BooleanValuedAnalysis.SetTheory.ZF.Collection` / `.CollectionSchema` | Per-source-child collecting names plus genuine raw/separated Collection-schema validity under local `Small` |
+| `BooleanValuedAnalysis.SetTheory.ZF.Replacement` / `.ReplacementSchema` | Exact functional ranges derived by Separation plus genuine raw/separated Replacement-schema validity under local `Small` |
+| `BooleanValuedAnalysis.SetTheory.ZF.Transfer` | Exact selected ZF sentence theory, deterministic schema closure, memberwise raw/separated validity, and both Transfer Principles |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
@@ -135,7 +141,9 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 16. **Boolean-valued Collection and Replacement (M016): complete.** Per-source-child M004 maximizers give a public collecting name and genuine Collection schema; functionality plus M009 Separation yields the exact Replacement range and genuine raw/separated Replacement validity under the same local `Small` boundary.
 17. **Boolean-valued logical soundness design (M017): complete.** The pinned Mathlib syntax has no syntactic proof calculus, so a project-owned bounded Hilbert kernel is the induction target. An executable probe validates its uniform-`⊤` invariant, modus ponens/substitution/generalization rules, native newest-variable instantiation, quantifier axioms, equality boundary, and deterministic sentence closure without new foundational assumptions.
 18. **Boolean-valued logical soundness (M018): complete.** The public bounded Hilbert calculus supplies conventional classical logical and equality axioms, exact newest-variable instantiation, uniform derivation soundness, deterministic parameter closure, and raw/separated set-theory consequences without a logic-level `Small` assumption.
-19. **Boolean-valid ZF theory packaging and Transfer (M019): next.** Package the exact currently validated ZF fragment as a sentence theory, prove its raw and separated top-valued validity with local size assumptions visible at the selected axioms, and state the resulting theorem-consequence result under the reserved Transfer name.
+19. **Boolean-valid ZF theory packaging and Transfer (M019): complete.** The exact validated fixed axioms and deterministically closed Separation, Collection, and Replacement instances form `ZF.theory`; memberwise raw/separated validity and M018 soundness give the explicit `ZF.transfer` and `ZF.separatedTransfer` theorem-consequence results under the established local `Small` boundary.
+
+The foundational Transfer spine through M019 is complete.  The next roadmap decision is to select the first concrete R7 application so its mathematical requirements determine the typed ascent/descent interface.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 

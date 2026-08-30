@@ -46,6 +46,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Replacement
 import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
+import BooleanValuedAnalysis.SetTheory.ZF.Transfer
 
 /-!
 # Boolean-Valued Analysis
@@ -77,5 +78,6 @@ hypothesis, Boolean-valued Collection built from per-source-child
 maximum-principle witnesses, and exact functional Replacement derived by
 Separation, both with genuine raw and separated schema validity, together with
 a bounded Hilbert calculus, generic Boolean-valued logical soundness, and raw
-and separated set-theory consequence theorems.
+and separated set-theory consequence theorems, culminating in a concrete
+Boolean-valid ZF sentence theory and its raw/separated Transfer Principles.
 -/

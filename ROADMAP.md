@@ -31,7 +31,17 @@ The repository currently provides:
 - direct coefficient-restriction Separation for extensional predicates, formula-specialized Separation witnesses, and genuine first-order Separation-schema instances with arbitrary free parameters, all without a `Small` hypothesis;
 - Boolean inclusion, size-free subset normalization, and a small-coded raw powerset constructor with exact membership semantics, together with raw and separated Boolean validity of the ZF powerset axiom under local `[Small.{u} 𝔹]`;
 - direct von Neumann successor and a `ULift ℕ`-indexed Boolean-valued `ω`, with exact membership semantics and raw/separated Boolean validity of ZF Infinity without a `Small` hypothesis;
-- a public size-free structural proof of ZF Foundation in which induction on raw names forces arbitrary membership truth below the truth value of having a membership-minimal member, with raw and separated Boolean validity and no rank or witness-selection machinery.
+- a public size-free structural proof of ZF Foundation in which induction on raw names forces arbitrary membership truth below the truth value of having a membership-minimal member, with raw and separated Boolean validity and no rank or witness-selection machinery;
+- genuine first-order Collection and total-functional Replacement schema
+  instances with arbitrary finite parameter blocks, raw/separated Boolean
+  validity, and the existing local `[Small.{u} 𝔹]` maximum-principle boundary;
+- a project-owned bounded Hilbert calculus with classical logical/equality
+  axioms, deterministic universal closure, and generic raw/separated
+  Boolean-valued soundness;
+- an explicit sentence theory containing exactly the currently validated fixed
+  ZF axioms and universally closed Separation, Collection, and Replacement
+  instances, together with raw and separated theorem-consequence Transfer
+  Principles under local `[Small.{u} 𝔹]`.
 
 These components form the foundation for the milestones below.
 
@@ -417,21 +427,48 @@ The public `FirstOrder.Soundness` module implements the bounded Hilbert derivati
 
 Completion record: [`docs/milestones/018-logical-soundness.md`](docs/milestones/018-logical-soundness.md)
 
-### M019 — Boolean-valid ZF theory packaging and Transfer — next
+### M019 — Boolean-valid ZF theory packaging and Transfer — complete
 
-Package the exact currently proved ZF axioms and universally closed schema instances as a concrete sentence theory. Prove every theory member raw top-valued and separated top-valued, keeping local `[Small.{u} 𝔹]` assumptions attached only to powerset, Collection, and Replacement membership in the selected fragment.
+Completed 2026-08-30.
 
-Combine that packaged theory validity with M018 soundness to state the first theorem-consequence result deserving the name **Transfer Principle**. The statement should make the exact object theory, derivability relation, size boundary, and raw/separated conclusions explicit rather than suggesting completeness or validity for all of ZF/ZFC.
+`ZF.IsAxiom` now specifies the exact selected theory by cases: extensionality,
+empty set, pairing, union, powerset, Infinity, Foundation, and every
+deterministically closed `Fin k`-parameter instance of Separation, Collection,
+and total-functional Replacement.  `ZF.theory` is the corresponding Mathlib
+sentence set and is purely syntactic, with no size assumption.  Collection is
+retained alongside Replacement because both belong to the validated M016
+fragment; no Choice sentence is included.
 
-M019 should not add new ZF axiom proofs, object-language Choice, logical completeness, general ascent, or typed ascent. If universally closing arbitrary schema parameters reveals a representation or universe boundary not already covered by M018, resolve that boundary explicitly before expanding the selected theory.
+The schema sentence constructors reuse M018's
+`FirstOrder.Formula.universalClosure`.  Closed Separation remains size-free,
+while closed Collection and Replacement retain the established local
+`[Small.{u} 𝔹]` boundary.  A complete case split proves every theory member raw
+top-valued, and the exact M006 sentence bridge gives separated memberwise
+validity without representatives.  Full selected-theory validity needs
+`Small` precisely because powerset, Collection, and Replacement are members.
 
-A theorem deserving the name **Transfer Principle** should still be stated only after the project has both a sufficiently broad Boolean-valid axiom fragment and a soundness layer showing that the relevant logical inference rules preserve value `⊤`.
+`ZF.transfer` and `ZF.separatedTransfer` combine that concrete theory validity
+with M018 soundness.  They state that an explicit M018 derivation from
+`ZF.theory` yields raw or separated Boolean truth value `⊤`.  These are the
+first results assigned the **Transfer Principle** name.  They assert syntactic
+theorem consequence, not logical completeness or semantic consequence.
 
-General ascent of arbitrary separated families and typed ascents of functions, relations, homomorphisms, vector spaces, operators, and other structures remain deferred until a concrete application specifies the necessary size, extensionality, and functorial requirements.
+M019 adds no new ZF axiom proof, object-language Choice, completeness theorem,
+general ascent, or typed ascent.  General ascent of arbitrary separated
+families and typed ascents of functions, relations, homomorphisms, vector
+spaces, operators, and other structures remain deferred until a concrete R7
+application specifies the necessary size, extensionality, and functorial
+requirements.
+
+Completion record: [`docs/milestones/019-zf-theory-transfer.md`](docs/milestones/019-zf-theory-transfer.md)
 
 ## R7. Applications
 
-After the foundational API stabilizes, develop applications motivated by Boolean-valued analysis, forcing, and algebraic or order-theoretic structures.
+The foundational Transfer spine through M019 is complete.  The next roadmap
+decision is to select a concrete application motivated by Boolean-valued
+analysis, forcing, or algebraic/order-theoretic structures; that application
+should determine the first typed ascent/descent interface rather than a
+speculative universal abstraction.
 
 Potential application roadmaps should be maintained separately so that foundational dependencies remain visible.
 

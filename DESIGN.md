@@ -373,6 +373,58 @@ invariant is value `⊤` for every free- and bound-variable assignment.
 - a later completeness theorem requires a calculus different from the minimal
   soundness kernel.
 
+## D013 — Define Transfer over an explicit closed ZF sentence theory
+
+**Status:** implemented by M019
+
+Package the validated ZF fragment as an inductively specified set of closed
+Mathlib sentences.  Fixed axioms enter literally.  Separation, Collection, and
+Replacement bodies use `Fin k` for their finite parameter blocks and enter
+only after M018's deterministic universal closure.  Transfer then means
+syntactic derivability from this exact sentence set implies Boolean truth value
+`⊤`.
+
+### Rationale
+
+- An inductive membership predicate makes the selected object theory
+  reviewable by cases and prevents an informal phrase such as “the ZF axioms”
+  from hiding an omitted or added sentence family.
+- `Fin k` gives schema parameters a canonical finite order, so universal
+  closure needs no chosen enumeration and no second formula syntax.
+- Collection remains in the selected theory alongside the standard
+  total-functional Replacement schema because M016 established both public
+  validity results; the package records the exact validated fragment.
+- The sentence set is syntax and therefore has no `Small` assumption.  Full
+  model validity and Transfer require `[Small.{u} 𝔹]` only because the selected
+  powerset, Collection, and Replacement families already require it.
+- M018 soundness supplies exactly the direction needed for Transfer.  A
+  completeness theorem would add a different and unnecessary claim.
+
+### Consequences
+
+- `ZF.IsAxiom` and `ZF.theory` expose the precise theory.  No Choice sentence
+  is present.
+- Closed Separation validity stays size-free; closed Collection and
+  Replacement validity retain the existing local size boundary.
+- `ZF.isTrue_of_mem_theory` and `ZF.theory_isTrue` prove raw memberwise and
+  aggregate validity, while exact M006 transport gives separated memberwise
+  validity without representatives.
+- `ZF.transfer` and `ZF.separatedTransfer` are the first results assigned the
+  **Transfer Principle** name.  Their premise is an explicit M018 derivation,
+  not semantic consequence.
+- General and typed ascent remain deferred to a concrete R7 application.
+
+### Reconsider when
+
+- a later standard-library derivation calculus should replace the project
+  kernel and offers a provably equivalent consequence relation;
+- a concrete consumer needs a minimal ZF presentation that omits redundant
+  Collection rather than the exact validated theory;
+- object-language Choice is proved Boolean-valid and a separately named ZFC
+  theory becomes appropriate;
+- completeness is independently required and its additional model-theoretic
+  assumptions have been designed explicitly.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001
