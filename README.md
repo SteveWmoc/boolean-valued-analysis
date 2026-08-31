@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml)
 
-The center of gravity of this project is epistemic, not social. If AI generated or AI assisted code bothers you, please go away.
+AI tools are used extensively in the development of this project, including in code, proofs, documentation, and review. The work should be judged on its mathematical and technical merits. If you object in principle to AI-assisted research or software development, we respectfully suggest that this is not the project for you.
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
@@ -31,7 +31,7 @@ The current development establishes that:
 - Boolean partitions of arbitrary values `b` and partitions of unity give the standard mixing lemma, while coverage is kept logically separate from overlap compatibility;
 - under the explicit smallness hypothesis `[Small.{u} 𝔹]`, arbitrary indexed Boolean suprema admit small disjoint witness partitions, every extensional Boolean-valued predicate attains its full supremum, and every set-theoretic existential truth value is attained by a Boolean-valued witness;
 - raw names admit a separated quotient by top-valued Boolean equality, while the full Boolean values of equality and membership descend unchanged to the quotient;
-- ordinary Lean equality on separated names is exactly the `⊤` fiber of descended Boolean-valued equality, and canonical ground-model names retain their preservation/reflection properties after separation;
+- ordinary Lean equality on separated names is exactly the `⊤` fiber of descended Boolean-valued equality, and canonical names retain their preservation/reflection properties after separation;
 - the separated quotient carries its own lawful Boolean-valued first-order set-theory structure using descended equality and membership;
 - quotienting raw assignments preserves the **entire Boolean truth value** of every bounded formula, ordinary formula, and closed sentence, with universal quantification compared by quotient induction rather than representative selection;
 - elementary descent sends a separated name `x` to the external set of separated `y` with membership value `⊤`, and checked ground-model membership is exactly membership of `checkSeparated x` in the descent of `checkSeparated y`;
