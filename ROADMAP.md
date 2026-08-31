@@ -197,7 +197,6 @@ The bounded induction steps use M002’s weighted-child semantics. Ground bounde
 M007 introduces no `[Small.{u} 𝔹]`, no general ascent, no quotient representative selector, no `Shrink` or Zorn machinery, and no equality between universes. `Audit/M007Acceptance.lean` exercises the ground structure, bounded child semantics, atomic and nested bounded Δ₀ formulas, rejection of an unrestricted universal formula, and the exact raw and separated comparison theorems.
 
 Specification and completion record: [`docs/milestones/007-delta0-absoluteness.md`](docs/milestones/007-delta0-absoluteness.md)
-
 ### M008 — First Boolean-valid ZF fragment — complete
 
 Completed 2026-08-19.
@@ -398,7 +397,6 @@ Design record: [`docs/milestones/015-replacement-collection-design.md`](docs/mil
 ### M016 — Boolean-valued Collection and Replacement — complete
 
 Completed 2026-08-28.
-
 The public collecting name applies M004 independently to every literal child of the source and reuses that source's index type and coefficients. The resulting weighted Collection kernel is packaged as a genuine schema instance with exact raw semantics and raw/separated value `⊤` under local `[Small.{u} 𝔹]`.
 
 Replacement is derived through the planned route: totality supplies the selected witnesses, functionality forces every competing output equal to the corresponding selected witness on its Boolean region, and M009 Separation cuts the collecting superset down to the exact semantic range. The standard total-functional Replacement schema is encoded in the existing Mathlib syntax and is raw/separated top-valued under the same local boundary.
@@ -464,13 +462,39 @@ Completion record: [`docs/milestones/019-zf-theory-transfer.md`](docs/milestones
 
 ## R7. Applications
 
-The foundational Transfer spine through M019 is complete.  The next roadmap
-decision is to select a concrete application motivated by Boolean-valued
-analysis, forcing, or algebraic/order-theoretic structures; that application
-should determine the first typed ascent/descent interface rather than a
-speculative universal abstraction.
+### M020 — Takeuti Part I formalization design — complete
 
-Potential application roadmaps should be maintained separately so that foundational dependencies remain visible.
+Completed 2026-08-31.
+
+M020 selects Gaisi Takeuti's *Two Applications of Logic to Mathematics*, Part I,
+as the first concrete R7 application. The design maps Chapters 1–2 onto the
+existing foundation, identifies object-language Choice as the first missing
+set-theoretic ingredient, and freezes a Hilbert-free Boolean spectral-family
+layer between internal reals and later self-adjoint-operator realization.
+
+The first concrete typed-ascent consumer is Takeuti §1.4: definite internal
+sets and functions. This resolves the question of what should drive the first
+typed ascent interface without introducing a speculative universal structure
+transport mechanism. Chapter 2 will reuse Mathlib `AEEqFun` on the function
+side and will introduce a focused measure-algebra quotient only when M031
+requires it.
+
+Specification and design record: [`docs/milestones/020-takeuti-part-i-design.md`](docs/milestones/020-takeuti-part-i-design.md)
+
+### M021–M035 — Takeuti Part I implementation sequence
+
+M021 adds Boolean-valued Choice and a separately named ZFC theory/Transfer.
+M022–M024 develop internal arithmetic, Dedekind reals, Boolean spectral
+families, and their arithmetic/order/localization/mixing laws. M025 introduces
+definite sets and typed internal functions. M026–M029 develop the operator,
+convergence, semigroup, Banach-projection, simultaneous-spectrum, and
+functional-calculus layers of Chapter 1. M030 isolates the orthomodular
+quantum-logic boundary. M031–M035 construct the measure algebra and carry out
+Chapter 2 through the projection/measure equivalence.
+
+**Next milestone:** M021 — Boolean-valued Choice and ZFC Transfer.
+
+Potential additional application roadmaps should be maintained separately so that foundational dependencies remain visible.
 
 ## Review rubric
 
