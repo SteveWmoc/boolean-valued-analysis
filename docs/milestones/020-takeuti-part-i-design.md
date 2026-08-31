@@ -167,7 +167,6 @@ so `E` is a resolution of the identity.  Conversely, restricting a resolution
 to rational indices reconstructs an internal real.  The source then invokes
 the classical correspondence between resolutions of the identity and
 self-adjoint operators.
-
 M020 freezes the **resolution/spectral-family object as the intermediate public
 mathematics**.  A candidate signature is exercised in
 `docs/probes/M020TakeutiPartIDesign.lean`:
@@ -312,7 +311,7 @@ almost-everywhere equal measurable functions.  Chapter 2 should reuse this
 for the **function side** of the correspondence.
 
 The M020 audit did not locate a bundled Mathlib `MeasureAlgebra` implementing
-measurable sets modulo null sets as a complete Boolean algebra.  M030 should
+measurable sets modulo null sets as a complete Boolean algebra.  M031 should
 therefore prototype the set quotient separately, prove the Boolean/completeness
 interface actually required by the existing `BVSet` semantics, and connect
 its characteristic functions to `AEEqFun`.  This is preferable to encoding
@@ -337,7 +336,6 @@ it, but the resulting type must satisfy the project's genuine
 | §2.6 | projection/measure bridge via spectral theorem | operator realization + measure algebra |
 
 ## Proposed implementation sequence
-
 M020 fixes the following first-pass roadmap.  Later design milestones may split
 large items further, but they should preserve this dependency order.
 
