@@ -412,7 +412,9 @@ syntactic derivability from this exact sentence set implies Boolean truth value
 - `ZF.transfer` and `ZF.separatedTransfer` are the first results assigned the
   **Transfer Principle** name.  Their premise is an explicit M018 derivation,
   not semantic consequence.
-- General and typed ascent remain deferred to a concrete R7 application.
+- M020 has now supplied the concrete R7 consumer for typed ascent: Takeuti
+  §1.4 definite sets and functions. The implementation remains deferred to
+  M025 rather than generalized speculatively.
 
 ### Reconsider when
 
@@ -437,7 +439,6 @@ M001 confirmed that Mathlib's native structural operations are sufficient. The p
 The semantic interface is split into generic `FirstOrder` theorems and thin `SetTheory` specializations. The locally nameless bookkeeping needed by substitution is isolated in the public bounded-term helper `Term.realize_substBounded` / `SetTheory.evalTerm_substBounded`.
 
 ### O002 — Extensionality strength for formulas — resolved by M001
-
 The strongest natural lower-bound formulation is the primary API. `BoundedFormula.truth_congr_of_le` transports truth under an arbitrary Boolean lower bound on pointwise valued equality, and `BoundedFormula.truth_congr` chooses the meet of all free- and bound-assignment equality values. `Formula.truth_congr` and the set-theoretic wrappers are derived from that layer.
 
 Ordinary invariance under pointwise Lean equality is retained only as a convenience corollary through `truth_eq_of_pointwise_eq` and `formulaTruth_eq_of_pointwise_eq`; it is not used as a substitute for Boolean-valued extensionality.
@@ -447,6 +448,14 @@ Ordinary invariance under pointwise Lean equality is retained only as a convenie
 M005 chose an ordinary Lean quotient of raw names by top-valued Boolean equality. Exact representative-invariance lemmas for equality and membership show that the complete Boolean values descend to the quotient. No global setoid instance is installed on raw names, and no chosen representative is exposed.
 
 The resulting policy is recorded in D004: raw names remain the recursive layer, while `BVSet.Separated` is the extensional downstream carrier. M006 is responsible for proving that generic formula semantics can be instantiated intrinsically on that carrier and compared exactly with the raw semantics.
+
+### O006 — Typed ascent/descent for functions and structures — resolved in design by M020
+
+Pure R6 set theory may encode a ground function as a set-theoretic object and then apply `checkSeparated`, but this is not intended to be the final interface for functional analysis. M020 supplies the first concrete consumer: Takeuti §1.4 definite internal sets and functions.
+
+The design decision is therefore application-driven rather than universal. M025 should build typed ascent/descent only for definite domains/codomains and extensional maps, with internal function-graph realization, evaluation correspondence, and the sequence/function specializations needed by §§1.4–1.6. Broader interfaces for homomorphisms, vector spaces, operators, and other structures should be generalized only from later proved use cases.
+
+The representation, size, and quotient-representative details are implementation questions for M025; the question of *what should drive the first typed ascent API* is resolved.
 
 ## Open design questions
 
@@ -461,11 +470,3 @@ The M006 core uses `checkSeparated` for ground-set ascent and defines descent by
 M007 does not require it: standard names are canonical images of `PSet` values, and Δ₀ bounded quantifiers reduce through the checked children of those names. The formal issue therefore remains representation-sensitive rather than urgent. An external family contains quotient elements, while raw `BVSet.mk` requires raw children; a direct implementation may require representative selection and an explicit small indexing type.
 
 Resolve this question only when a concrete Transfer-facing or algebraic-system construction specifies the necessary domain, size assumptions, functorial behavior, and interaction with mixing.
-
-### O006 — Typed ascent/descent for functions and structures
-
-Pure R6 set theory may encode a ground function as a set-theoretic object and then apply `checkSeparated`. This is not intended to be the final interface for functional analysis.
-
-Later applications will need typed operations for functions, relations, homomorphisms, vector spaces, operators, and other structures. Their correct formal shape depends on the source and target carriers, extensionality conditions, size requirements, and whether the construction is naturally defined by graphs, pointwise action, or a functorial structure map.
-
-Do not design a universal typed ascent API before the first application fixes these requirements. Revisit this question when an R7 milestone needs to move a concrete algebraic or analytic structure across the Boolean-valued boundary.

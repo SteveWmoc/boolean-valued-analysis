@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml)
 
-The center of gravity of this project is epistemic, not social. If AI generated or AI assisted code bothers you, please go away.
+AI tools are used extensively in the development of this project, including in code, proofs, documentation, and review. The work should be judged on its mathematical and technical merits. If you object in principle to AI-assisted research or software development, we respectfully suggest that this is not the project for you.
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
@@ -31,7 +31,7 @@ The current development establishes that:
 - Boolean partitions of arbitrary values `b` and partitions of unity give the standard mixing lemma, while coverage is kept logically separate from overlap compatibility;
 - under the explicit smallness hypothesis `[Small.{u} 𝔹]`, arbitrary indexed Boolean suprema admit small disjoint witness partitions, every extensional Boolean-valued predicate attains its full supremum, and every set-theoretic existential truth value is attained by a Boolean-valued witness;
 - raw names admit a separated quotient by top-valued Boolean equality, while the full Boolean values of equality and membership descend unchanged to the quotient;
-- ordinary Lean equality on separated names is exactly the `⊤` fiber of descended Boolean-valued equality, and canonical ground-model names retain their preservation/reflection properties after separation;
+- ordinary Lean equality on separated names is exactly the `⊤` fiber of descended Boolean-valued equality, and canonical names retain their preservation/reflection properties after separation;
 - the separated quotient carries its own lawful Boolean-valued first-order set-theory structure using descended equality and membership;
 - quotienting raw assignments preserves the **entire Boolean truth value** of every bounded formula, ordinary formula, and closed sentence, with universal quantification compared by quotient induction rather than representative selection;
 - elementary descent sends a separated name `x` to the external set of separated `y` with membership value `⊤`, and checked ground-model membership is exactly membership of `checkSeparated x` in the descent of `checkSeparated y`;
@@ -118,7 +118,6 @@ The scoped notations are:
 x =ᴮ y
 x ∈ᴮ y
 ```
-
 Both expressions denote elements of the coefficient Boolean algebra, not Lean propositions.
 
 ## Roadmap
@@ -142,8 +141,9 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 17. **Boolean-valued logical soundness design (M017): complete.** The pinned Mathlib syntax has no syntactic proof calculus, so a project-owned bounded Hilbert kernel is the induction target. An executable probe validates its uniform-`⊤` invariant, modus ponens/substitution/generalization rules, native newest-variable instantiation, quantifier axioms, equality boundary, and deterministic sentence closure without new foundational assumptions.
 18. **Boolean-valued logical soundness (M018): complete.** The public bounded Hilbert calculus supplies conventional classical logical and equality axioms, exact newest-variable instantiation, uniform derivation soundness, deterministic parameter closure, and raw/separated set-theory consequences without a logic-level `Small` assumption.
 19. **Boolean-valid ZF theory packaging and Transfer (M019): complete.** The exact validated fixed axioms and deterministically closed Separation, Collection, and Replacement instances form `ZF.theory`; memberwise raw/separated validity and M018 soundness give the explicit `ZF.transfer` and `ZF.separatedTransfer` theorem-consequence results under the established local `Small` boundary.
+20. **Takeuti Part I formalization design (M020): complete.** Takeuti's *Two Applications of Logic to Mathematics*, Part I, is the selected R7 application. The design fixes the M021–M035 dependency order, keeps internal reals ↔ Boolean spectral families independent of Hilbert-space realization, and identifies §1.4 definite functions as the first concrete typed-ascent consumer.
 
-The foundational Transfer spine through M019 is complete.  The next roadmap decision is to select the first concrete R7 application so its mathematical requirements determine the typed ascent/descent interface.
+The foundational Transfer spine through M019 is complete, and M020 selects Takeuti Part I as the first concrete R7 application. **M021 — Boolean-valued Choice and ZFC Transfer** is the next implementation milestone; M022–M035 then develop internal arithmetic and reals, spectral families and operator realization, typed functions and Chapter 1 applications, the quantum-logic boundary, and the measure-algebra realization of Chapter 2.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
