@@ -174,6 +174,70 @@ noncomputable instance choicePieceSupportSmall [Small.{u} 𝔹]
     (x : BVSet.{u, v} 𝔹) : Small.{u} (choicePieceSupport x) :=
   small_of_injective (choicePiece_support_injective x)
 
+/-- Decode the small local support back to its actual first-member witness. -/
+noncomputable def choiceSupportOut [Small.{u} 𝔹]
+    (x : BVSet.{u, v} 𝔹)
+    (i : Shrink.{u} (choicePieceSupport x)) : choicePieceSupport x :=
+  (equivShrink (choicePieceSupport x)).symm i
+
+/-- Candidate raw choice set.  For each displayed family member, include every
+nonzero first-member piece, cut down by the coefficient of that family member. -/
+noncomputable def choiceSet [Small.{u} 𝔹]
+    (a : BVSet.{u, v} 𝔹) : BVSet.{u, v} 𝔹 :=
+  BVSet.mk
+    (Σ i : a.Index, Shrink.{u} (choicePieceSupport (a.child i)))
+    (fun p => (choiceSupportOut (a.child p.1) p.2).1)
+    (fun p => a.weight p.1 ⊓
+      choicePiece (a.child p.1) (choiceSupportOut (a.child p.1) p.2).1)
+
+/-- Every nonzero local first-member coefficient contributes the corresponding
+member to the candidate choice set. -/
+theorem choiceSet_coefficient_le_mem [Small.{u} 𝔹]
+    (a : BVSet.{u, v} 𝔹) (i : a.Index)
+    (y : choicePieceSupport (a.child i)) :
+    a.weight i ⊓ choicePiece (a.child i) y.1 ≤
+      BVSet.mem y.1 (choiceSet a) := by
+  let e : choicePieceSupport (a.child i) ≃
+      Shrink.{u} (choicePieceSupport (a.child i)) :=
+    equivShrink (choicePieceSupport (a.child i))
+  have h := BVSet.weight_le_mem_child (choiceSet a) ⟨i, e y⟩
+  simpa [choiceSet, choiceSupportOut, e] using h
+
+/-- Boolean value that every displayed member of `a` is nonempty. -/
+def choiceFamilyNonemptyValue (a : BVSet.{u, v} 𝔹) : 𝔹 :=
+  BVSet.boundedForall a (fun x => ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y x)
+
+/-- Boolean value that displayed members of `a` are equal or membership-disjoint. -/
+def choiceFamilyDisjointValue (a : BVSet.{u, v} 𝔹) : 𝔹 :=
+  BVSet.boundedForall a (fun x =>
+    BVSet.boundedForall a (fun y =>
+      BVSet.bvEq x y ⊔ BVSet.foundationDisjointValue x y))
+
+/-- Antecedent of the choice-set form of AC. -/
+def choiceAntecedentValue (a : BVSet.{u, v} 𝔹) : 𝔹 :=
+  choiceFamilyNonemptyValue a ⊓ choiceFamilyDisjointValue a
+
+/-- Under the Choice antecedent, every source coefficient is covered by the
+first-member pieces of its displayed child. -/
+theorem choiceAntecedent_inf_weight_le_iSup_choicePiece
+    (a : BVSet.{u, v} 𝔹) (i : a.Index) :
+    choiceAntecedentValue a ⊓ a.weight i ≤
+      ⨆ y : BVSet.{u, v} 𝔹, choicePiece (a.child i) y := by
+  have hnonempty :
+      choiceAntecedentValue a ⊓ a.weight i ≤
+        ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i) := by
+    unfold choiceAntecedentValue choiceFamilyNonemptyValue BVSet.boundedForall
+    calc
+      (choiceFamilyNonemptyValue a ⊓ choiceFamilyDisjointValue a) ⊓ a.weight i ≤
+          (a.weight i ⇨ ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i)) ⊓
+            a.weight i := by
+        apply le_inf
+        · exact (inf_le_left.trans (iInf_le _ i))
+        · exact inf_le_right
+      _ ≤ ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i) := himp_inf_le
+  rw [iSup_choicePiece_eq_iSup_mem]
+  exact hnonempty
+
 #check equivShrink
 #check IsWellFounded.induction
 #check trichotomous_of
