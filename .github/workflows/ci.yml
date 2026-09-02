@@ -62,8 +62,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          while IFS= read -r probe; do
-            echo "::group::$probe"
-            lake env lean "$probe"
-            echo "::endgroup::"
-          done < <(find docs -type f -name '*.lean' | sort)
+          {
+            while IFS= read -r probe; do
+              echo "::group::$probe"
+              lake env lean "$probe"
+              echo "::endgroup::"
+            done < <(find docs -type f -name '*.lean' | sort)
+          } 2>&1 | tee /tmp/documentation-probes.log
+
+      - name: Upload documentation probe log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-probes-log
+          path: /tmp/documentation-probes.log
+          if-no-files-found: ignore
