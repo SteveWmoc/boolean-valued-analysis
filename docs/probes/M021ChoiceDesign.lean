@@ -127,8 +127,9 @@ theorem bvEq_inf_choiceEarlierValue_le
 theorem bvEq_inf_choicePiece_le
     (x x' y : BVSet.{u, v} 𝔹) :
     BVSet.bvEq x x' ⊓ choicePiece x y ≤ choicePiece x' y := by
-  change BVSet.bvEq x x' ⊓ choicePiece x y ≤
-    BVSet.mem y x' ⊓ (choiceEarlierValue x' y)ᶜ
+  rw [show choicePiece x' y =
+      BVSet.mem y x' ⊓ (choiceEarlierValue x' y)ᶜ from by
+    rw [choicePiece, sdiff_eq]]
   apply le_inf
   · calc
       BVSet.bvEq x x' ⊓ choicePiece x y ≤
