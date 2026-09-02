@@ -140,6 +140,7 @@ theorem bvEq_inf_choicePiece_le
     have hpdis : Disjoint (choicePiece x y) (choiceEarlierValue x y) :=
       le_compl_iff_disjoint_right.mp (choicePiece_le_compl_earlier x y)
     rw [disjoint_iff]
+    apply bot_unique
     calc
       (BVSet.bvEq x x' ⊓ choicePiece x y) ⊓ choiceEarlierValue x' y =
           choicePiece x y ⊓
