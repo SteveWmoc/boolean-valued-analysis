@@ -427,6 +427,65 @@ syntactic derivability from this exact sentence set implies Boolean truth value
 - completeness is independently required and its additional model-theoretic
   assumptions have been designed explicitly.
 
+## D014 — Extend ZF to ZFC without mutating the exact ZF theory
+
+**Status:** implemented by M021
+
+Keep the M019 `ZF.IsAxiom` and `ZF.theory` definitions unchanged. Define a
+separate `ZFC.IsAxiom` whose cases embed every ZF axiom and add the genuine
+object-language `ZF.choice` sentence, and define `ZFC.theory` from that new
+membership predicate.
+
+Use the standard disjoint-family/choice-set form of Choice. Prove it by a
+fixed metatheoretic well-order that decomposes each raw membership value into
+disjoint first-member Boolean pieces. The pieces must be local under Boolean
+equality of source sets; this is the coherence condition needed when two raw
+family members agree only on part of the Boolean algebra.
+
+### Rationale
+
+- M019's exact ZF package is already a public, reviewable theory boundary;
+  changing it in place would silently alter the assumptions of existing
+  Transfer theorems.
+- A separate ZFC namespace makes the additional axiom visible in theorem
+  statements and preserves literal inclusion `ZF.theory ⊆ ZFC.theory`.
+- The choice-set formulation is first-order ZF and avoids introducing typed
+  function-graph infrastructure before M025.
+- A naive metatheoretic selection of one raw witness per family member is not
+  Boolean-coherent under partial equality of raw names. The global first-member
+  decomposition repairs exactly this defect.
+- The nonzero first-piece support injects into `𝔹`, so the established local
+  `[Small.{u} 𝔹]` boundary is sufficient to collect the support into one raw
+  `BVSet`; no global smallness policy is required.
+
+### Consequences
+
+- `ZF.choice` is a genuine closed sentence with raw and separated value `⊤`
+  under `[Small.{u} 𝔹]`.
+- `ZFC.IsAxiom`, `ZFC.theory`, memberwise validity, `ZFC.transfer`, and
+  `ZFC.separatedTransfer` form a separate public package; M019's definitions
+  and theorem statements remain unchanged.
+- The core cross-family overlap theorem is size-free. `Small` enters only at
+  the support-collection boundary used to build the raw choice set.
+- The proof uses classical choice in Lean's metatheory through the fixed
+  well-order and small-support coding. This metalinguistic choice is distinct
+  from, and does not assume, the object-language Choice sentence proved valid.
+- ZFC Transfer has the same meaning as ZF Transfer: explicit syntactic
+  derivability in the project-owned Hilbert calculus implies Boolean value
+  `⊤`; no completeness or semantic-consequence claim is added.
+- Typed ascent remains deferred to M025.
+
+### Reconsider when
+
+- a later project-wide theory hierarchy would make ZF/ZFC extension reusable
+  without obscuring the exact axiom sets;
+- the raw-name representation changes enough to remove the local `Small`
+  support-collection boundary;
+- a different first-order Choice formulation materially simplifies later
+  internal-function work while retaining an explicit equivalence theorem;
+- the project replaces its derivation kernel under the conditions already
+  listed in D012/D013.
+
 ## Resolved design questions
 
 ### O001 — Formula substitution interface — resolved by M001

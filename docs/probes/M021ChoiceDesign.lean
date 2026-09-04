@@ -1,16 +1,20 @@
-import BooleanValuedAnalysis
-import Mathlib.SetTheory.Cardinal.Order
+import BooleanValuedAnalysis.SetTheory.ZF.Choice
 
 /-!
 # M021 Choice design probe
 
-This documentation-only probe checks the Boolean decomposition intended for the
-M021 proof of object-language Choice. A fixed metatheoretic well-order is used
-to cut membership in a raw name into disjoint "first-member" Boolean pieces.
-Only the nonzero local support will later be reindexed into the immediate-child
-universe of a `BVSet`.
+The exploratory proof developed here during PR #56 has now been promoted to
+`BooleanValuedAnalysis.SetTheory.ZF.Choice`.  This probe intentionally no longer
+maintains a second copy of that proof.  Instead it keeps the original design
+claims executable against the public API:
 
-No declaration in this file is public API.
+* membership is decomposed into well-ordered first-member Boolean pieces;
+* distinct first-member pieces are disjoint;
+* the pieces recover the full nonemptiness value;
+* first-member pieces are local under Boolean equality;
+* nonzero local support is small under the established coefficient-smallness
+  boundary;
+* the resulting semantic Choice value is top.
 -/
 
 noncomputable section
@@ -20,234 +24,32 @@ universe u v
 namespace BooleanValuedAnalysis.M021Probe
 
 open BooleanValued
-open BooleanValued.BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-/-- Boolean value that `x` has a member strictly earlier than `y` in the fixed
-metatheoretic well-order. -/
-def choiceEarlierValue (x y : BVSet.{u, v} 𝔹) : 𝔹 :=
-  ⨆ z : {z : BVSet.{u, v} 𝔹 // WellOrderingRel z y}, BVSet.mem z.1 x
+example (x y : BVSet.{u, v} 𝔹) :
+    BVSet.choicePiece x y ≤ BVSet.mem y x :=
+  BVSet.choicePiece_le_mem x y
 
-/-- Boolean region on which `y` belongs to `x` and no earlier element does. -/
-def choicePiece (x y : BVSet.{u, v} 𝔹) : 𝔹 :=
-  BVSet.mem y x \ choiceEarlierValue x y
+example (x y z : BVSet.{u, v} 𝔹) (hyz : y ≠ z) :
+    BVSet.choicePiece x y ⊓ BVSet.choicePiece x z = ⊥ :=
+  BVSet.choicePiece_disjoint x y z hyz
 
-/-- A first-member piece lies below ordinary membership. -/
-theorem choicePiece_le_mem (x y : BVSet.{u, v} 𝔹) :
-    choicePiece x y ≤ BVSet.mem y x := by
-  unfold choicePiece
-  exact sdiff_le
+example (x : BVSet.{u, v} 𝔹) :
+    (⨆ y : BVSet.{u, v} 𝔹, BVSet.choicePiece x y) =
+      ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y x :=
+  BVSet.iSup_choicePiece_eq_iSup_mem x
 
-/-- A first-member piece is disjoint from the entire earlier-membership value. -/
-theorem choicePiece_le_compl_earlier (x y : BVSet.{u, v} 𝔹) :
-    choicePiece x y ≤ (choiceEarlierValue x y)ᶜ := by
-  rw [choicePiece, sdiff_eq]
-  exact inf_le_right
+example (x x' y : BVSet.{u, v} 𝔹) :
+    BVSet.bvEq x x' ⊓ BVSet.choicePiece x y ≤ BVSet.choicePiece x' y :=
+  BVSet.bvEq_inf_choicePiece_le x x' y
 
-/-- First-member pieces for distinct proposed members are disjoint. -/
-theorem choicePiece_disjoint (x y z : BVSet.{u, v} 𝔹) (hyz : y ≠ z) :
-    choicePiece x y ⊓ choicePiece x z = ⊥ := by
-  rcases trichotomous_of WellOrderingRel y z with hlt | heq | hgt
-  · have hmem_le : BVSet.mem y x ≤ choiceEarlierValue x z := by
-      unfold choiceEarlierValue
-      exact le_iSup_of_le ⟨y, hlt⟩ le_rfl
-    have hz_le : choicePiece x z ≤ (BVSet.mem y x)ᶜ := by
-      exact (choicePiece_le_compl_earlier x z).trans (compl_le_compl hmem_le)
-    apply bot_unique
-    calc
-      choicePiece x y ⊓ choicePiece x z ≤
-          BVSet.mem y x ⊓ (BVSet.mem y x)ᶜ :=
-        inf_le_inf (choicePiece_le_mem x y) hz_le
-      _ = ⊥ := inf_compl_eq_bot
-  · exact (hyz heq).elim
-  · have hmem_le : BVSet.mem z x ≤ choiceEarlierValue x y := by
-      unfold choiceEarlierValue
-      exact le_iSup_of_le ⟨z, hgt⟩ le_rfl
-    have hy_le : choicePiece x y ≤ (BVSet.mem z x)ᶜ := by
-      exact (choicePiece_le_compl_earlier x y).trans (compl_le_compl hmem_le)
-    apply bot_unique
-    calc
-      choicePiece x y ⊓ choicePiece x z ≤
-          (BVSet.mem z x)ᶜ ⊓ BVSet.mem z x :=
-        inf_le_inf hy_le (choicePiece_le_mem x z)
-      _ = ⊥ := compl_inf_eq_bot
+example [Small.{u} 𝔹] (x : BVSet.{u, v} 𝔹) :
+    Small.{u} (BVSet.choicePieceSupport x) := by
+  infer_instance
 
-/-- Every ordinary membership value is covered by the first-member pieces. -/
-theorem mem_le_iSup_choicePiece (x y : BVSet.{u, v} 𝔹) :
-    BVSet.mem y x ≤ ⨆ z : BVSet.{u, v} 𝔹, choicePiece x z := by
-  apply IsWellFounded.induction WellOrderingRel y
-  intro y ih
-  let e := choiceEarlierValue x y
-  have he_le :
-      BVSet.mem y x ⊓ e ≤ ⨆ z : BVSet.{u, v} 𝔹, choicePiece x z := by
-    dsimp [e, choiceEarlierValue]
-    rw [inf_iSup_eq]
-    apply iSup_le
-    intro z
-    exact inf_le_right.trans (ih z.1 z.2)
-  have hpiece_le :
-      choicePiece x y ≤ ⨆ z : BVSet.{u, v} 𝔹, choicePiece x z :=
-    le_iSup (fun z : BVSet.{u, v} 𝔹 => choicePiece x z) y
-  calc
-    BVSet.mem y x = BVSet.mem y x ⊓ (e ⊔ eᶜ) := by
-      rw [sup_compl_eq_top, inf_top_eq]
-    _ = (BVSet.mem y x ⊓ e) ⊔ (BVSet.mem y x ⊓ eᶜ) := by
-      rw [inf_sup_left]
-    _ = (BVSet.mem y x ⊓ e) ⊔ choicePiece x y := by
-      rw [choicePiece, sdiff_eq]
-    _ ≤ ⨆ z : BVSet.{u, v} 𝔹, choicePiece x z := sup_le he_le hpiece_le
-
-/-- The first-member decomposition recovers exactly the ordinary nonemptiness
-truth value of a raw name. -/
-theorem iSup_choicePiece_eq_iSup_mem (x : BVSet.{u, v} 𝔹) :
-    (⨆ y : BVSet.{u, v} 𝔹, choicePiece x y) =
-      ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y x := by
-  apply le_antisymm
-  · apply iSup_le
-    intro y
-    exact (choicePiece_le_mem x y).trans
-      (le_iSup (fun z : BVSet.{u, v} 𝔹 => BVSet.mem z x) y)
-  · apply iSup_le
-    intro y
-    exact mem_le_iSup_choicePiece x y
-
-/-- Earlier-membership truth transports along Boolean equality of the set. -/
-theorem bvEq_inf_choiceEarlierValue_le
-    (x x' y : BVSet.{u, v} 𝔹) :
-    BVSet.bvEq x x' ⊓ choiceEarlierValue x y ≤ choiceEarlierValue x' y := by
-  unfold choiceEarlierValue
-  rw [inf_iSup_eq]
-  apply iSup_le
-  intro z
-  apply le_iSup_of_le z
-  exact BVSet.mem_congr_right x x' z.1
-
-/-- The first-member decomposition is local under Boolean equality. -/
-theorem bvEq_inf_choicePiece_le
-    (x x' y : BVSet.{u, v} 𝔹) :
-    BVSet.bvEq x x' ⊓ choicePiece x y ≤ choicePiece x' y := by
-  rw [show choicePiece x' y =
-      BVSet.mem y x' ⊓ (choiceEarlierValue x' y)ᶜ from by
-    rw [choicePiece, sdiff_eq]]
-  apply le_inf
-  · calc
-      BVSet.bvEq x x' ⊓ choicePiece x y ≤
-          BVSet.bvEq x x' ⊓ BVSet.mem y x :=
-        inf_le_inf_left _ (choicePiece_le_mem x y)
-      _ ≤ BVSet.mem y x' := BVSet.mem_congr_right x x' y
-  · apply le_compl_iff_disjoint_right.mpr
-    have hpdis : Disjoint (choicePiece x y) (choiceEarlierValue x y) :=
-      le_compl_iff_disjoint_right.mp (choicePiece_le_compl_earlier x y)
-    rw [disjoint_iff]
-    apply bot_unique
-    calc
-      (BVSet.bvEq x x' ⊓ choicePiece x y) ⊓ choiceEarlierValue x' y =
-          choicePiece x y ⊓
-            (BVSet.bvEq x' x ⊓ choiceEarlierValue x' y) := by
-        rw [BVSet.bvEq_symm x' x]
-        ac_rfl
-      _ ≤ choicePiece x y ⊓ choiceEarlierValue x y :=
-        inf_le_inf_left _ (bvEq_inf_choiceEarlierValue_le x' x y)
-      _ ≤ ⊥ := hpdis.le_bot
-
-/-- The nonzero first-member pieces of one raw name. -/
-def choicePieceSupport (x : BVSet.{u, v} 𝔹) :=
-  {y : BVSet.{u, v} 𝔹 // choicePiece x y ≠ ⊥}
-
-/-- Nonzero first-member pieces have distinct Boolean coefficients. -/
-theorem choicePiece_support_injective (x : BVSet.{u, v} 𝔹) :
-    Function.Injective
-      (fun y : choicePieceSupport x => choicePiece x y.1) := by
-  intro y z hcoeff
-  change choicePiece x y.1 = choicePiece x z.1 at hcoeff
-  apply Subtype.ext
-  by_contra hyz
-  have hdis := choicePiece_disjoint x y.1 z.1 hyz
-  apply y.2
-  calc
-    choicePiece x y.1 = choicePiece x y.1 ⊓ choicePiece x y.1 :=
-      (inf_idem _).symm
-    _ = choicePiece x y.1 ⊓ choicePiece x z.1 := by rw [hcoeff]
-    _ = ⊥ := hdis
-
-/-- Under the existing coefficient-smallness boundary, the local nonzero
-first-piece support can be reindexed in `Type u`. -/
-noncomputable instance choicePieceSupportSmall [Small.{u} 𝔹]
-    (x : BVSet.{u, v} 𝔹) : Small.{u} (choicePieceSupport x) :=
-  small_of_injective (choicePiece_support_injective x)
-
-/-- Decode the small local support back to its actual first-member witness. -/
-noncomputable def choiceSupportOut [Small.{u} 𝔹]
-    (x : BVSet.{u, v} 𝔹)
-    (i : Shrink.{u} (choicePieceSupport x)) : choicePieceSupport x :=
-  (equivShrink (choicePieceSupport x)).symm i
-
-/-- Candidate raw choice set. For each displayed family member, include every
-nonzero first-member piece, cut down by its family coefficient. -/
-noncomputable def choiceSet [Small.{u} 𝔹]
-    (a : BVSet.{u, v} 𝔹) : BVSet.{u, v} 𝔹 :=
-  BVSet.mk
-    (Σ i : a.Index, Shrink.{u} (choicePieceSupport (a.child i)))
-    (fun p => (choiceSupportOut (a.child p.1) p.2).1)
-    (fun p => a.weight p.1 ⊓
-      choicePiece (a.child p.1) (choiceSupportOut (a.child p.1) p.2).1)
-
-/-- Every nonzero local first-member coefficient contributes the corresponding
-member to the candidate choice set. -/
-theorem choiceSet_coefficient_le_mem [Small.{u} 𝔹]
-    (a : BVSet.{u, v} 𝔹) (i : a.Index)
-    (y : choicePieceSupport (a.child i)) :
-    a.weight i ⊓ choicePiece (a.child i) y.1 ≤
-      BVSet.mem y.1 (choiceSet a) := by
-  let e : choicePieceSupport (a.child i) ≃
-      Shrink.{u} (choicePieceSupport (a.child i)) :=
-    equivShrink (choicePieceSupport (a.child i))
-  have h := BVSet.weight_le_mem_child (choiceSet a) ⟨i, e y⟩
-  simpa [choiceSet, choiceSupportOut, e] using h
-
-/-- Boolean value that every displayed member of `a` is nonempty. -/
-def choiceFamilyNonemptyValue (a : BVSet.{u, v} 𝔹) : 𝔹 :=
-  BVSet.boundedForall a (fun x => ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y x)
-
-/-- Boolean value that displayed members of `a` are equal or membership-disjoint. -/
-def choiceFamilyDisjointValue (a : BVSet.{u, v} 𝔹) : 𝔹 :=
-  BVSet.boundedForall a (fun x =>
-    BVSet.boundedForall a (fun y =>
-      BVSet.bvEq x y ⊔ BVSet.foundationDisjointValue x y))
-
-/-- Antecedent of the choice-set form of AC. -/
-def choiceAntecedentValue (a : BVSet.{u, v} 𝔹) : 𝔹 :=
-  choiceFamilyNonemptyValue a ⊓ choiceFamilyDisjointValue a
-
-/-- Under the Choice antecedent, every source coefficient is covered by the
-first-member pieces of its displayed child. -/
-theorem choiceAntecedent_inf_weight_le_iSup_choicePiece
-    (a : BVSet.{u, v} 𝔹) (i : a.Index) :
-    choiceAntecedentValue a ⊓ a.weight i ≤
-      ⨆ y : BVSet.{u, v} 𝔹, choicePiece (a.child i) y := by
-  have hante_nonempty : choiceAntecedentValue a ≤ choiceFamilyNonemptyValue a := by
-    unfold choiceAntecedentValue
-    exact inf_le_left
-  have hbound :
-      choiceFamilyNonemptyValue a ≤
-        a.weight i ⇨ ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i) := by
-    unfold choiceFamilyNonemptyValue BVSet.boundedForall
-    exact iInf_le _ i
-  have hnonempty :
-      choiceAntecedentValue a ⊓ a.weight i ≤
-        ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i) := by
-    calc
-      choiceAntecedentValue a ⊓ a.weight i ≤
-          (a.weight i ⇨ ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i)) ⊓
-            a.weight i :=
-        inf_le_inf (hante_nonempty.trans hbound) le_rfl
-      _ ≤ ⨆ y : BVSet.{u, v} 𝔹, BVSet.mem y (a.child i) := himp_inf_le
-  rw [iSup_choicePiece_eq_iSup_mem]
-  exact hnonempty
-
-#check equivShrink
-#check IsWellFounded.induction
-#check trichotomous_of
+example [Small.{u} 𝔹] (a : BVSet.{u, v} 𝔹) :
+    BVSet.choiceValue a = ⊤ :=
+  BVSet.choiceValue_top a
 
 end BooleanValuedAnalysis.M021Probe

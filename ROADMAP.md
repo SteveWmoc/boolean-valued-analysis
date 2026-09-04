@@ -41,7 +41,11 @@ The repository currently provides:
 - an explicit sentence theory containing exactly the currently validated fixed
   ZF axioms and universally closed Separation, Collection, and Replacement
   instances, together with raw and separated theorem-consequence Transfer
-  Principles under local `[Small.{u} 𝔹]`.
+  Principles under local `[Small.{u} 𝔹]`;
+- a genuine object-language Choice sentence proved raw/separated top-valued by
+  a coherent first-member Boolean decomposition, and a separately named ZFC
+  sentence theory extending the exact ZF package with corresponding raw and
+  separated theorem-consequence Transfer Principles.
 
 These components form the foundation for the milestones below.
 
@@ -419,7 +423,7 @@ Design record: [`docs/milestones/017-logical-soundness-design.md`](docs/mileston
 
 Completed 2026-08-29.
 
-The public `FirstOrder.Soundness` module implements the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled exactly by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas. The derivation invariant is uniform value `⊤` over every free- and bound-variable assignment.
+The public `FirstOrder.Soundness` module implements the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled exactly by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas. The derivation invariant is uniform value `⊤` for every free- and bound-variable assignment.
 
 `SetTheory.LogicalSoundness` specializes the result to raw Boolean-valued names and transports provable consequences to the separated universe through the exact M006 sentence bridge. The logic layer contains no `Small`; any later size assumption enters only through whichever Boolean-valid set-theory axioms are selected. M018 adds no completeness theorem, object-language Choice, general ascent, or typed ascent, and continues to reserve the Transfer name for precise theory packaging.
 
@@ -481,9 +485,41 @@ requires it.
 
 Specification and design record: [`docs/milestones/020-takeuti-part-i-design.md`](docs/milestones/020-takeuti-part-i-design.md)
 
-### M021–M035 — Takeuti Part I implementation sequence
+### M021 — Boolean-valued Choice and ZFC Transfer — complete
 
-M021 adds Boolean-valued Choice and a separately named ZFC theory/Transfer.
+Completed 2026-09-03.
+
+M021 proves a genuine object-language Axiom of Choice in the standard
+disjoint-family/choice-set form. A fixed metatheoretic well-order cuts each raw
+membership value into disjoint first-member Boolean pieces. These pieces cover
+the full nonemptiness value and are local under Boolean equality of source
+sets, which supplies the coherence missing from naive independent raw-witness
+selection.
+
+Only nonzero first-member pieces are collected into the canonical raw choice
+set. Their coefficients inject into `𝔹`, so the existing local
+`[Small.{u} 𝔹]` boundary permits reindexing through `Shrink.{u}`. The core
+cross-family overlap estimate is size-free; `Small` enters only when the support
+is collected into one `BVSet` node.
+
+`ZF.choice` is a closed first-order sentence in the existing pure set-theory
+syntax. Its exact semantic reduction and the canonical choice-set theorem give
+raw and separated truth value `⊤` under `[Small.{u} 𝔹]`.
+
+M021 leaves the exact M019 `ZF.theory` unchanged. `ZFC.IsAxiom` instead embeds
+every `ZF.IsAxiom` and adds one Choice case; `ZFC.theory` is the resulting
+sentence set. Memberwise raw/separated validity plus M018 soundness provide
+`ZFC.transfer` and `ZFC.separatedTransfer` with the same syntactic-derivability
+meaning as M019.
+
+The proof keeps the metatheoretic classical-choice boundary explicit: the fixed
+well-order and support coding construct a raw Boolean-valued witness, while the
+internal object-language Choice sentence is separately proved top-valued.
+
+Completion record: [`docs/milestones/021-choice-zfc-transfer.md`](docs/milestones/021-choice-zfc-transfer.md)
+
+### M022–M035 — Remaining Takeuti Part I implementation sequence
+
 M022–M024 develop internal arithmetic, Dedekind reals, Boolean spectral
 families, and their arithmetic/order/localization/mixing laws. M025 introduces
 definite sets and typed internal functions. M026–M029 develop the operator,
@@ -492,7 +528,7 @@ functional-calculus layers of Chapter 1. M030 isolates the orthomodular
 quantum-logic boundary. M031–M035 construct the measure algebra and carry out
 Chapter 2 through the projection/measure equivalence.
 
-**Next milestone:** M021 — Boolean-valued Choice and ZFC Transfer.
+**Next milestone:** M022 — Internal arithmetic and Dedekind reals.
 
 Potential additional application roadmaps should be maintained separately so that foundational dependencies remain visible.
 
