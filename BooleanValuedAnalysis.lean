@@ -46,6 +46,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Replacement
 import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
+import BooleanValuedAnalysis.SetTheory.ZF.Choice
 import BooleanValuedAnalysis.SetTheory.ZF.Transfer
 
 /-!
@@ -75,9 +76,10 @@ direct Boolean-valued von Neumann successor and omega constructions proving raw
 and separated validity of ZF Infinity, the structural raw-name proof of ZF
 Foundation with raw and separated validity and no additional smallness
 hypothesis, Boolean-valued Collection built from per-source-child
-maximum-principle witnesses, and exact functional Replacement derived by
-Separation, both with genuine raw and separated schema validity, together with
-a bounded Hilbert calculus, generic Boolean-valued logical soundness, and raw
-and separated set-theory consequence theorems, culminating in a concrete
-Boolean-valid ZF sentence theory and its raw/separated Transfer Principles.
+maximum-principle witnesses, exact functional Replacement derived by Separation,
+and the semantic first-member construction underlying Boolean-valued Choice,
+together with a bounded Hilbert calculus, generic Boolean-valued logical
+soundness, and raw and separated set-theory consequence theorems, culminating in
+a concrete Boolean-valid ZF sentence theory and its raw/separated Transfer
+Principles.
 -/
