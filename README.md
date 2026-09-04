@@ -6,7 +6,7 @@ AI tools are used extensively in the development of this project, including in c
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, the Boolean-valid ZF axiom and schema constructions, generic Boolean-valued logical soundness, and a concrete ZF sentence theory with raw/separated theorem-consequence Transfer Principles are usable. The APIs may change as applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, the Boolean-valid ZF/ZFC axiom and schema constructions, generic Boolean-valued logical soundness, and concrete ZF and ZFC sentence theories with raw/separated theorem-consequence Transfer Principles are usable. The APIs may change as applications are developed.
 
 ## Mathematical overview
 
@@ -47,9 +47,11 @@ The current development establishes that:
 - structural induction on raw names proves `BVSet.mem y x ≤ BVSet.foundationMinimalSup x`; consequently the genuine minimal-member ZF Foundation sentence has Boolean truth value `⊤` on raw and separated names without `Small`, `Shrink`, rank minimization, mixing, maximum-principle, Zorn, `Nontrivial`, or representative-selection machinery;
 - per-source-child maximizers give genuine first-order Collection instances, while functionality and Separation give exact total-functional Replacement instances; both schema families are raw/separated top-valued under the existing local `[Small.{u} 𝔹]` boundary;
 - `ZF.IsAxiom` packages extensionality, empty set, pairing, union, powerset, Infinity, Foundation, and every deterministically closed finite-parameter Separation, Collection, and Replacement instance as the explicit assumption-free sentence set `ZF.theory`;
-- every member of `ZF.theory` is raw and separated top-valued under `[Small.{u} 𝔹]`, and M018 syntactic soundness yields `ZF.transfer` and `ZF.separatedTransfer`: any sentence with an explicit project-calculus derivation from that exact theory has Boolean value `⊤` on the corresponding carrier.
+- every member of `ZF.theory` is raw and separated top-valued under `[Small.{u} 𝔹]`, and M018 syntactic soundness yields `ZF.transfer` and `ZF.separatedTransfer`: any sentence with an explicit project-calculus derivation from that exact theory has Boolean value `⊤` on the corresponding carrier;
+- `ZF.choice` is a genuine closed first-order Choice sentence in the disjoint-family/choice-set form, and a direct first-member Boolean decomposition proves raw and separated truth value `⊤` under the same local `[Small.{u} 𝔹]` boundary;
+- `ZFC.IsAxiom` extends the exact M019 ZF package by one additional Choice case, so `ZFC.theory`, `ZFC.transfer`, and `ZFC.separatedTransfer` provide the corresponding raw/separated theorem-consequence package without mutating `ZF.theory`.
 
-This does not yet establish a Boolean-valued model of ZFC: no object-language Choice axiom is included.  The implemented Transfer Principles are explicit syntactic theorem-consequence results; they do not assert logical completeness or semantic consequence.
+Thus the project now proves Boolean validity of its explicit ZFC sentence theory under `[Small.{u} 𝔹]`. The Transfer Principles remain explicit syntactic theorem-consequence results; they do not assert logical completeness or semantic consequence.
 
 ## Repository layout
 
@@ -82,6 +84,9 @@ This does not yet establish a Boolean-valued model of ZFC: no object-language Ch
 | `BooleanValuedAnalysis.SetTheory.ZF.Collection` / `.CollectionSchema` | Per-source-child collecting names plus genuine raw/separated Collection-schema validity under local `Small` |
 | `BooleanValuedAnalysis.SetTheory.ZF.Replacement` / `.ReplacementSchema` | Exact functional ranges derived by Separation plus genuine raw/separated Replacement-schema validity under local `Small` |
 | `BooleanValuedAnalysis.SetTheory.ZF.Transfer` | Exact selected ZF sentence theory, deterministic schema closure, memberwise raw/separated validity, and both Transfer Principles |
+| `BooleanValuedAnalysis.SetTheory.ZF.Choice` | First-member Boolean decomposition, small support coding, choice-set construction, and the semantic Choice theorem |
+| `BooleanValuedAnalysis.SetTheory.ZF.ChoiceAxiom` | Genuine closed Choice sentence with exact semantics and raw/separated Boolean validity |
+| `BooleanValuedAnalysis.SetTheory.ZFC.Transfer` | Separate ZFC sentence theory extending exact `ZF.theory` by Choice, with raw/separated memberwise validity and Transfer |
 | `BooleanValuedAnalysis.Equality` | Equivalence laws and atomic substitution |
 | `BooleanValuedAnalysis.Extensional` | Extensional unary Boolean-valued predicates |
 | `BooleanValuedAnalysis.Bounded` | Weighted-child bounded existential and universal quantification |
@@ -142,8 +147,9 @@ Both expressions denote elements of the coefficient Boolean algebra, not Lean pr
 18. **Boolean-valued logical soundness (M018): complete.** The public bounded Hilbert calculus supplies conventional classical logical and equality axioms, exact newest-variable instantiation, uniform derivation soundness, deterministic parameter closure, and raw/separated set-theory consequences without a logic-level `Small` assumption.
 19. **Boolean-valid ZF theory packaging and Transfer (M019): complete.** The exact validated fixed axioms and deterministically closed Separation, Collection, and Replacement instances form `ZF.theory`; memberwise raw/separated validity and M018 soundness give the explicit `ZF.transfer` and `ZF.separatedTransfer` theorem-consequence results under the established local `Small` boundary.
 20. **Takeuti Part I formalization design (M020): complete.** Takeuti's *Two Applications of Logic to Mathematics*, Part I, is the selected R7 application. The design fixes the M021–M035 dependency order, keeps internal reals ↔ Boolean spectral families independent of Hilbert-space realization, and identifies §1.4 definite functions as the first concrete typed-ascent consumer.
+21. **Boolean-valued Choice and ZFC Transfer (M021): complete.** A first-member Boolean decomposition yields a genuine object-language Choice sentence with raw/separated value `⊤` under local `[Small.{u} 𝔹]`; a separate `ZFC.theory` extends the exact M019 `ZF.theory` and supports raw/separated theorem-consequence Transfer.
 
-The foundational Transfer spine through M019 is complete, and M020 selects Takeuti Part I as the first concrete R7 application. **M021 — Boolean-valued Choice and ZFC Transfer** is the next implementation milestone; M022–M035 then develop internal arithmetic and reals, spectral families and operator realization, typed functions and Chapter 1 applications, the quantum-logic boundary, and the measure-algebra realization of Chapter 2.
+The foundational ZFC Transfer spine through M021 is complete, and M020's Takeuti roadmap now proceeds to **M022 — Internal arithmetic and Dedekind reals**. M022–M035 develop internal arithmetic and reals, spectral families and operator realization, typed functions and Chapter 1 applications, the quantum-logic boundary, and the measure-algebra realization of Chapter 2.
 
 The detailed dependency-ordered plan is maintained in [ROADMAP.md](ROADMAP.md). Architectural choices and resolved/open design questions are recorded in [DESIGN.md](DESIGN.md), and substantial work items receive focused specifications under [`docs/milestones/`](docs/milestones/).
 
