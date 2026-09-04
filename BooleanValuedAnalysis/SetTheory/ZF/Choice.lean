@@ -322,7 +322,7 @@ theorem choiceAntecedent_inf_weights_le
 one displayed family child can overlap a selected piece from another child only
 on the region where the family members are equal; locality then transports both
 pieces to the same set, where first-member disjointness gives uniqueness. -/
-theorem choiceSet_child_overlap_le_bvEq [Small.{u} 𝔹]
+theorem choiceSet_child_overlap_le_bvEq
     (a : BVSet.{u, v} 𝔹) (i j : a.Index)
     (y z : BVSet.{u, v} 𝔹)
     (s : choicePieceSupport (a.child j)) :
