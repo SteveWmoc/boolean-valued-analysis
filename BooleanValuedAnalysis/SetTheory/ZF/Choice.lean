@@ -334,27 +334,42 @@ theorem choiceSet_child_overlap_le_bvEq [Small.{u} 𝔹]
     ((((((choiceAntecedentValue a ⊓ a.weight i) ⊓
           choicePiece (a.child i) y) ⊓ mem z (a.child i)) ⊓
         a.weight j) ⊓ choicePiece (a.child j) s.1) ⊓ bvEq z s.1)
-  have hr_ant : r ≤ choiceAntecedentValue a := by
+  have hr_before_eq :
+      r ≤ (((((choiceAntecedentValue a ⊓ a.weight i) ⊓
+          choicePiece (a.child i) y) ⊓ mem z (a.child i)) ⊓
+        a.weight j) ⊓ choicePiece (a.child j) s.1) := by
     dsimp [r]
-    simp
-  have hr_wi : r ≤ a.weight i := by
-    dsimp [r]
-    simp
-  have hr_wj : r ≤ a.weight j := by
-    dsimp [r]
-    simp
-  have hr_piece_i : r ≤ choicePiece (a.child i) y := by
-    dsimp [r]
-    simp
-  have hr_mem_i : r ≤ mem z (a.child i) := by
-    dsimp [r]
-    simp
-  have hr_piece_j : r ≤ choicePiece (a.child j) s.1 := by
-    dsimp [r]
-    simp
+    exact inf_le_left
+  have hr_before_piece_j :
+      r ≤ ((((choiceAntecedentValue a ⊓ a.weight i) ⊓
+          choicePiece (a.child i) y) ⊓ mem z (a.child i)) ⊓
+        a.weight j) :=
+    hr_before_eq.trans inf_le_left
+  have hr_before_weight_j :
+      r ≤ (((choiceAntecedentValue a ⊓ a.weight i) ⊓
+          choicePiece (a.child i) y) ⊓ mem z (a.child i)) :=
+    hr_before_piece_j.trans inf_le_left
+  have hr_before_mem_i :
+      r ≤ ((choiceAntecedentValue a ⊓ a.weight i) ⊓
+          choicePiece (a.child i) y) :=
+    hr_before_weight_j.trans inf_le_left
+  have hr_base : r ≤ choiceAntecedentValue a ⊓ a.weight i :=
+    hr_before_mem_i.trans inf_le_left
+  have hr_ant : r ≤ choiceAntecedentValue a :=
+    hr_base.trans inf_le_left
+  have hr_wi : r ≤ a.weight i :=
+    hr_base.trans inf_le_right
+  have hr_wj : r ≤ a.weight j :=
+    hr_before_piece_j.trans inf_le_right
+  have hr_piece_i : r ≤ choicePiece (a.child i) y :=
+    hr_before_mem_i.trans inf_le_right
+  have hr_mem_i : r ≤ mem z (a.child i) :=
+    hr_before_weight_j.trans inf_le_right
+  have hr_piece_j : r ≤ choicePiece (a.child j) s.1 :=
+    hr_before_eq.trans inf_le_right
   have hr_eqzs : r ≤ bvEq z s.1 := by
     dsimp [r]
-    simp
+    exact inf_le_right
   have hr_family :
       r ≤ bvEq (a.child i) (a.child j) ⊔
         foundationDisjointValue (a.child i) (a.child j) := by
@@ -479,23 +494,23 @@ theorem choiceAntecedent_inf_weight_inf_piece_le_unique [Small.{u} 𝔹]
           choiceSet_coefficient_le_mem a i s
         _ = mem y (choiceSet a) := rfl
   unfold choiceUniqueValue
-  change r ≤ mem y (a.child i) ⊓ mem y (choiceSet a) ⊓
+  change r ≤ (mem y (a.child i) ⊓ mem y (choiceSet a)) ⊓
     (⨅ z : BVSet.{u, v} 𝔹,
       (mem z (a.child i) ⊓ mem z (choiceSet a)) ⇨ bvEq z y)
-  apply le_inf hr_mem
-  apply le_inf hr_choice
-  apply le_iInf
-  intro z
-  rw [le_himp_iff]
-  have h := choicePiece_inf_mem_inf_mem_choiceSet_le_bvEq a i y z
-  calc
-    r ⊓ (mem z (a.child i) ⊓ mem z (choiceSet a)) =
-        ((((choiceAntecedentValue a ⊓ a.weight i) ⊓
-            choicePiece (a.child i) y) ⊓ mem z (a.child i)) ⊓
-          mem z (choiceSet a)) := by
-      dsimp [r]
-      ac_rfl
-    _ ≤ bvEq z y := h
+  apply le_inf
+  · exact le_inf hr_mem hr_choice
+  · apply le_iInf
+    intro z
+    rw [le_himp_iff]
+    have h := choicePiece_inf_mem_inf_mem_choiceSet_le_bvEq a i y z
+    calc
+      r ⊓ (mem z (a.child i) ⊓ mem z (choiceSet a)) =
+          ((((choiceAntecedentValue a ⊓ a.weight i) ⊓
+              choicePiece (a.child i) y) ⊓ mem z (a.child i)) ⊓
+            mem z (choiceSet a)) := by
+        dsimp [r]
+        ac_rfl
+      _ ≤ bvEq z y := h
 
 /-- Boolean value that `c` is a choice set for every displayed member of `a`. -/
 def choiceSetValue (a c : BVSet.{u, v} 𝔹) : 𝔹 :=
