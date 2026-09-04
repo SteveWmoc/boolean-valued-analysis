@@ -49,6 +49,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Choice
 import BooleanValuedAnalysis.SetTheory.ZF.ChoiceAxiom
 import BooleanValuedAnalysis.SetTheory.ZF.Transfer
+import BooleanValuedAnalysis.SetTheory.ZFC.Transfer
 
 /-!
 # Boolean-Valued Analysis
@@ -81,6 +82,6 @@ maximum-principle witnesses, exact functional Replacement derived by Separation,
 and the semantic first-member construction plus genuine first-order sentence for
 Boolean-valued Choice, together with a bounded Hilbert calculus, generic
 Boolean-valued logical soundness, and raw and separated set-theory consequence
-theorems, culminating in concrete Boolean-valid set-theory packages and their
+theorems, culminating in exact Boolean-valid ZF and ZFC sentence theories with
 raw/separated Transfer Principles.
 -/
