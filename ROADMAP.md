@@ -278,7 +278,7 @@ Completed 2026-08-22.
 M011 promotes the M010 feasibility proof into the public set-theory API. `BVSet.subsetValue` is definitionally the M002 weighted bounded universal and `BVSet.subsetValue_eq_iInf_mem` gives the exact unrestricted first-order inclusion semantics. The size-free normalization
 
 ```text
-BVSet.normalizeSubset x z := BVSet.separate x (fun y => mem y z)
+BVSet.normalizeSubset x z := BVSet.separate x (fun y => BVSet.mem y z)
 ```
 
 satisfies
@@ -423,7 +423,7 @@ Design record: [`docs/milestones/017-logical-soundness-design.md`](docs/mileston
 
 Completed 2026-08-29.
 
-The public `FirstOrder.Soundness` module implements the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled exactly by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas. The derivation invariant is uniform value `⊤` over every free- and bound-variable assignment.
+The public `FirstOrder.Soundness` module implements the bounded Hilbert derivation kernel, a conventional classical propositional and quantifier axiom basis, equality axioms controlled exactly by `LawfulStructure`, exact newest-variable instantiation, generic soundness by derivation induction, and deterministic universal closure for `Fin n`-parameter formulas. The derivation invariant is uniform value `⊤` for every free- and bound-variable assignment.
 
 `SetTheory.LogicalSoundness` specializes the result to raw Boolean-valued names and transports provable consequences to the separated universe through the exact M006 sentence bridge. The logic layer contains no `Small`; any later size assumption enters only through whichever Boolean-valid set-theory axioms are selected. M018 adds no completeness theorem, object-language Choice, general ascent, or typed ascent, and continues to reserve the Transfer name for precise theory packaging.
 
