@@ -47,6 +47,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Replacement
 import BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Choice
+import BooleanValuedAnalysis.SetTheory.ZF.ChoiceAxiom
 import BooleanValuedAnalysis.SetTheory.ZF.Transfer
 
 /-!
@@ -77,9 +78,9 @@ and separated validity of ZF Infinity, the structural raw-name proof of ZF
 Foundation with raw and separated validity and no additional smallness
 hypothesis, Boolean-valued Collection built from per-source-child
 maximum-principle witnesses, exact functional Replacement derived by Separation,
-and the semantic first-member construction underlying Boolean-valued Choice,
-together with a bounded Hilbert calculus, generic Boolean-valued logical
-soundness, and raw and separated set-theory consequence theorems, culminating in
-a concrete Boolean-valid ZF sentence theory and its raw/separated Transfer
-Principles.
+and the semantic first-member construction plus genuine first-order sentence for
+Boolean-valued Choice, together with a bounded Hilbert calculus, generic
+Boolean-valued logical soundness, and raw and separated set-theory consequence
+theorems, culminating in concrete Boolean-valid set-theory packages and their
+raw/separated Transfer Principles.
 -/
