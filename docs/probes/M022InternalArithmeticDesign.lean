@@ -119,11 +119,7 @@ theorem bvEq_ratName (q r : ℚ) :
     BVSet.bvEq (ratName (𝔹 := 𝔹) q) (ratName (𝔹 := 𝔹) r) =
       classicalValue (𝔹 := 𝔹) (q = r) := by
   classical
-  change
-    BVSet.bvEq
-        (BVSet.check (𝔹 := 𝔹) (ratCode.{u} q))
-        (BVSet.check (𝔹 := 𝔹) (ratCode.{u} r)) =
-      classicalValue (𝔹 := 𝔹) (q = r)
+  unfold ratName
   by_cases h : q = r
   · subst r
     rw [BVSet.bvEq_refl]
@@ -137,10 +133,7 @@ theorem bvEq_ratName (q r : ℚ) :
 Boolean value top. -/
 theorem mem_ratName_rationalsName (q : ℚ) :
     BVSet.mem (ratName (𝔹 := 𝔹) q) (rationalsName (𝔹 := 𝔹)) = ⊤ := by
-  change
-    BVSet.mem
-        (BVSet.check (𝔹 := 𝔹) (ratCode.{u} q))
-        (BVSet.check (𝔹 := 𝔹) rationalsGround.{u}) = ⊤
+  unfold ratName rationalsName
   exact BVSet.check_mem_top_of_mem (ratCode_mem_rationalsGround q)
 
 /-- The closed upper rational cut associated with a classical real `x`.
@@ -170,11 +163,7 @@ theorem mem_ratName_checkedUpperCut (x : ℝ) (q : ℚ) :
     BVSet.mem (ratName (𝔹 := 𝔹) q) (checkedUpperCut (𝔹 := 𝔹) x) =
       classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ)) := by
   classical
-  change
-    BVSet.mem
-        (BVSet.check (𝔹 := 𝔹) (ratCode.{u} q))
-        (BVSet.check (𝔹 := 𝔹) (upperCutGround.{u} x)) =
-      classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ))
+  unfold ratName checkedUpperCut
   by_cases h : x ≤ (q : ℝ)
   · rw [BVSet.check_mem_top_of_mem ((ratCode_mem_upperCutGround_iff x q).2 h)]
     simp [classicalValue, h]
