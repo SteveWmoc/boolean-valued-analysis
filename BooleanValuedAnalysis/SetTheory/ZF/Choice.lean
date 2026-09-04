@@ -158,8 +158,9 @@ theorem bvEq_inf_choicePiece_le
         inf_le_inf_left _ (bvEq_inf_choiceEarlierValue_le x' x y)
       _ ≤ ⊥ := hpdis.le_bot
 
-/-- The nonzero first-member pieces of one raw name. -/
-def choicePieceSupport (x : BVSet.{u, v} 𝔹) :=
+/-- The nonzero first-member pieces of one raw name. This is a transparent
+subtype alias because later local-support proofs frequently expose its carrier. -/
+abbrev choicePieceSupport (x : BVSet.{u, v} 𝔹) :=
   {y : BVSet.{u, v} 𝔹 // choicePiece x y ≠ ⊥}
 
 /-- Nonzero first-member pieces have distinct Boolean coefficients. -/
@@ -478,6 +479,9 @@ theorem choiceAntecedent_inf_weight_inf_piece_le_unique [Small.{u} 𝔹]
           choiceSet_coefficient_le_mem a i s
         _ = mem y (choiceSet a) := rfl
   unfold choiceUniqueValue
+  change r ≤ mem y (a.child i) ⊓ mem y (choiceSet a) ⊓
+    (⨅ z : BVSet.{u, v} 𝔹,
+      (mem z (a.child i) ⊓ mem z (choiceSet a)) ⇨ bvEq z y)
   apply le_inf hr_mem
   apply le_inf hr_choice
   apply le_iInf
@@ -514,7 +518,8 @@ theorem choiceAntecedent_le_choiceSetValue [Small.{u} 𝔹]
       dsimp [r]
       exact (inf_eq_left.mpr hcover).symm
     _ = ⨆ y : BVSet.{u, v} 𝔹,
-        r ⊓ choicePiece (a.child i) y := inf_iSup_eq
+        r ⊓ choicePiece (a.child i) y := by
+      rw [inf_iSup_eq]
     _ ≤ ⨆ y : BVSet.{u, v} 𝔹,
         choiceUniqueValue (a.child i) (choiceSet a) y := by
       apply iSup_le
