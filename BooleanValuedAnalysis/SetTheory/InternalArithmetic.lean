@@ -7,6 +7,7 @@ Authors: Steven Sabean
 import BooleanValuedAnalysis.Canonical
 import BooleanValuedAnalysis.SetTheory.Delta0
 import Mathlib.Data.Rat.Encodable
+import Mathlib.SetTheory.ZFC.Basic
 import Mathlib.Tactic
 
 /-!
@@ -15,12 +16,13 @@ import Mathlib.Tactic
 M022 begins the arithmetic layer needed for Takeuti's internal real numbers.
 The representation of ground rationals is deliberately hidden behind semantic
 theorems: users see canonical rational names, their checked carrier, and exact
-Boolean equality/membership facts.
+Boolean equality and strict-order facts.
 
-This file also exposes the checked classical upper Dedekind cut
-`{q : ℚ | x ≤ q}` and its Boolean membership profile.  The closed upper-cut
-orientation is Takeuti's Chapter 1 convention and is the one consumed by the
-spectral-family layer in M023.
+Strict order is represented by a genuine ground set-theoretic relation graph
+using Kuratowski ordered pairs; clients do not depend on the concrete rational
+coding. This file also exposes the checked classical upper Dedekind cut
+`{q : ℚ | x ≤ q}` and its Boolean membership profile. The closed upper-cut
+orientation is Takeuti's Chapter 1 convention and is consumed by M023.
 -/
 
 noncomputable section
@@ -99,6 +101,54 @@ private theorem ratCode_mem_rationalsGround (q : ℚ) :
     ratCode.{u} q ∈ rationalsGround.{u} := by
   exact ⟨ULift.up q, PSet.Equiv.refl _⟩
 
+/-- Ground Kuratowski ordered-pair code, obtained from Mathlib's definable
+set-theoretic pair constructor. -/
+private def orderedPairCode (x y : PSet.{u}) : PSet.{u} :=
+  ZFSet.Definable₂.out ZFSet.pair x y
+
+private theorem orderedPairCode_equiv_iff
+    (x y x' y' : PSet.{u}) :
+    PSet.Equiv (orderedPairCode x y) (orderedPairCode x' y') ↔
+      PSet.Equiv x x' ∧ PSet.Equiv y y' := by
+  constructor
+  · intro h
+    have hp :
+        ZFSet.pair (ZFSet.mk x) (ZFSet.mk y) =
+          ZFSet.pair (ZFSet.mk x') (ZFSet.mk y') := by
+      calc
+        ZFSet.pair (ZFSet.mk x) (ZFSet.mk y) =
+            ZFSet.mk (orderedPairCode x y) :=
+          ZFSet.Definable₂.mk_out.symm
+        _ = ZFSet.mk (orderedPairCode x' y') := ZFSet.sound h
+        _ = ZFSet.pair (ZFSet.mk x') (ZFSet.mk y') :=
+          ZFSet.Definable₂.mk_out
+    have hxy := ZFSet.pair_inj.mp hp
+    exact ⟨ZFSet.eq.mp hxy.1, ZFSet.eq.mp hxy.2⟩
+  · rintro ⟨hx, hy⟩
+    exact ZFSet.Definable₂.out_equiv ZFSet.pair hx hy
+
+private def ratLtGround : PSet.{u} :=
+  PSet.mk (ULift.{u} {p : ℚ × ℚ // p.1 < p.2})
+    (fun p =>
+      orderedPairCode
+        (ratCode p.down.1.1)
+        (ratCode p.down.1.2))
+
+private theorem orderedRatPair_mem_ratLtGround_iff (q r : ℚ) :
+    orderedPairCode (ratCode.{u} q) (ratCode.{u} r) ∈ ratLtGround.{u} ↔
+      q < r := by
+  constructor
+  · rintro ⟨p, hp⟩
+    have hcodes :=
+      (orderedPairCode_equiv_iff
+        (ratCode.{u} q) (ratCode.{u} r)
+        (ratCode.{u} p.down.1.1) (ratCode.{u} p.down.1.2)).1 hp
+    have hq : q = p.down.1.1 := (ratCode_equiv_iff q p.down.1.1).1 hcodes.1
+    have hr : r = p.down.1.2 := (ratCode_equiv_iff r p.down.1.2).1 hcodes.2
+    simpa [hq, hr] using p.down.2
+  · intro h
+    exact ⟨ULift.up ⟨(q, r), h⟩, PSet.Equiv.refl _⟩
+
 private def upperCutGround (x : ℝ) : PSet.{u} :=
   PSet.mk (ULift.{u} {q : ℚ // x ≤ (q : ℝ)})
     (fun q => ratCode q.down.1)
@@ -118,7 +168,7 @@ namespace BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-/-- Canonical Boolean-valued name of a ground rational.  The concrete ground
+/-- Canonical Boolean-valued name of a ground rational. The concrete ground
 coding is an implementation detail of M022. -/
 def ratName (q : ℚ) : BVSet.{u, v} 𝔹 :=
   BVSet.check (𝔹 := 𝔹) (InternalArithmetic.ratCode.{u} q)
@@ -152,8 +202,45 @@ theorem mem_ratName_rationals (q : ℚ) :
   unfold ratName rationals
   exact check_mem_top_of_mem (InternalArithmetic.ratCode_mem_rationalsGround q)
 
+/-- Canonical name of the Kuratowski pair of two rational codes. -/
+def ratPairName (q r : ℚ) : BVSet.{u, v} 𝔹 :=
+  BVSet.check (𝔹 := 𝔹)
+    (InternalArithmetic.orderedPairCode
+      (InternalArithmetic.ratCode.{u} q)
+      (InternalArithmetic.ratCode.{u} r))
+
+/-- Checked graph of the ordinary strict order on the ground rationals. -/
+def ratLtGraph : BVSet.{u, v} 𝔹 :=
+  BVSet.check (𝔹 := 𝔹) InternalArithmetic.ratLtGround.{u}
+
+/-- Membership of a canonical rational pair in the checked order graph is
+exactly the classical strict rational order truth value. -/
+@[simp]
+theorem mem_ratPairName_ratLtGraph (q r : ℚ) :
+    mem (ratPairName (𝔹 := 𝔹) q r) (ratLtGraph (𝔹 := 𝔹)) =
+      classicalValue (𝔹 := 𝔹) (q < r) := by
+  classical
+  unfold ratPairName ratLtGraph
+  by_cases h : q < r
+  · rw [check_mem_top_of_mem
+      ((InternalArithmetic.orderedRatPair_mem_ratLtGround_iff q r).2 h)]
+    simp [classicalValue, h]
+  · rw [check_mem_bot_of_not_mem]
+    · simp [classicalValue, h]
+    · intro hmem
+      exact h ((InternalArithmetic.orderedRatPair_mem_ratLtGround_iff q r).1 hmem)
+
+/-- Semantic strict-order value supplied by the genuine checked relation graph. -/
+def ratLtValue (q r : ℚ) : 𝔹 :=
+  mem (ratPairName.{u, v} (𝔹 := 𝔹) q r) (ratLtGraph.{u, v} (𝔹 := 𝔹))
+
+@[simp]
+theorem ratLtValue_eq (q r : ℚ) :
+    ratLtValue (𝔹 := 𝔹) q r = classicalValue (𝔹 := 𝔹) (q < r) :=
+  mem_ratPairName_ratLtGraph q r
+
 /-- Checked Boolean-valued name of the closed upper rational cut determined by
-a classical real `x`.  The rational boundary is included when `x` is rational,
+a classical real `x`. The rational boundary is included when `x` is rational,
 matching Takeuti Part I, Chapter 1. -/
 def checkedUpperCut (x : ℝ) : BVSet.{u, v} 𝔹 :=
   BVSet.check (𝔹 := 𝔹) (InternalArithmetic.upperCutGround.{u} x)
