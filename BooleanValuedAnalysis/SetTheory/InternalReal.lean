@@ -52,16 +52,33 @@ theorem ratLtValue_eq (q r : ℚ) :
 private theorem succ_check_insert_self (x : PSet.{u}) :
     succ (check (𝔹 := 𝔹) x) =
       check (𝔹 := 𝔹) (PSet.insert x x) := by
-  cases x
-  rfl
+  cases x with
+  | mk ι A =>
+      unfold succ check PSet.insert
+      congr
+      · funext i
+        cases i <;> rfl
+      · funext i
+        cases i <;> rfl
+
+private theorem empty_eq_check_empty :
+    (∅ : BVSet.{u, v} 𝔹) = check (𝔹 := 𝔹) (∅ : PSet.{u}) := by
+  change
+    BVSet.mk PEmpty PEmpty.elim PEmpty.elim =
+      BVSet.mk PEmpty (fun i => check (𝔹 := 𝔹) (PEmpty.elim i)) (fun _ => ⊤)
+  congr
+  · funext i
+    exact PEmpty.elim i
+  · funext i
+    exact PEmpty.elim i
 
 /-- The direct finite von Neumann name is exactly the checked ground finite
-ordinal.  Thus M012's naturals and M022's checked arithmetic reuse one
+ordinal. Thus M012's naturals and M022's checked arithmetic reuse one
 representation rather than merely isomorphic copies. -/
 theorem natName_eq_check_ofNat (n : ℕ) :
     natName (𝔹 := 𝔹) n = check (𝔹 := 𝔹) (PSet.ofNat.{u} n) := by
   induction n with
-  | zero => rfl
+  | zero => exact empty_eq_check_empty
   | succ n ih =>
       change
         succ (natName (𝔹 := 𝔹) n) =
@@ -139,8 +156,7 @@ theorem iffValue_eq_top_iff (a b : 𝔹) :
     exact ⟨le_rfl, le_rfl⟩
 
 /-- Boolean truth value of Takeuti's rational upper-cut conditions in their
-profile normal form.  This is the semantic normal form used by M023; the
-rational strict order is the ordinary ground order embedded by `ratLtValue`. -/
+profile normal form. This is the semantic normal form used by M023. -/
 def upperCutValue (u : BVSet.Separated.{u, v} 𝔹) : 𝔹 :=
   iffValue (⨅ q : ℚ, profile (𝔹 := 𝔹) u q) ⊥ ⊓
     (iffValue (⨆ q : ℚ, profile (𝔹 := 𝔹) u q) ⊤ ⊓
@@ -186,7 +202,8 @@ theorem checkedUpperCutValue_eq_top (x : ℝ) :
       checkedUpperProfile.{u, v} (𝔹 := 𝔹) x r =
         ⨅ s : {s : ℚ // r < s},
           checkedUpperProfile.{u, v} (𝔹 := 𝔹) x s.1
-    simpa only [checkedUpperProfile_eq] using
+    simp_rw [checkedUpperProfile_eq]
+    simpa only [BVSet.checkedUpperProfile_eq] using
       BVSet.checkedUpperProfile_rightContinuous (𝔹 := 𝔹) x r
 
 end Separated
