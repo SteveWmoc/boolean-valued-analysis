@@ -11,7 +11,7 @@ import BooleanValuedAnalysis.SetTheory.ZF.Infinity
 # Internal reals for Boolean-valued analysis
 
 M022 packages Takeuti's Chapter 1 upper Dedekind reals on the separated
-Boolean-valued universe.  The public object is a separated name together with
+Boolean-valued universe. The public object is a separated name together with
 proof that its rational membership profile satisfies the Boolean upper-cut
 predicate with value `⊤`.
 
@@ -37,17 +37,6 @@ open SetTheory
 namespace BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
-
-/-- Strict order on ground rationals, embedded as a classical Boolean value.
-This is the semantic order interface consumed by the upper-cut predicate; the
-concrete rational coding remains hidden. -/
-def ratLtValue (q r : ℚ) : 𝔹 :=
-  classicalValue (𝔹 := 𝔹) (q < r)
-
-@[simp]
-theorem ratLtValue_eq (q r : ℚ) :
-    ratLtValue (𝔹 := 𝔹) q r = classicalValue (𝔹 := 𝔹) (q < r) :=
-  rfl
 
 private theorem succ_check_insert_self (x : PSet.{u}) :
     succ (check (𝔹 := 𝔹) x) =
@@ -156,7 +145,8 @@ theorem iffValue_eq_top_iff (a b : 𝔹) :
     exact ⟨le_rfl, le_rfl⟩
 
 /-- Boolean truth value of Takeuti's rational upper-cut conditions in their
-profile normal form. This is the semantic normal form used by M023. -/
+profile normal form. This is the semantic normal form used by M023. Rational
+strict order is supplied publicly by `BVSet.ratLtGraph`/`BVSet.ratLtValue`. -/
 def upperCutValue (u : BVSet.Separated.{u, v} 𝔹) : 𝔹 :=
   iffValue (⨅ q : ℚ, profile (𝔹 := 𝔹) u q) ⊥ ⊓
     (iffValue (⨆ q : ℚ, profile (𝔹 := 𝔹) u q) ⊤ ⊓
