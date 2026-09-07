@@ -175,26 +175,50 @@ theorem checkedUpperProfile_eq (x : ℝ) (q : ℚ) :
       classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ)) := by
   simp [checkedUpperProfile, profile]
 
+private theorem upperCut_rightContinuous_prop (x : ℝ) (r : ℚ) :
+    x ≤ (r : ℝ) ↔
+      ∀ s : {s : ℚ // r < s}, x ≤ (s.1 : ℝ) := by
+  constructor
+  · intro h s
+    have hrs : (r : ℝ) < (s.1 : ℝ) := by
+      exact_mod_cast s.2
+    exact h.trans hrs.le
+  · intro h
+    by_contra hxr
+    have hrx : (r : ℝ) < x := lt_of_not_ge hxr
+    obtain ⟨q, hrq, hqx⟩ := exists_rat_btwn hrx
+    have hrq' : r < q := by
+      exact_mod_cast hrq
+    have hxq := h ⟨q, hrq'⟩
+    exact (not_le_of_gt hqx) hxq
+
 /-- Checked classical upper cuts satisfy the complete M022 upper-cut
 predicate. -/
 theorem checkedUpperCutValue_eq_top (x : ℝ) :
     upperCutValue (𝔹 := 𝔹) (checkedUpperCut.{u, v} (𝔹 := 𝔹) x) = ⊤ := by
   rw [upperCutValue_eq_top_iff]
   refine ⟨?_, ?_, ?_⟩
-  · change (⨅ q : ℚ, checkedUpperProfile.{u, v} (𝔹 := 𝔹) x q) = ⊥
-    simp_rw [checkedUpperProfile_eq]
-    simpa using BVSet.checkedUpperProfile_iInf_eq_bot (𝔹 := 𝔹) x
-  · change (⨆ q : ℚ, checkedUpperProfile.{u, v} (𝔹 := 𝔹) x q) = ⊤
-    simp_rw [checkedUpperProfile_eq]
-    simpa using BVSet.checkedUpperProfile_iSup_eq_top (𝔹 := 𝔹) x
+  · simp_rw [profile, mem_ratName_checkedUpperCut]
+    obtain ⟨q, _, hqx⟩ := exists_rat_btwn (show x - 1 < x by linarith)
+    apply bot_unique
+    calc
+      (⨅ r : ℚ, classicalValue (𝔹 := 𝔹) (x ≤ (r : ℝ))) ≤
+          classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ)) := iInf_le _ q
+      _ = ⊥ := by simp [classicalValue, not_le_of_gt hqx]
+  · simp_rw [profile, mem_ratName_checkedUpperCut]
+    obtain ⟨q, hxq, _⟩ := exists_rat_btwn (show x < x + 1 by linarith)
+    apply top_unique
+    calc
+      ⊤ = classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ)) := by
+        simp [classicalValue, hxq.le]
+      _ ≤ ⨆ r : ℚ, classicalValue (𝔹 := 𝔹) (x ≤ (r : ℝ)) :=
+        le_iSup (fun r : ℚ => classicalValue (𝔹 := 𝔹) (x ≤ (r : ℝ))) q
   · intro r
-    change
-      checkedUpperProfile.{u, v} (𝔹 := 𝔹) x r =
-        ⨅ s : {s : ℚ // r < s},
-          checkedUpperProfile.{u, v} (𝔹 := 𝔹) x s.1
-    simp_rw [checkedUpperProfile_eq]
-    simpa only [BVSet.checkedUpperProfile_eq] using
-      BVSet.checkedUpperProfile_rightContinuous (𝔹 := 𝔹) x r
+    simp_rw [profile, mem_ratName_checkedUpperCut]
+    rw [iInf_classicalValue]
+    apply congrArg (classicalValue (𝔹 := 𝔹))
+    apply propext
+    exact upperCut_rightContinuous_prop x r
 
 end Separated
 
