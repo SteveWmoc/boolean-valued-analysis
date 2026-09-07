@@ -49,28 +49,32 @@ theorem ratLtValue_eq (q r : ℚ) :
     ratLtValue (𝔹 := 𝔹) q r = classicalValue (𝔹 := 𝔹) (q < r) :=
   rfl
 
-/-- The direct finite von Neumann name and the checked ground finite ordinal
-are extensionally equal with Boolean value `⊤`.  This is the M022 compatibility
-bridge reusing M012's natural-number representation. -/
+private theorem succ_check_insert_self (x : PSet.{u}) :
+    succ (check (𝔹 := 𝔹) x) =
+      check (𝔹 := 𝔹) (PSet.insert x x) := by
+  cases x
+  rfl
+
+/-- The direct finite von Neumann name is exactly the checked ground finite
+ordinal.  Thus M012's naturals and M022's checked arithmetic reuse one
+representation rather than merely isomorphic copies. -/
+theorem natName_eq_check_ofNat (n : ℕ) :
+    natName (𝔹 := 𝔹) n = check (𝔹 := 𝔹) (PSet.ofNat.{u} n) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      change
+        succ (natName (𝔹 := 𝔹) n) =
+          check (𝔹 := 𝔹) (PSet.insert (PSet.ofNat.{u} n) (PSet.ofNat.{u} n))
+      rw [ih]
+      exact succ_check_insert_self _
+
+/-- Boolean equality form of `natName_eq_check_ofNat`. -/
+@[simp]
 theorem natName_bvEq_check_ofNat (n : ℕ) :
     bvEq (natName (𝔹 := 𝔹) n)
       (check (𝔹 := 𝔹) (PSet.ofNat.{u} n)) = ⊤ := by
-  induction n with
-  | zero =>
-      rw [natName_zero, PSet.ofNat]
-      exact bvEq_refl _
-  | succ n ih =>
-      rw [natName_succ]
-      apply top_unique
-      calc
-        ⊤ = bvEq (natName (𝔹 := 𝔹) n)
-              (check (𝔹 := 𝔹) (PSet.ofNat.{u} n)) := ih.symm
-        _ ≤ bvEq (succ (natName (𝔹 := 𝔹) n))
-              (succ (check (𝔹 := 𝔹) (PSet.ofNat.{u} n))) :=
-          bvEq_le_bvEq_succ _ _
-        _ = bvEq (succ (natName (𝔹 := 𝔹) n))
-              (check (𝔹 := 𝔹) (PSet.ofNat.{u} (n + 1))) := by
-          rfl
+  rw [natName_eq_check_ofNat, bvEq_refl]
 
 namespace Separated
 
@@ -127,7 +131,12 @@ private theorem himp_eq_top_iff_le (a b : 𝔹) :
 theorem iffValue_eq_top_iff (a b : 𝔹) :
     iffValue a b = ⊤ ↔ a = b := by
   rw [iffValue, inf_eq_top_iff, himp_eq_top_iff_le, himp_eq_top_iff_le]
-  exact le_antisymm_iff
+  constructor
+  · rintro ⟨hab, hba⟩
+    exact le_antisymm hab hba
+  · intro h
+    subst b
+    exact ⟨le_rfl, le_rfl⟩
 
 /-- Boolean truth value of Takeuti's rational upper-cut conditions in their
 profile normal form.  This is the semantic normal form used by M023; the
@@ -152,26 +161,32 @@ theorem upperCutValue_eq_top_iff (u : BVSet.Separated.{u, v} 𝔹) :
 
 /-- The checked classical upper-cut profile in the separated universe. -/
 def checkedUpperProfile (x : ℝ) (q : ℚ) : 𝔹 :=
-  profile (𝔹 := 𝔹) (checkedUpperCut (𝔹 := 𝔹) x) q
+  profile.{u, v} (𝔹 := 𝔹) (checkedUpperCut.{u, v} (𝔹 := 𝔹) x) q
 
 @[simp]
 theorem checkedUpperProfile_eq (x : ℝ) (q : ℚ) :
-    checkedUpperProfile (𝔹 := 𝔹) x q =
+    checkedUpperProfile.{u, v} (𝔹 := 𝔹) x q =
       classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ)) := by
   simp [checkedUpperProfile, profile]
 
 /-- Checked classical upper cuts satisfy the complete M022 upper-cut
 predicate. -/
 theorem checkedUpperCutValue_eq_top (x : ℝ) :
-    upperCutValue (𝔹 := 𝔹) (checkedUpperCut (𝔹 := 𝔹) x) = ⊤ := by
+    upperCutValue (𝔹 := 𝔹) (checkedUpperCut.{u, v} (𝔹 := 𝔹) x) = ⊤ := by
   rw [upperCutValue_eq_top_iff]
   refine ⟨?_, ?_, ?_⟩
-  · simpa [checkedUpperProfile, profile] using
-      BVSet.checkedUpperProfile_iInf_eq_bot (𝔹 := 𝔹) x
-  · simpa [checkedUpperProfile, profile] using
-      BVSet.checkedUpperProfile_iSup_eq_top (𝔹 := 𝔹) x
+  · change (⨅ q : ℚ, checkedUpperProfile.{u, v} (𝔹 := 𝔹) x q) = ⊥
+    simp_rw [checkedUpperProfile_eq]
+    simpa using BVSet.checkedUpperProfile_iInf_eq_bot (𝔹 := 𝔹) x
+  · change (⨆ q : ℚ, checkedUpperProfile.{u, v} (𝔹 := 𝔹) x q) = ⊤
+    simp_rw [checkedUpperProfile_eq]
+    simpa using BVSet.checkedUpperProfile_iSup_eq_top (𝔹 := 𝔹) x
   · intro r
-    simpa [checkedUpperProfile, profile] using
+    change
+      checkedUpperProfile.{u, v} (𝔹 := 𝔹) x r =
+        ⨅ s : {s : ℚ // r < s},
+          checkedUpperProfile.{u, v} (𝔹 := 𝔹) x s.1
+    simpa only [checkedUpperProfile_eq] using
       BVSet.checkedUpperProfile_rightContinuous (𝔹 := 𝔹) x r
 
 end Separated
@@ -195,17 +210,17 @@ def profile (u : InternalReal.{u, v} 𝔹) (q : ℚ) : 𝔹 :=
 /-- The profile of every internal real has empty total intersection. -/
 theorem profile_iInf_eq_bot (u : InternalReal.{u, v} 𝔹) :
     (⨅ q : ℚ, profile u q) = ⊥ := by
-  exact (BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal |>.1
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).1
 
 /-- The profile of every internal real covers the whole Boolean algebra. -/
 theorem profile_iSup_eq_top (u : InternalReal.{u, v} 𝔹) :
     (⨆ q : ℚ, profile u q) = ⊤ := by
-  exact (BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal |>.2.1
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.1
 
 /-- Takeuti rational right-continuity for every internal real. -/
 theorem profile_rightContinuous (u : InternalReal.{u, v} 𝔹) (r : ℚ) :
     profile u r = ⨅ s : {s : ℚ // r < s}, profile u s.1 := by
-  exact (BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal |>.2.2 r
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.2 r
 
 /-- A classical real embedded by its closed upper rational cut. -/
 def checkReal (x : ℝ) : InternalReal.{u, v} 𝔹 where
