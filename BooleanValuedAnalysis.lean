@@ -34,6 +34,7 @@ import BooleanValuedAnalysis.Descent
 import BooleanValuedAnalysis.SetTheory.SeparatedSemantics
 import BooleanValuedAnalysis.SetTheory.LogicalSoundness
 import BooleanValuedAnalysis.SetTheory.Delta0
+import BooleanValuedAnalysis.SetTheory.InternalArithmetic
 import BooleanValuedAnalysis.SetTheory.ZF.Constructors
 import BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms
 import BooleanValuedAnalysis.SetTheory.ZF.Separation
@@ -41,6 +42,8 @@ import BooleanValuedAnalysis.SetTheory.ZF.SeparationSchema
 import BooleanValuedAnalysis.SetTheory.ZF.Powerset
 import BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom
 import BooleanValuedAnalysis.SetTheory.ZF.Infinity
+import BooleanValuedAnalysis.SetTheory.InternalReal
+import BooleanValuedAnalysis.SetTheory.InternalRealSyntax
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -83,5 +86,9 @@ and the semantic first-member construction plus genuine first-order sentence for
 Boolean-valued Choice, together with a bounded Hilbert calculus, generic
 Boolean-valued logical soundness, and raw and separated set-theory consequence
 theorems, culminating in exact Boolean-valid ZF and ZFC sentence theories with
-raw/separated Transfer Principles.
+raw/separated Transfer Principles. M022 adds the Takeuti arithmetic layer with
+canonical rational names, exact checked rational equality and order truth,
+closed upper Dedekind cuts, separated internal reals, a genuine first-order
+upper-cut predicate, and the three rational profile equations consumed by the
+spectral-family construction in M023.
 -/
