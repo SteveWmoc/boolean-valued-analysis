@@ -6,6 +6,7 @@ Authors: Steven Sabean
 
 import BooleanValuedAnalysis.Canonical
 import BooleanValuedAnalysis.SetTheory.Delta0
+import BooleanValuedAnalysis.SetTheory.ZF.Powerset
 import Mathlib.Data.Rat.Encodable
 import Mathlib.SetTheory.ZFC.Basic
 import Mathlib.Tactic
@@ -162,6 +163,11 @@ private theorem ratCode_mem_upperCutGround_iff (x : ℝ) (q : ℚ) :
   · intro h
     exact ⟨ULift.up ⟨q, h⟩, PSet.Equiv.refl _⟩
 
+private theorem upperCutGround_subset_rationalsGround (x : ℝ) :
+    upperCutGround.{u} x ⊆ rationalsGround.{u} := by
+  intro q
+  exact ⟨ULift.up q.down.1, PSet.Equiv.refl _⟩
+
 end InternalArithmetic
 
 namespace BVSet
@@ -244,6 +250,18 @@ a classical real `x`. The rational boundary is included when `x` is rational,
 matching Takeuti Part I, Chapter 1. -/
 def checkedUpperCut (x : ℝ) : BVSet.{u, v} 𝔹 :=
   BVSet.check (𝔹 := 𝔹) (InternalArithmetic.upperCutGround.{u} x)
+
+/-- The checked upper cut is a Boolean-valued subset of the checked rational
+carrier with truth value `⊤`. -/
+@[simp]
+theorem subsetValue_checkedUpperCut_rationals (x : ℝ) :
+    subsetValue (checkedUpperCut (𝔹 := 𝔹) x) (rationals (𝔹 := 𝔹)) = ⊤ := by
+  unfold checkedUpperCut rationals subsetValue
+  rw [boundedForall_check]
+  simp only [iInf_eq_top]
+  intro q
+  exact check_mem_top_of_mem
+    (InternalArithmetic.upperCutGround_subset_rationalsGround x q)
 
 /-- Exact rational membership profile of a checked classical upper cut. -/
 @[simp]
