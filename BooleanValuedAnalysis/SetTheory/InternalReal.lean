@@ -227,7 +227,10 @@ end BVSet
 /-- An internal real is a separated Boolean-valued name satisfying Takeuti's
 Chapter 1 upper Dedekind-cut predicate with Boolean value `⊤`. -/
 structure InternalReal (𝔹 : Type v) [CompleteBooleanAlgebra 𝔹] where
+  /-- The underlying separated Boolean-valued set representing the upper cut. -/
   val : BVSet.Separated.{u, v} 𝔹
+  /-- Proof that the underlying name satisfies the upper-cut predicate with
+  Boolean truth value `⊤`. -/
   isReal : BVSet.Separated.upperCutValue (𝔹 := 𝔹) val = ⊤
 
 namespace InternalReal
