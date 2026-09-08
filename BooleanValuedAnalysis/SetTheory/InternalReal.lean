@@ -113,6 +113,27 @@ theorem mem_ratName_checkedUpperCut (x : ℝ) (q : ℚ) :
       classicalValue (𝔹 := 𝔹) (x ≤ (q : ℝ)) := by
   simp [ratName, checkedUpperCut]
 
+/-- Boolean truth value that one separated name is included in another. -/
+def subsetValue (z x : BVSet.Separated.{u, v} 𝔹) : 𝔹 :=
+  ⨅ y : BVSet.Separated.{u, v} 𝔹, mem y z ⇨ mem y x
+
+/-- Separated inclusion preserves the exact raw Boolean inclusion value. -/
+@[simp]
+theorem subsetValue_toSeparated (z x : BVSet.{u, v} 𝔹) :
+    subsetValue (BVSet.toSeparated z) (BVSet.toSeparated x) =
+      BVSet.subsetValue z x := by
+  rw [subsetValue, iInf_eq_iInf_toSeparated, BVSet.subsetValue_eq_iInf_mem]
+  simp
+
+/-- The separated checked upper cut is included in the separated rational
+carrier with Boolean truth value `⊤`. -/
+@[simp]
+theorem subsetValue_checkedUpperCut_rationals (x : ℝ) :
+    subsetValue (checkedUpperCut (𝔹 := 𝔹) x) (rationals (𝔹 := 𝔹)) = ⊤ := by
+  unfold checkedUpperCut rationals
+  rw [subsetValue_toSeparated]
+  exact BVSet.subsetValue_checkedUpperCut_rationals (𝔹 := 𝔹) x
+
 /-- Rational Boolean membership profile of an arbitrary separated name. -/
 def profile (u : BVSet.Separated.{u, v} 𝔹) (q : ℚ) : 𝔹 :=
   mem (ratName (𝔹 := 𝔹) q) u
@@ -144,20 +165,22 @@ theorem iffValue_eq_top_iff (a b : 𝔹) :
     subst b
     exact ⟨le_rfl, le_rfl⟩
 
-/-- Boolean truth value of Takeuti's rational upper-cut conditions in their
-profile normal form. This is the semantic normal form used by M023. Rational
-strict order is supplied publicly by `BVSet.ratLtGraph`/`BVSet.ratLtValue`. -/
+/-- Boolean truth value of Takeuti's upper Dedekind-cut conditions in semantic
+normal form. Besides the three rational profile equations, the candidate must
+be Boolean-included in the checked rational carrier. -/
 def upperCutValue (u : BVSet.Separated.{u, v} 𝔹) : 𝔹 :=
-  iffValue (⨅ q : ℚ, profile (𝔹 := 𝔹) u q) ⊥ ⊓
-    (iffValue (⨆ q : ℚ, profile (𝔹 := 𝔹) u q) ⊤ ⊓
-      (⨅ r : ℚ,
-        iffValue (profile (𝔹 := 𝔹) u r)
-          (⨅ s : {s : ℚ // r < s}, profile (𝔹 := 𝔹) u s.1)))
+  subsetValue u (rationals (𝔹 := 𝔹)) ⊓
+    (iffValue (⨅ q : ℚ, profile (𝔹 := 𝔹) u q) ⊥ ⊓
+      (iffValue (⨆ q : ℚ, profile (𝔹 := 𝔹) u q) ⊤ ⊓
+        (⨅ r : ℚ,
+          iffValue (profile (𝔹 := 𝔹) u r)
+            (⨅ s : {s : ℚ // r < s}, profile (𝔹 := 𝔹) u s.1))))
 
-/-- Top-valuedness of the upper-cut predicate is exactly the three Takeuti
-profile equations. -/
+/-- Top-valuedness of the upper-cut predicate is exactly rational inclusion and
+the three Takeuti profile equations. -/
 theorem upperCutValue_eq_top_iff (u : BVSet.Separated.{u, v} 𝔹) :
     upperCutValue (𝔹 := 𝔹) u = ⊤ ↔
+      subsetValue u (rationals (𝔹 := 𝔹)) = ⊤ ∧
       (⨅ q : ℚ, profile (𝔹 := 𝔹) u q) = ⊥ ∧
       (⨆ q : ℚ, profile (𝔹 := 𝔹) u q) = ⊤ ∧
       ∀ r : ℚ,
@@ -197,7 +220,7 @@ predicate. -/
 theorem checkedUpperCutValue_eq_top (x : ℝ) :
     upperCutValue (𝔹 := 𝔹) (checkedUpperCut.{u, v} (𝔹 := 𝔹) x) = ⊤ := by
   rw [upperCutValue_eq_top_iff]
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨subsetValue_checkedUpperCut_rationals (𝔹 := 𝔹) x, ?_, ?_, ?_⟩
   · simp_rw [profile, mem_ratName_checkedUpperCut]
     obtain ⟨q, _, hqx⟩ := exists_rat_btwn (show x - 1 < x by linarith)
     apply bot_unique
@@ -241,20 +264,26 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 def profile (u : InternalReal.{u, v} 𝔹) (q : ℚ) : 𝔹 :=
   BVSet.Separated.profile (𝔹 := 𝔹) u.val q
 
+/-- Every internal real is Boolean-included in the separated rational carrier. -/
+theorem subsetValue_eq_top (u : InternalReal.{u, v} 𝔹) :
+    BVSet.Separated.subsetValue u.val
+      (BVSet.Separated.rationals (𝔹 := 𝔹)) = ⊤ := by
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).1
+
 /-- The profile of every internal real has empty total intersection. -/
 theorem profile_iInf_eq_bot (u : InternalReal.{u, v} 𝔹) :
     (⨅ q : ℚ, profile u q) = ⊥ := by
-  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).1
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.1
 
 /-- The profile of every internal real covers the whole Boolean algebra. -/
 theorem profile_iSup_eq_top (u : InternalReal.{u, v} 𝔹) :
     (⨆ q : ℚ, profile u q) = ⊤ := by
-  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.1
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.2.1
 
 /-- Takeuti rational right-continuity for every internal real. -/
 theorem profile_rightContinuous (u : InternalReal.{u, v} 𝔹) (r : ℚ) :
     profile u r = ⨅ s : {s : ℚ // r < s}, profile u s.1 := by
-  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.2 r
+  exact ((BVSet.Separated.upperCutValue_eq_top_iff (𝔹 := 𝔹) u.val).1 u.isReal).2.2.2 r
 
 /-- A classical real embedded by its closed upper rational cut. -/
 def checkReal (x : ℝ) : InternalReal.{u, v} 𝔹 where
