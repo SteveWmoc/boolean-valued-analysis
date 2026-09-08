@@ -45,7 +45,11 @@ The repository currently provides:
 - a genuine object-language Choice sentence proved raw/separated top-valued by
   a coherent first-member Boolean decomposition, and a separately named ZFC
   sentence theory extending the exact ZF package with corresponding raw and
-  separated theorem-consequence Transfer Principles.
+  separated theorem-consequence Transfer Principles;
+- canonical rational names, a checked Kuratowski-pair graph for strict rational
+  order, Takeuti closed upper rational cuts, and separated internal reals with
+  exact rational profile equations, all without a new `Small` or `Nontrivial`
+  assumption.
 
 These components form the foundation for the milestones below.
 
@@ -518,17 +522,53 @@ internal object-language Choice sentence is separately proved top-valued.
 
 Completion record: [`docs/milestones/021-choice-zfc-transfer.md`](docs/milestones/021-choice-zfc-transfer.md)
 
-### M022–M035 — Remaining Takeuti Part I implementation sequence
+### M022 — Internal arithmetic and Dedekind reals — complete
 
-M022–M024 develop internal arithmetic, Dedekind reals, Boolean spectral
-families, and their arithmetic/order/localization/mixing laws. M025 introduces
-definite sets and typed internal functions. M026–M029 develop the operator,
-convergence, semigroup, Banach-projection, simultaneous-spectrum, and
+Completed 2026-09-08.
+
+M022 reuses M012's finite von Neumann names and proves they agree exactly with
+the corresponding checked `PSet.ofNat` ordinals. Ground rationals are coded
+behind the public `BVSet.ratName`/`BVSet.rationals` API; checked rational
+equality is exactly classical equality embedded in the coefficient Boolean
+algebra.
+
+Strict rational order is represented by a genuine checked set-theoretic graph
+of Kuratowski ordered pairs. Membership of `BVSet.ratPairName q r` in
+`BVSet.ratLtGraph` is exactly `classicalValue (q < r)`, so the concrete rational
+coding remains absent from downstream statements.
+
+Takeuti's Chapter 1 convention is implemented by the closed upper rational cut
+`{q : ℚ | x ≤ q}`. Checked classical cuts are Boolean-included in the rational
+carrier and have the exact profile `classicalValue (x ≤ q)`. On separated
+names, `BVSet.Separated.upperCutValue` requires rational inclusion together with
+empty total intersection, full total union, and rational right-continuity.
+`InternalReal` packages a separated name with a proof that this value is `⊤`.
+Every classical real has a checked `InternalReal`, and the three profile
+equations are public for arbitrary internal reals.
+
+`SetTheory.InternalRealSyntax.upperCutFormula` separately exposes the same
+Chapter 1 cut conditions as a genuine formula in the existing pure-set-theory
+syntax. Rational order is expanded through Kuratowski-pair membership in the
+supplied relation graph, and `upperCutFormula_isDelta0` certifies that every
+quantifier is set-bounded.
+
+M022 introduces no new global `Small.{u} 𝔹` or `Nontrivial 𝔹` assumption and
+keeps name and coefficient universes independent. `Audit/M022Acceptance.lean`
+checks the complete public surface in pinned CI and the live Tau Ceti audit.
+
+Completion record: [`docs/milestones/022-internal-arithmetic-dedekind-reals.md`](docs/milestones/022-internal-arithmetic-dedekind-reals.md)
+
+### M023–M035 — Remaining Takeuti Part I implementation sequence
+
+M023–M024 develop Boolean spectral families, the internal-real/spectral-family
+correspondence, and their arithmetic/order/localization/mixing laws. M025
+introduces definite sets and typed internal functions. M026–M029 develop the
+operator, convergence, semigroup, Banach-projection, simultaneous-spectrum, and
 functional-calculus layers of Chapter 1. M030 isolates the orthomodular
 quantum-logic boundary. M031–M035 construct the measure algebra and carry out
 Chapter 2 through the projection/measure equivalence.
 
-**Next milestone:** M022 — Internal arithmetic and Dedekind reals.
+**Next milestone:** M023 — Internal reals and Boolean spectral families.
 
 Potential additional application roadmaps should be maintained separately so that foundational dependencies remain visible.
 
