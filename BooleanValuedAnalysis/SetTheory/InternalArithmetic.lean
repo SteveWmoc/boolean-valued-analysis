@@ -208,6 +208,26 @@ theorem mem_ratName_rationals (q : ℚ) :
   unfold ratName rationals
   exact check_mem_top_of_mem (InternalArithmetic.ratCode_mem_rationalsGround q)
 
+/-- Membership in the checked rational carrier is exactly the supremum of
+Boolean equalities with canonical rational names.  This is the semantic support
+theorem consumed by M023; the concrete ground coding remains hidden. -/
+theorem mem_rationals_eq_iSup_bvEq_ratName (z : BVSet.{u, v} 𝔹) :
+    mem z (rationals (𝔹 := 𝔹)) =
+      ⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q) := by
+  unfold rationals InternalArithmetic.rationalsGround
+  rw [check_mk, mem_mk]
+  simp only [top_inf_eq]
+  change
+    (⨆ q : ULift.{u} ℚ, bvEq z (ratName (𝔹 := 𝔹) q.down)) =
+      ⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q)
+  apply le_antisymm
+  · apply iSup_le
+    intro q
+    exact le_iSup_of_le q.down le_rfl
+  · apply iSup_le
+    intro q
+    exact le_iSup_of_le (ULift.up q) (by simp)
+
 /-- Canonical name of the Kuratowski pair of two rational codes. -/
 def ratPairName (q r : ℚ) : BVSet.{u, v} 𝔹 :=
   BVSet.check (𝔹 := 𝔹)

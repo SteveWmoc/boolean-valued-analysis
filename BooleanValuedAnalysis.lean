@@ -44,6 +44,8 @@ import BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom
 import BooleanValuedAnalysis.SetTheory.ZF.Infinity
 import BooleanValuedAnalysis.SetTheory.InternalReal
 import BooleanValuedAnalysis.SetTheory.InternalRealSyntax
+import BooleanValuedAnalysis.SetTheory.SpectralFamily
+import BooleanValuedAnalysis.SetTheory.SpectralFamilyCorrespondence
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
