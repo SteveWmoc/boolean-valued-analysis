@@ -8,7 +8,7 @@ authors:
     orcid: "https://orcid.org/0009-0009-9238-610X"
 repository-code: "https://github.com/SteveWmoc/boolean-valued-analysis"
 license: "Apache-2.0"
-version: "0.1.0"
+version: "0.1.1"
 abstract: >-
   An experimental Lean 4 formalization of the foundations of Boolean-valued set
   theory and Boolean-valued analysis, including Boolean-valued semantics, mixing
