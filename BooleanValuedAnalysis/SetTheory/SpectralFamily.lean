@@ -51,7 +51,7 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 /-- Extend a rational Boolean profile to real indices by taking the meet over
 all rational thresholds strictly above the real index. -/
 def rationalEnvelope (P : ℚ → 𝔹) (r : ℝ) : 𝔹 :=
-  ⨅ q : {q : ℚ // r < (q.1 : ℝ)}, P q.1
+  ⨅ q : {q : ℚ // r < (q : ℝ)}, P q.1
 
 /-- Every rational envelope is monotone, independently of any cut axioms on
 its input profile. -/
@@ -61,7 +61,8 @@ theorem rationalEnvelope_monotone (P : ℚ → 𝔹) :
   unfold rationalEnvelope
   apply le_iInf
   intro q
-  exact iInf_le _ ⟨q.1, lt_of_le_of_lt hrs q.2⟩
+  exact iInf_le _ (show {q : ℚ // r < (q : ℝ)} from
+    ⟨q.1, lt_of_le_of_lt hrs q.2⟩)
 
 /-- A rational profile satisfying Takeuti's rational right-continuity is
 recovered exactly from its real rational envelope at rational indices. -/
@@ -76,15 +77,17 @@ theorem rationalEnvelope_at_rat
   · apply le_iInf
     intro s
     unfold rationalEnvelope
-    have hrs : (r : ℝ) < (s.1 : ℝ) := by
-      exact_mod_cast s.2
-    exact iInf_le _ ⟨s.1, hrs⟩
+    have hrs : (r : ℝ) < (s.1 : ℝ) :=
+      Rat.cast_lt.mpr s.2
+    exact iInf_le _ (show {q : ℚ // (r : ℝ) < (q : ℝ)} from
+      ⟨s.1, hrs⟩)
   · unfold rationalEnvelope
     apply le_iInf
     intro s
-    have hrs : r < s.1 := by
-      exact_mod_cast s.2
-    exact iInf_le _ ⟨s.1, hrs⟩
+    have hrs : r < s.1 :=
+      Rat.cast_lt.mp s.2
+    exact iInf_le _ (show {q : ℚ // r < q} from
+      ⟨s.1, hrs⟩)
 
 /-- Rational envelopes are right-continuous on the real line.  The proof uses
 only the density of the ambient real order between the current index and a
@@ -109,10 +112,11 @@ theorem rationalEnvelope_rightContinuous (P : ℚ → 𝔹) (r : ℝ) :
     calc
       (⨅ s : {s : ℝ // r < s}, rationalEnvelope P s.1) ≤
           rationalEnvelope P m :=
-        iInf_le _ ⟨m, hrm⟩
+        iInf_le _ (show {s : ℝ // r < s} from ⟨m, hrm⟩)
       _ ≤ P q.1 := by
         unfold rationalEnvelope
-        exact iInf_le _ ⟨q.1, hmq⟩
+        exact iInf_le _ (show {p : ℚ // m < (p : ℝ)} from
+          ⟨q.1, hmq⟩)
 
 private theorem internalRealEnvelope_at_rat
     (u : InternalReal.{u, v} 𝔹) (q : ℚ) :
