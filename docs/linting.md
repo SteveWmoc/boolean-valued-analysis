@@ -16,8 +16,12 @@ Repository-level QA supplements declaration linting:
 - `sorry` and `admit` are rejected from the public library, `Audit/` acceptance probes, and Lean source files under `docs/`;
 - milestone acceptance probes matching `Audit/M*Acceptance.lean` are discovered automatically, so a new milestone probe is tested without another workflow edit;
 - Lean documentation/signature probes under `docs/` are compiled automatically as well, preventing research notes from silently drifting behind the implemented API;
-- both the pinned environment and the live Tau Ceti compatibility environment run the same acceptance and documentation probes.
+- pinned CI checks that the Lean and Mathlib stable release tags agree, that the committed Mathlib manifest input matches `lakefile.toml`, and that `lakefile.toml` and `CITATION.cff` carry the same project version;
+- pinned CI runs `leanprover/lean-action`'s dependency-axiom audit with the explicit repository-wide allow-list `propext`, `Classical.choice`, and `Quot.sound`; an additional unexpected axiom dependency fails the build;
+- both the pinned environment and the live Tau Ceti compatibility environment run the same milestone acceptance and documentation probes.
 
 The automatic discovery rules are intentional architectural safeguards. A new milestone should add its `Audit/MNNNAcceptance.lean` file; it should not require copying another CI step. A `.lean` file under `docs/` is therefore executable documentation and must remain placeholder-free and compiling.
 
-Future project-specific checks may encode Boolean-valued-analysis invariants that generic Lean linters cannot see, such as unwanted foundational dependencies, accidental `Small` hypotheses, or representative-selection leaks across the separated-universe boundary.
+The release-wide axiom allow-list is intentionally coarser than the project's mathematical dependency discipline. It says which metatheoretic axioms may occur somewhere in the repository; it does not license adding `Classical.choice`, `Small`, quotient representative selection, or other dependencies to declarations whose local architecture is intended to avoid them. Those finer boundaries remain part of milestone acceptance and review.
+
+Future project-specific checks may encode additional Boolean-valued-analysis invariants that generic Lean linters cannot see, such as accidental `Small` hypotheses or representative-selection leaks across the separated-universe boundary.

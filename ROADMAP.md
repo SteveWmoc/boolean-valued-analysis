@@ -49,7 +49,11 @@ The repository currently provides:
 - canonical rational names, a checked Kuratowski-pair graph for strict rational
   order, Takeuti closed upper rational cuts, and separated internal reals with
   exact rational profile equations, all without a new `Small` or `Nontrivial`
-  assumption.
+  assumption;
+- Hilbert-free real-indexed Boolean spectral families, Takeuti's rational-envelope
+  construction, reconstruction of internal reals from rational restrictions,
+  and a genuine equivalence `InternalReal 𝔹 ≃ SpectralFamily 𝔹`, again without
+  a new `Small` or `Nontrivial` assumption.
 
 These components form the foundation for the milestones below.
 
@@ -558,17 +562,60 @@ checks the complete public surface in pinned CI and the live Tau Ceti audit.
 
 Completion record: [`docs/milestones/022-internal-arithmetic-dedekind-reals.md`](docs/milestones/022-internal-arithmetic-dedekind-reals.md)
 
-### M023–M035 — Remaining Takeuti Part I implementation sequence
+### M023 — Internal reals and Boolean spectral families — complete
 
-M023–M024 develop Boolean spectral families, the internal-real/spectral-family
-correspondence, and their arithmetic/order/localization/mixing laws. M025
-introduces definite sets and typed internal functions. M026–M029 develop the
-operator, convergence, semigroup, Banach-projection, simultaneous-spectrum, and
-functional-calculus layers of Chapter 1. M030 isolates the orthomodular
-quantum-logic boundary. M031–M035 construct the measure algebra and carry out
-Chapter 2 through the projection/measure equivalence.
+Completed 2026-09-10.
 
-**Next milestone:** M023 — Internal reals and Boolean spectral families.
+M023 introduces the Hilbert-free `SpectralFamily 𝔹`: an increasing real-indexed
+Boolean family with total intersection `⊥`, total union `⊤`, and right-continuity.
+Takeuti's rational-envelope construction extends an M022 rational truth profile
+by
+
+```text
+E λ = ⨅ q : {q : ℚ // λ < (q : ℝ)}, P q.
+```
+
+For every internal real this envelope satisfies the spectral-family axioms and
+recovers the original profile exactly at rational indices. Conversely, an
+arbitrary spectral family is restricted to the rationals and represented by a
+Boolean-valued rational-subset name with exact checked-rational membership.
+Rational restrictions inherit the M022 endpoint and right-continuity equations,
+so they reconstruct genuine `InternalReal` values.
+
+The difficult inverse is proved extensionally on the separated carrier rather
+than by choosing quotient representatives. A top-valued rational subset has the
+exact support expansion
+
+```text
+mem z x = ⨆ q : ℚ, bvEq z (ratName q) ⊓ profile x q,
+```
+
+so two such subsets with equal rational profiles are equal as separated names.
+This yields both round trips as ordinary Lean equalities and packages the result
+as
+
+```text
+internalRealEquivSpectralFamily : InternalReal 𝔹 ≃ SpectralFamily 𝔹.
+```
+
+M023 adds no Hilbert-space structure, `[Small.{u} 𝔹]`, or `Nontrivial 𝔹`
+assumption. `Audit/M023Acceptance.lean` checks the spectral axioms, rational
+restriction/reconstruction, support expansion, both inverse laws, and the
+packaged equivalence in pinned CI and the live Tau Ceti architecture audit.
+
+Completion record: [`docs/milestones/023-spectral-families.md`](docs/milestones/023-spectral-families.md)
+
+### M024–M035 — Remaining Takeuti Part I implementation sequence
+
+M024 develops arithmetic, order, localization, and mixing laws through the
+internal-real/spectral-family equivalence. M025 introduces definite sets and
+typed internal functions. M026–M029 develop the operator, convergence,
+semigroup, Banach-projection, simultaneous-spectrum, and functional-calculus
+layers of Chapter 1. M030 isolates the orthomodular quantum-logic boundary.
+M031–M035 construct the measure algebra and carry out Chapter 2 through the
+projection/measure equivalence.
+
+**Next milestone:** M024 — spectral arithmetic, order, localization, and mixing laws.
 
 Potential additional application roadmaps should be maintained separately so that foundational dependencies remain visible.
 
