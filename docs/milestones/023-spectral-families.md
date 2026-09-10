@@ -1,6 +1,8 @@
 # M023 — Internal reals and Boolean spectral families
 
-**Status:** in progress
+**Status:** complete
+
+**Completed:** 2026-09-10
 
 **Depends on:** M001–M022
 
@@ -8,9 +10,9 @@
 
 ## Purpose
 
-M023 formalizes the pure Boolean-algebraic correspondence at the center of Takeuti §1.3.  It sends an M022 internal upper-Dedekind real to a real-indexed Boolean spectral family and reconstructs an internal real by restricting a spectral family to rational indices.
+M023 formalizes the pure Boolean-algebraic correspondence at the center of Takeuti §1.3. It sends an M022 internal upper-Dedekind real to a real-indexed Boolean spectral family and reconstructs an internal real by restricting a spectral family to rational indices.
 
-This milestone deliberately stops before Hilbert-space or self-adjoint-operator realization.  The correspondence proved here is intrinsic Boolean-valued analysis.
+The result is intrinsic Boolean-valued analysis. Hilbert spaces, self-adjoint operators, and the spectral theorem remain downstream.
 
 ## Spectral-family convention
 
@@ -30,74 +32,102 @@ This is the Hilbert-free resolution-of-the-identity object frozen by M020.
 
 ## Internal real → spectral family
 
-For `u : InternalReal 𝔹`, write
+For `u : InternalReal 𝔹`, let
 
 ```text
 P q := InternalReal.profile u q.
 ```
 
-Takeuti extends this rational profile to real indices by
+Takeuti's real-index extension is
 
 ```text
 E λ := ⨅ q : {q : ℚ // λ < (q : ℝ)}, P q.
 ```
 
-M023 should prove directly from the M022 profile equations that:
+The public `SpectralFamily.rationalEnvelope` implements this formula. M023 proves that the envelope is monotone and right-continuous, and that the M022 endpoint laws imply
 
-1. `E` is monotone;
-2. `⨅ λ, E λ = ⊥`;
-3. `⨆ λ, E λ = ⊤`;
-4. `E` is right-continuous on `ℝ`;
-5. at rational indices, `E (q : ℝ) = P q` exactly.
+```text
+⨅ λ : ℝ, E λ = ⊥
+⨆ λ : ℝ, E λ = ⊤.
+```
 
-The last equation is the key bridge used by both inverse laws.
+The crucial rational restriction theorem is exact:
+
+```text
+(InternalReal.toSpectralFamily u).proj (q : ℝ)
+  = InternalReal.profile u q.
+```
+
+No top-value weakening is used.
 
 ## Spectral family → internal real
 
-For `E : SpectralFamily 𝔹`, restrict to rationals:
+For `E : SpectralFamily 𝔹`, M023 forms the raw Boolean-valued rational subset whose canonical rational child `q` carries coefficient `E.proj q`. Its exact rational membership is
 
 ```text
-P q := E.proj (q : ℝ).
+BVSet.mem (BVSet.ratName q) (SpectralFamily.rationalName E)
+  = E.proj (q : ℝ).
 ```
 
-Construct a raw Boolean-valued rational subset whose canonical rational child `q` carries coefficient `P q`, then pass to the separated universe.  Prove exact rational membership
+The name is Boolean-included in the checked rational carrier. Density of `ℚ` in `ℝ`, together with the spectral-family endpoint and right-continuity laws, proves that the rational restriction satisfies all three M022 profile equations. Consequently `SpectralFamily.toInternalReal` is a genuine `InternalReal` with
 
 ```text
-InternalReal.profile (E.toInternalReal) q = E.proj (q : ℝ).
+InternalReal.profile (SpectralFamily.toInternalReal E) q
+  = E.proj (q : ℝ).
 ```
-
-The spectral-family endpoint and right-continuity laws must imply the three M022 rational upper-cut equations, and every child of the constructed name must lie in the checked rational carrier with Boolean value `⊤`.
 
 ## Reconstruction on rational subsets
 
-The difficult inverse direction must not stop at equality of rational profiles.  M023 should establish that an M022 internal real is determined, on the separated carrier, by its checked-rational profile together with its top-valued inclusion in the rational carrier.
-
-A useful intermediate target is an exact rational expansion theorem for any separated rational subset `u`:
+The difficult inverse direction is extensional rather than representation-dependent. M022 exposes the semantic support equation
 
 ```text
-mem z u = ⨆ q : ℚ, bvEq z (ratName q) ⊓ profile u q.
+BVSet.mem z BVSet.rationals
+  = ⨆ q : ℚ, BVSet.bvEq z (BVSet.ratName q).
 ```
 
-The checked rational carrier itself should admit the corresponding support equation
+M023 descends this to the separated universe and proves that every top-valued rational subset has the exact expansion
 
 ```text
-mem z rationals = ⨆ q : ℚ, bvEq z (ratName q).
+mem z x
+  = ⨆ q : ℚ,
+      bvEq z (ratName q) ⊓ profile x q.
 ```
 
-These formulas make the inverse law extensional rather than representation-dependent.
+Hence two separated rational subsets with equal rational profiles are equal as separated names. The proof uses only rational support, Boolean-valued atomic substitution, quotient induction, and separated extensionality. It does not choose quotient representatives and does not unfold the private rational coding.
 
-## Acceptance tests
+## Inverse laws and packaged equivalence
 
-M023 is complete only if executable probes establish all of the following.
+Both constructions are inverse as ordinary Lean equalities:
 
-1. `SpectralFamily` is Hilbert-free and assumes only `CompleteBooleanAlgebra 𝔹`.
-2. The rational-envelope extension of every `InternalReal` satisfies all spectral-family axioms.
-3. The extension agrees exactly with `InternalReal.profile` at every rational index.
-4. Every `SpectralFamily` reconstructs an `InternalReal` with exact rational profile `E.proj q`.
-5. Rational restriction of a spectral family satisfies the three M022 upper-cut equations.
-6. The round trip `SpectralFamily → InternalReal → SpectralFamily` is Lean equality.
-7. The round trip `InternalReal → SpectralFamily → InternalReal` is Lean equality on the separated carrier, not merely pointwise profile equality.
-8. No Hilbert space, operator algebra, `Small.{u} 𝔹`, or `Nontrivial 𝔹` assumption is introduced.
+```text
+InternalReal.toSpectralFamily (SpectralFamily.toInternalReal E) = E
+SpectralFamily.toInternalReal (InternalReal.toSpectralFamily u) = u
+```
+
+The second theorem is equality of the actual `InternalReal` structures on the separated carrier, not merely pointwise equality of rational profiles.
+
+The correspondence is packaged for downstream use as
+
+```text
+internalRealEquivSpectralFamily :
+  InternalReal 𝔹 ≃ SpectralFamily 𝔹
+```
+
+so M024 can transport structure through a genuine equivalence rather than repeatedly invoking the inverse laws by hand.
+
+## Acceptance
+
+`Audit/M023Acceptance.lean` checks the complete public surface:
+
+1. `SpectralFamily` is Hilbert-free and assumes only `CompleteBooleanAlgebra 𝔹`;
+2. the rational-envelope extension of every `InternalReal` satisfies all spectral-family axioms;
+3. the extension agrees exactly with the M022 profile at rational indices;
+4. every spectral family reconstructs an `InternalReal` with exact rational profile;
+5. rational restriction satisfies the three M022 upper-cut equations;
+6. the rational carrier and rational subsets satisfy the public support/expansion equations;
+7. both round trips are Lean equalities;
+8. the correspondence is available as a Lean equivalence;
+9. no Hilbert space, operator algebra, `Small.{u} 𝔹`, or `Nontrivial 𝔹` assumption is introduced.
 
 ## Non-goals
 
@@ -112,8 +142,9 @@ M023 does **not** include:
 ## Review prompts
 
 - Is the real-index extension exactly Takeuti's rational-envelope construction?
-- Does the rational restriction theorem hold as an exact Boolean equality rather than only at value `⊤`?
+- Does rational restriction hold as an exact Boolean equality rather than only at value `⊤`?
 - Is the converse constructor genuinely a Boolean-valued rational subset rather than an external profile disguised as an internal real?
 - Are both inverse laws proved at the intended extensional/separated level?
+- Does rational-subset reconstruction avoid representatives and private rational encodings?
 - Does the proof avoid importing Hilbert-space structure into the pure Boolean correspondence?
 - Are M024 arithmetic/localization results still downstream theorems rather than fields of `SpectralFamily`?
