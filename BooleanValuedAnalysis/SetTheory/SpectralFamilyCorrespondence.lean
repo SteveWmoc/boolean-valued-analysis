@@ -9,10 +9,15 @@ import BooleanValuedAnalysis.SetTheory.SpectralFamily
 /-!
 # Internal-real / spectral-family correspondence
 
-This file develops the converse direction of Takeuti Part I, §1.3.  A Boolean
-spectral family is restricted to rational indices and used as the coefficient
-profile of a raw Boolean-valued rational subset.  The resulting separated name
-is an M022 `InternalReal`.
+This file completes the pure Boolean-valued correspondence of Takeuti Part I,
+§1.3. A Boolean spectral family is restricted to rational indices and used as
+the coefficient profile of a raw Boolean-valued rational subset. Conversely,
+an M022 internal real is extended from its rational profile by Takeuti's
+rational-envelope construction.
+
+The two constructions are inverse as Lean equalities. The difficult inverse is
+proved extensionally on the separated carrier: a top-valued rational subset is
+determined by its checked-rational membership profile.
 
 No Hilbert space, `Small`, or `Nontrivial` assumption is used.
 -/
@@ -22,6 +27,119 @@ noncomputable section
 universe u v
 
 namespace BooleanValued
+
+namespace BVSet.Separated
+
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+
+/-- Membership in the separated checked rational carrier is exactly the join of
+Boolean equalities with canonical separated rational names. -/
+theorem mem_rationals_eq_iSup_bvEq_ratName
+    (z : BVSet.Separated.{u, v} 𝔹) :
+    mem z (rationals (𝔹 := 𝔹)) =
+      ⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q) := by
+  refine Quotient.inductionOn' z ?_
+  intro z
+  change
+    BVSet.mem z (BVSet.rationals (𝔹 := 𝔹)) =
+      ⨆ q : ℚ, BVSet.bvEq z (BVSet.ratName (𝔹 := 𝔹) q)
+  exact BVSet.mem_rationals_eq_iSup_bvEq_ratName z
+
+/-- Top-valued separated inclusion gives pointwise inclusion of Boolean
+membership values. -/
+theorem mem_le_of_subsetValue_eq_top
+    (x y : BVSet.Separated.{u, v} 𝔹)
+    (h : subsetValue x y = ⊤)
+    (z : BVSet.Separated.{u, v} 𝔹) :
+    mem z x ≤ mem z y := by
+  have hz : subsetValue x y ≤ mem z x ⇨ mem z y := by
+    unfold subsetValue
+    exact iInf_le _ z
+  have htop : ⊤ ≤ mem z x ⇨ mem z y := by
+    simpa [h] using hz
+  have hle := (le_himp_iff).1 htop
+  simpa using hle
+
+/-- Exact rational support expansion for a separated Boolean-valued subset of
+the checked rationals. -/
+theorem mem_eq_rational_profile_expansion
+    (x : BVSet.Separated.{u, v} 𝔹)
+    (hx : subsetValue x (rationals (𝔹 := 𝔹)) = ⊤)
+    (z : BVSet.Separated.{u, v} 𝔹) :
+    mem z x =
+      ⨆ q : ℚ,
+        bvEq z (ratName (𝔹 := 𝔹) q) ⊓ profile (𝔹 := 𝔹) x q := by
+  have hsub :
+      mem z x ≤ mem z (rationals (𝔹 := 𝔹)) :=
+    mem_le_of_subsetValue_eq_top x (rationals (𝔹 := 𝔹)) hx z
+  rw [mem_rationals_eq_iSup_bvEq_ratName] at hsub
+  apply le_antisymm
+  · calc
+      mem z x =
+          mem z x ⊓ (⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q)) :=
+        (inf_eq_left.mpr hsub).symm
+      _ = ⨆ q : ℚ,
+          mem z x ⊓ bvEq z (ratName (𝔹 := 𝔹) q) := by
+        rw [inf_iSup_eq]
+      _ ≤ ⨆ q : ℚ,
+          bvEq z (ratName (𝔹 := 𝔹) q) ⊓ profile (𝔹 := 𝔹) x q := by
+        apply iSup_le
+        intro q
+        apply le_iSup_of_le q
+        apply le_inf
+        · exact inf_le_right
+        · calc
+            mem z x ⊓ bvEq z (ratName (𝔹 := 𝔹) q) =
+                bvEq z (ratName (𝔹 := 𝔹) q) ⊓ mem z x := inf_comm _ _
+            _ ≤ mem (ratName (𝔹 := 𝔹) q) x :=
+              mem_congr_left z (ratName (𝔹 := 𝔹) q) x
+            _ = profile (𝔹 := 𝔹) x q := rfl
+  · apply iSup_le
+    intro q
+    calc
+      bvEq z (ratName (𝔹 := 𝔹) q) ⊓ profile (𝔹 := 𝔹) x q =
+          bvEq (ratName (𝔹 := 𝔹) q) z ⊓
+            mem (ratName (𝔹 := 𝔹) q) x := by
+        rw [bvEq_symm z (ratName (𝔹 := 𝔹) q)]
+        rfl
+      _ ≤ mem z x := mem_congr_left (ratName (𝔹 := 𝔹) q) z x
+
+private theorem bvEq_eq_iInf_mem_iff
+    (x y : BVSet.Separated.{u, v} 𝔹) :
+    bvEq x y =
+      ⨅ z : BVSet.Separated.{u, v} 𝔹,
+        (mem z x ⇨ mem z y) ⊓ (mem z y ⇨ mem z x) := by
+  refine Quotient.inductionOn₂' x y ?_
+  intro x y
+  rw [iInf_eq_iInf_toSeparated]
+  change
+    BVSet.bvEq x y =
+      ⨅ z : BVSet.{u, v} 𝔹,
+        (BVSet.mem z x ⇨ BVSet.mem z y) ⊓
+          (BVSet.mem z y ⇨ BVSet.mem z x)
+  exact BVSet.bvEq_eq_iInf_mem_iff x y
+
+/-- A separated Boolean-valued subset of the checked rationals is determined by
+its checked-rational membership profile. -/
+theorem eq_of_subset_rationals_of_profile_eq
+    (x y : BVSet.Separated.{u, v} 𝔹)
+    (hx : subsetValue x (rationals (𝔹 := 𝔹)) = ⊤)
+    (hy : subsetValue y (rationals (𝔹 := 𝔹)) = ⊤)
+    (hprofile : ∀ q : ℚ, profile (𝔹 := 𝔹) x q = profile (𝔹 := 𝔹) y q) :
+    x = y := by
+  rw [eq_iff_bvEq_top, bvEq_eq_iInf_mem_iff]
+  apply top_unique
+  apply le_iInf
+  intro z
+  have hmem : mem z x = mem z y := by
+    rw [mem_eq_rational_profile_expansion x hx z]
+    rw [mem_eq_rational_profile_expansion y hy z]
+    simp_rw [hprofile]
+  rw [hmem]
+  simp
+
+end BVSet.Separated
+
 namespace SpectralFamily
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
@@ -177,5 +295,59 @@ theorem rationalEnvelope_restrict (E : SpectralFamily 𝔹) (r : ℝ) :
     intro q
     exact E.monotone q.2.le
 
+/-- Two spectral families are equal when their projections agree pointwise. -/
+theorem ext {E F : SpectralFamily 𝔹}
+    (h : ∀ r : ℝ, E.proj r = F.proj r) : E = F := by
+  cases E with
+  | mk Eproj Em Ei Es Er =>
+      cases F with
+      | mk Fproj Fm Fi Fs Fr =>
+          dsimp at h
+          have hp : Eproj = Fproj := funext h
+          subst Fproj
+          rfl
+
+/-- The spectral-family → internal-real → spectral-family round trip is the
+identity as a Lean equality. -/
+@[simp]
+theorem toSpectralFamily_toInternalReal (E : SpectralFamily 𝔹) :
+    InternalReal.toSpectralFamily
+        (toInternalReal E : InternalReal.{u, v} 𝔹) = E := by
+  apply ext
+  intro r
+  change rationalEnvelope (fun q : ℚ => E.proj (q : ℝ)) r = E.proj r
+  exact rationalEnvelope_restrict E r
+
 end SpectralFamily
+
+namespace InternalReal
+
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
+
+/-- The internal-real → spectral-family → internal-real round trip is the
+identity on the separated carrier, not merely pointwise profile equality. -/
+@[simp]
+theorem toInternalReal_toSpectralFamily (u : InternalReal.{u, v} 𝔹) :
+    SpectralFamily.toInternalReal (toSpectralFamily u) = u := by
+  have hval :
+      (SpectralFamily.toInternalReal (toSpectralFamily u) :
+        InternalReal.{u, v} 𝔹).val = u.val := by
+    apply BVSet.Separated.eq_of_subset_rationals_of_profile_eq
+    · exact subsetValue_eq_top
+        (SpectralFamily.toInternalReal (toSpectralFamily u) :
+          InternalReal.{u, v} 𝔹)
+    · exact subsetValue_eq_top u
+    · intro q
+      change
+        profile
+            (SpectralFamily.toInternalReal (toSpectralFamily u) :
+              InternalReal.{u, v} 𝔹) q =
+          profile u q
+      rw [SpectralFamily.profile_toInternalReal, toSpectralFamily_proj_rat]
+  cases u with
+  | mk val hu =>
+      cases hval
+      rfl
+
+end InternalReal
 end BooleanValued
