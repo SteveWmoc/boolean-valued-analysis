@@ -93,8 +93,8 @@ theorem mem_ratName_rationalName (E : SpectralFamily 𝔹) (q : ℚ) :
     rw [BVSet.bvEq_ratName]
     by_cases h : q = r.down
     · subst q
-      simp [classicalValue]
-    · simp [classicalValue, h]
+      simp [BVSet.classicalValue]
+    · simp [BVSet.classicalValue, h]
   · apply le_iSup_of_le (ULift.up q)
     simp
 
@@ -109,6 +109,7 @@ theorem subsetValue_rationalName_rationals (E : SpectralFamily 𝔹) :
   rw [le_himp_iff]
   unfold rationalName
   rw [BVSet.mem_mk]
+  simp only [top_inf_eq]
   apply iSup_le
   intro r
   calc
@@ -162,10 +163,6 @@ rational-envelope construction. -/
 theorem rationalEnvelope_restrict (E : SpectralFamily 𝔹) (r : ℝ) :
     rationalEnvelope (fun q : ℚ => E.proj (q : ℝ)) r = E.proj r := by
   apply le_antisymm
-  · unfold rationalEnvelope
-    apply le_iInf
-    intro q
-    exact E.monotone q.2.le
   · rw [E.rightContinuous r]
     apply le_iInf
     intro s
@@ -175,6 +172,10 @@ theorem rationalEnvelope_restrict (E : SpectralFamily 𝔹) (r : ℝ) :
         unfold rationalEnvelope
         exact iInf_le _ (show {t : ℚ // r < (t : ℝ)} from ⟨q, hrq⟩)
       _ ≤ E.proj s.1 := E.monotone hqs.le
+  · unfold rationalEnvelope
+    apply le_iInf
+    intro q
+    exact E.monotone q.2.le
 
 end SpectralFamily
 end BooleanValued
