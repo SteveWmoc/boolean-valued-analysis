@@ -119,6 +119,7 @@ lake build
 ```
 
 To use the whole library from another file:
+
 ```lean
 import BooleanValuedAnalysis
 
