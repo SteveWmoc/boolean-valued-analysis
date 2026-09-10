@@ -93,8 +93,8 @@ theorem mem_ratName_rationalName (E : SpectralFamily 𝔹) (q : ℚ) :
     rw [BVSet.bvEq_ratName]
     by_cases h : q = r.down
     · subst q
-      simp [BVSet.classicalValue]
-    · simp [BVSet.classicalValue, h]
+      simp [SetTheory.classicalValue]
+    · simp [SetTheory.classicalValue, h]
   · apply le_iSup_of_le (ULift.up q)
     simp
 
