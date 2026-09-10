@@ -106,6 +106,8 @@ jobs:
           auto-config: false
           build: true
           lint: true
+          axiom-audit: true
+          axiom-audit-allow: propext,Classical.choice,Quot.sound
 
       - name: Compile milestone acceptance probes
         shell: bash
