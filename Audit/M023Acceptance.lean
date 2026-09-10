@@ -131,4 +131,10 @@ example (u : InternalReal.{u, v} 𝔹) :
   toInternalReal_toSpectralFamily u
 
 end InternalReal
+
+-- The correspondence is available downstream as one reusable equivalence.
+example {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹] :
+    InternalReal.{u, v} 𝔹 ≃ SpectralFamily 𝔹 :=
+  internalRealEquivSpectralFamily.{u, v} 𝔹
+
 end BooleanValued
