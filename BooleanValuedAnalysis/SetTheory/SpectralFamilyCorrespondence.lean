@@ -329,12 +329,21 @@ theorem toSpectralFamily_toInternalReal (E : SpectralFamily 𝔹) :
         apply le_antisymm
         · apply le_iInf
           intro q
-          rw [profile_toInternalReal E q.1]
-          exact iInf_le _ q
+          calc
+            (⨅ t : {t : ℚ // r < (t : ℝ)},
+                InternalReal.profile
+                  (toInternalReal E : InternalReal.{u, v} 𝔹) t.1) ≤
+                InternalReal.profile
+                  (toInternalReal E : InternalReal.{u, v} 𝔹) q.1 := iInf_le _ q
+            _ = E.proj (q.1 : ℝ) := profile_toInternalReal E q.1
         · apply le_iInf
           intro q
-          rw [← profile_toInternalReal E q.1]
-          exact iInf_le _ q
+          calc
+            (⨅ t : {t : ℚ // r < (t : ℝ)}, E.proj (t.1 : ℝ)) ≤
+                E.proj (q.1 : ℝ) := iInf_le _ q
+            _ = InternalReal.profile
+                (toInternalReal E : InternalReal.{u, v} 𝔹) q.1 :=
+              (profile_toInternalReal E q.1).symm
     _ = E.proj r := rationalEnvelope_restrict E r
 
 end SpectralFamily
