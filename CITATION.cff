@@ -5,12 +5,19 @@ type: software
 authors:
   - family-names: "Sabean"
     given-names: "Steven"
+    orcid: "https://orcid.org/0009-0009-9238-610X"
 repository-code: "https://github.com/SteveWmoc/boolean-valued-analysis"
 license: "Apache-2.0"
 version: "0.1.0"
+abstract: >-
+  An experimental Lean 4 formalization of the foundations of Boolean-valued set
+  theory and Boolean-valued analysis, including Boolean-valued semantics, mixing
+  and maximum principles, a separated Boolean-valued universe, ZF/ZFC transfer
+  infrastructure, internal reals, and Boolean spectral families.
 keywords:
   - "Lean 4"
   - "formalized mathematics"
   - "Boolean-valued analysis"
+  - "Boolean-valued models"
   - "set theory"
   - "forcing"
