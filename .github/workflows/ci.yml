@@ -42,6 +42,65 @@ jobs:
           done < <(find BooleanValuedAnalysis -type f -name '*.lean' | sort)
           exit "${missing}"
 
+      - name: Verify release metadata coherence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          toolchain = Path("lean-toolchain").read_text(encoding="utf-8").strip()
+          match = re.fullmatch(r"leanprover/lean4:(v\d+\.\d+\.\d+)", toolchain)
+          if match is None:
+              raise SystemExit(f"unexpected lean-toolchain format: {toolchain!r}")
+          lean_rev = match.group(1)
+
+          lakefile = Path("lakefile.toml").read_text(encoding="utf-8")
+          project_version = re.search(r'^version = "([^"]+)"$', lakefile, re.MULTILINE)
+          mathlib_rev = re.search(
+              r'\[\[require\]\]\s*\nname = "mathlib"\s*\n'
+              r'git = "https://github.com/leanprover-community/mathlib4\.git"\s*\n'
+              r'rev = "([^"]+)"',
+              lakefile,
+          )
+          if project_version is None or mathlib_rev is None:
+              raise SystemExit("could not read project version or Mathlib revision from lakefile.toml")
+
+          citation = Path("CITATION.cff").read_text(encoding="utf-8")
+          citation_version = re.search(r'^version:\s*"?([^"\s]+)"?$', citation, re.MULTILINE)
+          if citation_version is None:
+              raise SystemExit("could not read version from CITATION.cff")
+
+          manifest = json.loads(Path("lake-manifest.json").read_text(encoding="utf-8"))
+          mathlib_packages = [pkg for pkg in manifest["packages"] if pkg["name"] == "mathlib"]
+          if len(mathlib_packages) != 1:
+              raise SystemExit(f"expected one Mathlib manifest entry, found {len(mathlib_packages)}")
+          manifest_mathlib = mathlib_packages[0]
+
+          if lean_rev != mathlib_rev.group(1):
+              raise SystemExit(
+                  f"Lean/Mathlib release mismatch: lean-toolchain={lean_rev}, "
+                  f"lakefile Mathlib={mathlib_rev.group(1)}"
+              )
+          if manifest_mathlib.get("inputRev") != mathlib_rev.group(1):
+              raise SystemExit(
+                  "lake-manifest.json Mathlib inputRev does not match lakefile.toml: "
+                  f"{manifest_mathlib.get('inputRev')} != {mathlib_rev.group(1)}"
+              )
+          if project_version.group(1) != citation_version.group(1):
+              raise SystemExit(
+                  "project version mismatch: "
+                  f"lakefile.toml={project_version.group(1)}, "
+                  f"CITATION.cff={citation_version.group(1)}"
+              )
+
+          print(f"Project version: {project_version.group(1)}")
+          print(f"Lean/Mathlib release: {lean_rev}")
+          print(f"Mathlib commit: {manifest_mathlib['rev']}")
+          PY
+
       - uses: leanprover/lean-action@v1
         with:
           auto-config: false
@@ -62,18 +121,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          {
-            while IFS= read -r probe; do
-              echo "::group::$probe"
-              lake env lean "$probe"
-              echo "::endgroup::"
-            done < <(find docs -type f -name '*.lean' | sort)
-          } 2>&1 | tee /tmp/documentation-probes.log
-
-      - name: Upload documentation probe log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation-probes-log
-          path: /tmp/documentation-probes.log
-          if-no-files-found: ignore
+          while IFS= read -r probe; do
+            echo "::group::$probe"
+            lake env lean "$probe"
+            echo "::endgroup::"
+          done < <(find docs -type f -name '*.lean' | sort)
