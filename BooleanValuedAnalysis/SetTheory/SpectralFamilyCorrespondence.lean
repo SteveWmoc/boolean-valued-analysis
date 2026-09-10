@@ -315,7 +315,12 @@ theorem toSpectralFamily_toInternalReal (E : SpectralFamily 𝔹) :
         (toInternalReal E : InternalReal.{u, v} 𝔹) = E := by
   apply ext
   intro r
-  change rationalEnvelope (fun q : ℚ => E.proj (q : ℝ)) r = E.proj r
+  unfold InternalReal.toSpectralFamily
+  change
+    rationalEnvelope
+        (InternalReal.profile
+          (toInternalReal E : InternalReal.{u, v} 𝔹)) r = E.proj r
+  simp_rw [profile_toInternalReal]
   exact rationalEnvelope_restrict E r
 
 end SpectralFamily
@@ -324,30 +329,45 @@ namespace InternalReal
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
+private theorem eq_of_val_eq {x y : InternalReal.{u, v} 𝔹}
+    (h : x.val = y.val) : x = y := by
+  cases x with
+  | mk xv hx =>
+      cases y with
+      | mk yv hy =>
+          dsimp at h
+          subst yv
+          rfl
+
 /-- The internal-real → spectral-family → internal-real round trip is the
 identity on the separated carrier, not merely pointwise profile equality. -/
 @[simp]
 theorem toInternalReal_toSpectralFamily (u : InternalReal.{u, v} 𝔹) :
     SpectralFamily.toInternalReal (toSpectralFamily u) = u := by
-  have hval :
+  apply eq_of_val_eq
+  apply BVSet.Separated.eq_of_subset_rationals_of_profile_eq
+  · exact subsetValue_eq_top
       (SpectralFamily.toInternalReal (toSpectralFamily u) :
-        InternalReal.{u, v} 𝔹).val = u.val := by
-    apply BVSet.Separated.eq_of_subset_rationals_of_profile_eq
-    · exact subsetValue_eq_top
-        (SpectralFamily.toInternalReal (toSpectralFamily u) :
-          InternalReal.{u, v} 𝔹)
-    · exact subsetValue_eq_top u
-    · intro q
-      change
-        profile
-            (SpectralFamily.toInternalReal (toSpectralFamily u) :
-              InternalReal.{u, v} 𝔹) q =
-          profile u q
-      rw [SpectralFamily.profile_toInternalReal, toSpectralFamily_proj_rat]
-  cases u with
-  | mk val hu =>
-      cases hval
-      rfl
+        InternalReal.{u, v} 𝔹)
+  · exact subsetValue_eq_top u
+  · intro q
+    change
+      profile
+          (SpectralFamily.toInternalReal (toSpectralFamily u) :
+            InternalReal.{u, v} 𝔹) q =
+        profile u q
+    rw [SpectralFamily.profile_toInternalReal, toSpectralFamily_proj_rat]
 
 end InternalReal
+
+/-- Takeuti's M023 correspondence packaged as a genuine equivalence of the
+separated internal reals and Boolean spectral families. -/
+def internalRealEquivSpectralFamily
+    (𝔹 : Type v) [CompleteBooleanAlgebra 𝔹] :
+    InternalReal.{u, v} 𝔹 ≃ SpectralFamily 𝔹 where
+  toFun := InternalReal.toSpectralFamily
+  invFun := SpectralFamily.toInternalReal
+  left_inv := InternalReal.toInternalReal_toSpectralFamily
+  right_inv := SpectralFamily.toSpectralFamily_toInternalReal
+
 end BooleanValued
