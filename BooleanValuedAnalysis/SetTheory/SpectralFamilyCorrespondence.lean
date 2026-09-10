@@ -320,8 +320,22 @@ theorem toSpectralFamily_toInternalReal (E : SpectralFamily 𝔹) :
     rationalEnvelope
         (InternalReal.profile
           (toInternalReal E : InternalReal.{u, v} 𝔹)) r = E.proj r
-  simp_rw [profile_toInternalReal]
-  exact rationalEnvelope_restrict E r
+  calc
+    rationalEnvelope
+        (InternalReal.profile
+          (toInternalReal E : InternalReal.{u, v} 𝔹)) r =
+      rationalEnvelope (fun q : ℚ => E.proj (q : ℝ)) r := by
+        unfold rationalEnvelope
+        apply le_antisymm
+        · apply le_iInf
+          intro q
+          rw [profile_toInternalReal E q.1]
+          exact iInf_le _ q
+        · apply le_iInf
+          intro q
+          rw [← profile_toInternalReal E q.1]
+          exact iInf_le _ q
+    _ = E.proj r := rationalEnvelope_restrict E r
 
 end SpectralFamily
 
