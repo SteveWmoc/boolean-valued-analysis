@@ -91,6 +91,8 @@ theorems, culminating in exact Boolean-valid ZF and ZFC sentence theories with
 raw/separated Transfer Principles. M022 adds the Takeuti arithmetic layer with
 canonical rational names, exact checked rational equality and order truth,
 closed upper Dedekind cuts, separated internal reals, a genuine first-order
-upper-cut predicate, and the three rational profile equations consumed by the
-spectral-family construction in M023.
+upper-cut predicate, and their rational profile equations. M023 extends those
+profiles to real-indexed Boolean spectral families, reconstructs internal reals
+from arbitrary spectral families, proves both round trips on the separated
+carrier, and packages the correspondence as an equivalence.
 -/
