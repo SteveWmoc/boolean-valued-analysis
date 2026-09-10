@@ -19,28 +19,9 @@ noncomputable section
 universe u v
 
 namespace BooleanValued
-
-namespace BVSet
+namespace BVSet.Separated
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
-
-private theorem mem_rationals_eq_iSup_bvEq_ratName_raw
-    (z : BVSet.{u, v} 𝔹) :
-    mem z (rationals (𝔹 := 𝔹)) =
-      ⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q) := by
-  unfold rationals
-  change
-    (⨆ q : ULift.{u} ℚ, bvEq z (ratName (𝔹 := 𝔹) q.down)) =
-      ⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q)
-  apply le_antisymm
-  · apply iSup_le
-    intro q
-    exact le_iSup_of_le q.down le_rfl
-  · apply iSup_le
-    intro q
-    exact le_iSup_of_le (ULift.up q) (by simp)
-
-namespace Separated
 
 private theorem mem_rationals_eq_iSup_bvEq_ratName
     (z : BVSet.Separated.{u, v} 𝔹) :
@@ -51,7 +32,7 @@ private theorem mem_rationals_eq_iSup_bvEq_ratName
   change
     BVSet.mem z (BVSet.rationals (𝔹 := 𝔹)) =
       ⨆ q : ℚ, BVSet.bvEq z (BVSet.ratName (𝔹 := 𝔹) q)
-  exact mem_rationals_eq_iSup_bvEq_ratName_raw z
+  exact BVSet.mem_rationals_eq_iSup_bvEq_ratName z
 
 private theorem mem_le_of_subsetValue_eq_top
     (x y : BVSet.Separated.{u, v} 𝔹)
@@ -83,7 +64,8 @@ private theorem mem_eq_rational_profile_expansion
           mem z x ⊓ (⨆ q : ℚ, bvEq z (ratName (𝔹 := 𝔹) q)) :=
         (inf_eq_left.mpr hsub).symm
       _ = ⨆ q : ℚ,
-          mem z x ⊓ bvEq z (ratName (𝔹 := 𝔹) q) := inf_iSup_eq
+          mem z x ⊓ bvEq z (ratName (𝔹 := 𝔹) q) := by
+        rw [inf_iSup_eq]
       _ ≤ ⨆ q : ℚ,
           bvEq z (ratName (𝔹 := 𝔹) q) ⊓ profile (𝔹 := 𝔹) x q := by
         apply iSup_le
@@ -149,6 +131,5 @@ example
     x = y :=
   eq_of_subset_rationals_of_profile_eq x y hx hy hprofile
 
-end Separated
-end BVSet
+end BVSet.Separated
 end BooleanValued
