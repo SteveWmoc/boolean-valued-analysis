@@ -1,6 +1,7 @@
 # Boolean-Valued Analysis
 
 [![CI](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22696492.svg)](https://doi.org/10.5281/zenodo.22696492)
 
 AI tools are used extensively in the development of this project, including in code, proofs, documentation, and review. The work should be judged on its mathematical and technical merits. If you object in principle to AI-assisted research or software development, we respectfully suggest that this is not the project for you.
 
@@ -192,6 +193,14 @@ The project is motivated by the work of A. G. Kusraev and S. S. Kutateladze on B
 It relies on [Mathlib](https://github.com/leanprover-community/mathlib4), especially its implementations of first-order syntax and ground-model pre-sets. The development has also benefited from comparison with the [Flypitch](https://github.com/ianklatzco/flypitch) formalization of forcing and Boolean-valued models.
 
 ## Citation
+
+For the project as a whole, cite the Zenodo archive using the concept DOI:
+
+[10.5281/zenodo.22696492](https://doi.org/10.5281/zenodo.22696492)
+
+For reproducibility, cite the DOI for the exact release used. The first Zenodo-archived release, `v0.1.1`, is:
+
+[10.5281/zenodo.22696493](https://doi.org/10.5281/zenodo.22696493)
 
 Citation metadata is provided in [CITATION.cff](CITATION.cff). GitHub can also generate a formatted citation from the repository page.
 

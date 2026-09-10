@@ -9,6 +9,8 @@ authors:
 repository-code: "https://github.com/SteveWmoc/boolean-valued-analysis"
 license: "Apache-2.0"
 version: "0.1.1"
+doi: "10.5281/zenodo.22696493"
+date-released: 2026-09-10
 abstract: >-
   An experimental Lean 4 formalization of the foundations of Boolean-valued set
   theory and Boolean-valued analysis, including Boolean-valued semantics, mixing
