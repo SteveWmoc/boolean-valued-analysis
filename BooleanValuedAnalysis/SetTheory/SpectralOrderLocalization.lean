@@ -127,23 +127,12 @@ theorem le_trans {E F G : SpectralFamily 𝔹}
     (hEF : LE E F) (hFG : LE F G) : LE E G :=
   fun r => (hFG r).trans (hEF r)
 
-/-- Pointwise equality of spectral projections determines a spectral family. -/
-theorem ext {E F : SpectralFamily 𝔹}
-    (h : ∀ r : ℝ, E.proj r = F.proj r) : E = F := by
-  cases E with
-  | mk Eproj Em EiInf EiSup Erc =>
-    cases F with
-    | mk Fproj Fm FiInf FiSup Frc =>
-      have hp : Eproj = Fproj := funext h
-      subst Fproj
-      rfl
-
 /-- Spectral order is antisymmetric. -/
 theorem le_antisymm {E F : SpectralFamily 𝔹}
     (hEF : LE E F) (hFE : LE F E) : E = F := by
-  apply ext
-  intro r
-  exact le_antisymm (hFE r) (hEF r)
+  apply SpectralFamily.ext
+  funext r
+  exact _root_.le_antisymm (hFE r) (hEF r)
 
 end SpectralFamily
 
