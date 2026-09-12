@@ -184,7 +184,6 @@ def localize (E : SpectralFamily 𝔹) (p : 𝔹) : SpectralFamily 𝔹 where
   iSup_eq_top := localizeProj_iSup_eq_top E p
   rightContinuous := localizeProj_rightContinuous E p
 
-@[simp]
 theorem localize_proj (E : SpectralFamily 𝔹) (p : 𝔹) (r : ℝ) :
     (localize E p).proj r =
       if 0 ≤ r then (E.proj r ⊓ p) ⊔ pᶜ else E.proj r ⊓ p := rfl
