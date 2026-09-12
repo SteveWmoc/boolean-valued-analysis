@@ -11,9 +11,9 @@ import Mathlib.Tactic
 # Spectral localization for M024a
 
 This file implements Takeuti's Boolean-side localization formula from Part I,
-§1.3.  Restricting a spectral family `E` to a Boolean region `p` keeps the
+§1.3. Restricting a spectral family `E` to a Boolean region `p` keeps the
 original family below `p` and fills the complementary region with the zero
-real.  The full Boolean truth degree of internal order/equality is then
+real. The full Boolean truth degree of internal order/equality is then
 characterized by order/equality of the localized spectral families.
 -/
 
@@ -47,13 +47,13 @@ private theorem localizeProj_monotone (E : SpectralFamily 𝔹) (p : 𝔹) :
 private theorem localizeProj_inf (E : SpectralFamily 𝔹) (p : 𝔹) (r : ℝ) :
     localizeProj E p r ⊓ p = E.proj r ⊓ p := by
   by_cases hr : 0 ≤ r
-  · rw [localizeProj, if_pos hr]
-    simp [sup_inf_left, inf_assoc]
-  · rw [localizeProj, if_neg hr]
+  · rw [localizeProj, if_pos hr, inf_sup_right]
+    simp [inf_assoc]
+  · rw [localizeProj, if_neg hr, inf_assoc, inf_idem]
 
 private theorem localizeProj_iInf_eq_bot (E : SpectralFamily 𝔹) (p : 𝔹) :
     (⨅ r : ℝ, localizeProj E p r) = ⊥ := by
-  apply le_antisymm
+  apply _root_.le_antisymm
   · rw [← E.iInf_eq_bot]
     apply le_iInf
     intro r
@@ -89,7 +89,7 @@ private theorem localizeProj_iSup_eq_top (E : SpectralFamily 𝔹) (p : 𝔹) :
         apply le_iSup_of_le r
         by_cases hr : 0 ≤ r
         · rw [localizeProj, if_pos hr]
-          exact (inf_comm p (E.proj r) ▸ le_sup_left)
+          simpa [inf_comm] using (le_sup_left : E.proj r ⊓ p ≤ (E.proj r ⊓ p) ⊔ pᶜ)
         · rw [localizeProj, if_neg hr]
           exact le_of_eq (inf_comm p (E.proj r))
   have hpc : pᶜ ≤ ⨆ r : ℝ, localizeProj E p r := by
@@ -97,7 +97,8 @@ private theorem localizeProj_iSup_eq_top (E : SpectralFamily 𝔹) (p : 𝔹) :
       pᶜ ≤ localizeProj E p 0 := by
         rw [localizeProj, if_pos le_rfl]
         exact le_sup_right
-      _ ≤ ⨆ r : ℝ, localizeProj E p r := le_iSup _ 0
+      _ ≤ ⨆ r : ℝ, localizeProj E p r :=
+        le_iSup (fun r : ℝ => localizeProj E p r) 0
   calc
     ⊤ = p ⊔ pᶜ := by simp
     _ ≤ ⨆ r : ℝ, localizeProj E p r := sup_le hp hpc
@@ -106,7 +107,7 @@ private theorem localizeProj_rightContinuous
     (E : SpectralFamily 𝔹) (p : 𝔹) (r : ℝ) :
     localizeProj E p r =
       ⨅ s : {s : ℝ // r < s}, localizeProj E p s.1 := by
-  apply le_antisymm
+  apply _root_.le_antisymm
   · apply le_iInf
     intro s
     exact localizeProj_monotone E p s.2.le
@@ -198,7 +199,7 @@ def zero : SpectralFamily 𝔹 where
       simp [hr, hs]
     · by_cases hs : 0 ≤ s <;> simp [hr, hs]
   iInf_eq_bot := by
-    apply le_antisymm
+    apply _root_.le_antisymm
     · calc
         (⨅ r : ℝ, if 0 ≤ r then (⊤ : 𝔹) else ⊥) ≤
             (if 0 ≤ (-1 : ℝ) then (⊤ : 𝔹) else ⊥) := iInf_le _ (-1)
@@ -208,19 +209,20 @@ def zero : SpectralFamily 𝔹 where
     apply top_unique
     calc
       ⊤ = (if 0 ≤ (0 : ℝ) then (⊤ : 𝔹) else ⊥) := by simp
-      _ ≤ ⨆ r : ℝ, if 0 ≤ r then (⊤ : 𝔹) else ⊥ := le_iSup _ 0
+      _ ≤ ⨆ r : ℝ, if 0 ≤ r then (⊤ : 𝔹) else ⊥ :=
+        le_iSup (fun r : ℝ => if 0 ≤ r then (⊤ : 𝔹) else ⊥) 0
   rightContinuous := by
     intro r
     by_cases hr : 0 ≤ r
     · rw [if_pos hr]
-      apply le_antisymm
+      apply _root_.le_antisymm
       · apply le_iInf
         intro s
         simp [hr.trans s.2.le]
       · exact le_top
     · have hr0 : r < 0 := lt_of_not_ge hr
       rw [if_neg hr]
-      apply le_antisymm
+      apply _root_.le_antisymm
       · exact bot_le
       · let m : ℝ := (r + 0) / 2
         have hrm : r < m := by
@@ -240,13 +242,13 @@ theorem zero_proj (r : ℝ) :
 
 @[simp]
 theorem localize_top (E : SpectralFamily 𝔹) : localize E ⊤ = E := by
-  apply ext
+  apply SpectralFamily.ext
   intro r
   by_cases hr : 0 ≤ r <;> simp [localize_proj, hr]
 
 @[simp]
 theorem localize_bot (E : SpectralFamily 𝔹) : localize E ⊥ = zero := by
-  apply ext
+  apply SpectralFamily.ext
   intro r
   by_cases hr : 0 ≤ r <;> simp [localize_proj, zero_proj, hr]
 
@@ -275,16 +277,26 @@ namespace BVSet.Separated
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
+private theorem bvEq_eq_iInf_mem_iff_local
+    (x y : BVSet.Separated.{u, v} 𝔹) :
+    bvEq x y =
+      ⨅ z : BVSet.Separated.{u, v} 𝔹,
+        (mem z x ⇨ mem z y) ⊓ (mem z y ⇨ mem z x) := by
+  refine Quotient.inductionOn₂' x y ?_
+  intro x y
+  rw [iInf_eq_iInf_toSeparated]
+  change
+    BVSet.bvEq x y =
+      ⨅ z : BVSet.{u, v} 𝔹,
+        (BVSet.mem z x ⇨ BVSet.mem z y) ⊓
+          (BVSet.mem z y ⇨ BVSet.mem z x)
+  exact BVSet.bvEq_eq_iInf_mem_iff x y
+
 /-- Boolean equality is exactly mutual Boolean inclusion. -/
 theorem bvEq_eq_subsetValue_inf
     (x y : BVSet.Separated.{u, v} 𝔹) :
     bvEq x y = subsetValue x y ⊓ subsetValue y x := by
-  refine Quotient.inductionOn₂' x y ?_
-  intro x y
-  simp only [bvEq_toSeparated, subsetValue_toSeparated]
-  rw [BVSet.bvEq_eq_iInf_mem_iff,
-    BVSet.subsetValue_eq_iInf_mem, BVSet.subsetValue_eq_iInf_mem,
-    iInf_inf_eq]
+  rw [bvEq_eq_iInf_mem_iff_local, subsetValue, subsetValue, iInf_inf_eq]
 
 end BVSet.Separated
 
@@ -293,7 +305,7 @@ namespace InternalReal
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 /-- Full Boolean order truth is exactly spectral order after localization to
-`p`.  This is the Hilbert-free Boolean content of Takeuti's localized order
+`p`. This is the Hilbert-free Boolean content of Takeuti's localized order
 formula. -/
 theorem le_leValue_iff_localize_spectralLE
     (u v : InternalReal.{u, v} 𝔹) (p : 𝔹) :
