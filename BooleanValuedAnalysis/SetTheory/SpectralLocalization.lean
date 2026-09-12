@@ -89,7 +89,8 @@ private theorem localizeProj_iSup_eq_top (E : SpectralFamily 𝔹) (p : 𝔹) :
         apply le_iSup_of_le r
         by_cases hr : 0 ≤ r
         · rw [localizeProj, if_pos hr]
-          simpa [inf_comm] using (le_sup_left : E.proj r ⊓ p ≤ (E.proj r ⊓ p) ⊔ pᶜ)
+          simpa [inf_comm] using
+            (le_sup_left : E.proj r ⊓ p ≤ (E.proj r ⊓ p) ⊔ pᶜ)
         · rw [localizeProj, if_neg hr]
           exact le_of_eq (inf_comm p (E.proj r))
   have hpc : pᶜ ≤ ⨆ r : ℝ, localizeProj E p r := by
@@ -151,7 +152,10 @@ private theorem localizeProj_rightContinuous
         have hmt : m < t.1 := hmmin.trans_le (min_le_left _ _)
         have hm0 : m < 0 := hmmin.trans_le (min_le_right _ _)
         calc
-          x ≤ localizeProj E p m := iInf_le _ ⟨m, hrm⟩
+          x ≤ localizeProj E p m :=
+            iInf_le
+              (fun s : {s : ℝ // r < s} => localizeProj E p s.1)
+              (show {s : ℝ // r < s} from ⟨m, hrm⟩)
           _ = E.proj m ⊓ p := by
             rw [localizeProj, if_neg (not_le.mpr hm0)]
           _ ≤ E.proj m := inf_le_left
@@ -164,7 +168,10 @@ private theorem localizeProj_rightContinuous
           dsimp [m]
           linarith
         calc
-          x ≤ localizeProj E p m := iInf_le _ ⟨m, hrm⟩
+          x ≤ localizeProj E p m :=
+            iInf_le
+              (fun s : {s : ℝ // r < s} => localizeProj E p s.1)
+              (show {s : ℝ // r < s} from ⟨m, hrm⟩)
           _ = E.proj m ⊓ p := by
             rw [localizeProj, if_neg (not_le.mpr hm0)]
           _ ≤ p := inf_le_right
@@ -233,7 +240,11 @@ def zero : SpectralFamily 𝔹 where
           linarith
         calc
           (⨅ s : {s : ℝ // r < s}, if 0 ≤ s.1 then (⊤ : 𝔹) else ⊥) ≤
-              (if 0 ≤ m then (⊤ : 𝔹) else ⊥) := iInf_le _ ⟨m, hrm⟩
+              (if 0 ≤ m then (⊤ : 𝔹) else ⊥) :=
+            iInf_le
+              (fun s : {s : ℝ // r < s} =>
+                if 0 ≤ s.1 then (⊤ : 𝔹) else ⊥)
+              (show {s : ℝ // r < s} from ⟨m, hrm⟩)
           _ = ⊥ := by simp [not_le.mpr hm0]
 
 @[simp]
