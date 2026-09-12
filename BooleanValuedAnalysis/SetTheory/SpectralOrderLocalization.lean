@@ -131,7 +131,7 @@ theorem le_trans {E F G : SpectralFamily 𝔹}
 theorem le_antisymm {E F : SpectralFamily 𝔹}
     (hEF : LE E F) (hFE : LE F E) : E = F := by
   apply SpectralFamily.ext
-  funext r
+  intro r
   exact _root_.le_antisymm (hFE r) (hEF r)
 
 end SpectralFamily
