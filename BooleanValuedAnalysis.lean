@@ -46,6 +46,7 @@ import BooleanValuedAnalysis.SetTheory.InternalReal
 import BooleanValuedAnalysis.SetTheory.InternalRealSyntax
 import BooleanValuedAnalysis.SetTheory.SpectralFamily
 import BooleanValuedAnalysis.SetTheory.SpectralFamilyCorrespondence
+import BooleanValuedAnalysis.SetTheory.SpectralOrderLocalization
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -94,5 +95,7 @@ closed upper Dedekind cuts, separated internal reals, a genuine first-order
 upper-cut predicate, and their rational profile equations. M023 extends those
 profiles to real-indexed Boolean spectral families, reconstructs internal reals
 from arbitrary spectral families, proves both round trips on the separated
-carrier, and packages the correspondence as an equivalence.
+carrier, and packages the correspondence as an equivalence. M024a begins the
+remaining Takeuti §1.3 layer with full Boolean order truth, spectral order, and
+localization to arbitrary Boolean regions.
 -/
