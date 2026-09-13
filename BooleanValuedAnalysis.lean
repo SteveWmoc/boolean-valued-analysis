@@ -49,6 +49,7 @@ import BooleanValuedAnalysis.SetTheory.SpectralFamilyCorrespondence
 import BooleanValuedAnalysis.SetTheory.SpectralOrderLocalization
 import BooleanValuedAnalysis.SetTheory.SpectralLocalization
 import BooleanValuedAnalysis.SetTheory.SpectralAddition
+import BooleanValuedAnalysis.SetTheory.SpectralMaximum
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -100,5 +101,6 @@ from arbitrary spectral families, proves both round trips on the separated
 carrier, and packages the correspondence as an equivalence. M024a begins the
 remaining Takeuti §1.3 layer with full Boolean order truth, spectral order, and
 localization to arbitrary Boolean regions. M024b begins the arithmetic side with
-Takeuti's exact spectral addition formula and checked-real calibration.
+Takeuti's exact spectral addition formula and checked-real calibration, followed
+by the pointwise-meet spectral maximum from Proposition 1.3.7.
 -/
