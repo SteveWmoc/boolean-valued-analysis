@@ -48,7 +48,7 @@ private theorem rightEnvelope_monotone (G : ℝ → 𝔹) :
 private theorem rightEnvelope_rightContinuous (G : ℝ → 𝔹) (r : ℝ) :
     rightEnvelope G r =
       ⨅ s : {s : ℝ // r < s}, rightEnvelope G s.1 := by
-  apply le_antisymm
+  apply _root_.le_antisymm
   · apply le_iInf
     intro s
     exact rightEnvelope_monotone G s.2.le
@@ -90,7 +90,7 @@ private def addProj (E F : SpectralFamily 𝔹) (r : ℝ) : 𝔹 :=
 
 private theorem addProj_iInf_eq_bot (E F : SpectralFamily 𝔹) :
     (⨅ r : ℝ, addProj E F r) = ⊥ := by
-  apply le_antisymm
+  apply _root_.le_antisymm
   · rw [← E.iInf_eq_bot]
     apply le_iInf
     intro a
@@ -202,7 +202,7 @@ theorem spectral_add_checkReal (x y : ℝ) :
   rw [SpectralFamily.add_proj]
   simp_rw [toSpectralFamily_checkReal_proj, classicalValue_inf]
   simp_rw [SetTheory.iSup_classicalValue]
-  rw [SetTheory.iInf_classicalValue, toSpectralFamily_checkReal_proj]
+  rw [SetTheory.iInf_classicalValue]
   apply congrArg (SetTheory.classicalValue (𝔹 := 𝔹))
   apply propext
   constructor
