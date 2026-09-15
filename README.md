@@ -1,7 +1,7 @@
 # Boolean-Valued Analysis
 
 [![CI](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22696492.svg)](https://doi.org/10.5281/zenodo.22696492)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22696493.svg)](https://doi.org/10.5281/zenodo.22696493)
 
 AI tools are used extensively in the development of this project, including in code, proofs, documentation, and review. The work should be judged on its mathematical and technical merits. If you object in principle to AI-assisted research or software development, we respectfully suggest that this is not the project for you.
 
