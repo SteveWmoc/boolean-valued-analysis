@@ -89,7 +89,8 @@ private theorem negProj_iSup_eq_top (E : SpectralFamily 𝔹) :
           unfold negProj
           apply le_iInf
           intro s
-          exact compl_le_compl (E.monotone s.2.le)
+          exact compl_le_compl
+            (E.monotone (by simpa only [neg_neg] using s.2.le))
         _ ≤ ⨆ r : ℝ, negProj E r :=
           le_iSup (fun r : ℝ => negProj E r) (-a)
 
@@ -162,7 +163,7 @@ theorem spectral_neg_checkReal (x : ℝ) :
   intro r
   rw [SpectralFamily.neg_proj]
   simp_rw [toSpectralFamily_checkReal_proj, compl_classicalValue]
-  rw [SetTheory.iInf_classicalValue, toSpectralFamily_checkReal_proj]
+  rw [SetTheory.iInf_classicalValue]
   apply congrArg (SetTheory.classicalValue (𝔹 := 𝔹))
   apply propext
   constructor
