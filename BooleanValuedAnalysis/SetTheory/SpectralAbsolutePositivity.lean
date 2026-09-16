@@ -160,8 +160,12 @@ theorem leValue_zero_right_eq_proj_zero (u : InternalReal.{u, v} 𝔹) :
     intro q
     by_cases hq : (0 : ℝ) ≤ (q : ℝ)
     · have hmono : profile u 0 ≤ profile u q := by
-        have h := (toSpectralFamily u).monotone hq
-        simpa using h
+        calc
+          profile u 0 = (toSpectralFamily u).proj 0 := hproj.symm
+          _ ≤ (toSpectralFamily u).proj (q : ℝ) :=
+            (toSpectralFamily u).monotone hq
+          _ = profile u q := by
+            simpa using toSpectralFamily_proj_rat u q
       simpa [SetTheory.classicalValue, hq] using hmono
     · simp [SetTheory.classicalValue, hq]
 
@@ -192,21 +196,16 @@ theorem ltValue_zero_eq_top_iff_spectral_strictlyPositive
   · intro h
     simp [h]
 
-/-- Checked classical reals satisfy Takeuti spectral positivity exactly when
-they are strictly positive classically. -/
-theorem spectral_strictlyPositive_checkReal (x : ℝ) :
+/-- A strictly positive checked classical real has a strictly positive spectral
+family. The converse needs `Nontrivial 𝔹` and is deliberately not assumed by
+M024. -/
+theorem spectral_strictlyPositive_checkReal_of_pos (x : ℝ) (hx : 0 < x) :
     SpectralFamily.IsStrictlyPositive
-        (toSpectralFamily
-          (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)) ↔
-      0 < x := by
+      (toSpectralFamily
+        (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)) := by
   rw [SpectralFamily.isStrictlyPositive_iff_proj_zero_eq_bot,
     toSpectralFamily_checkReal_proj]
-  classical
-  by_cases hx : x ≤ 0
-  · have hnx : ¬ 0 < x := not_lt_of_ge hx
-    simp [SetTheory.classicalValue, hx, hnx]
-  · have hxpos : 0 < x := lt_of_not_ge hx
-    simp [SetTheory.classicalValue, hx, hxpos]
+  simp [SetTheory.classicalValue, not_le_of_gt hx]
 
 /-- Spectral subtraction of checked reals agrees exactly with ordinary real
 subtraction. -/
@@ -267,6 +266,13 @@ theorem sub_checkReal (x y : ℝ) :
         (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹) =
       (checkReal (𝔹 := 𝔹) (x - y) : InternalReal.{u, v} 𝔹) := by
   apply (internalRealEquivSpectralFamily.{u, v} 𝔹).injective
+  change
+    toSpectralFamily
+        (sub
+          (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
+          (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)) =
+      toSpectralFamily
+        (checkReal (𝔹 := 𝔹) (x - y) : InternalReal.{u, v} 𝔹)
   rw [toSpectralFamily_sub]
   exact spectral_sub_checkReal x y
 
@@ -276,6 +282,11 @@ theorem abs_checkReal (x : ℝ) :
     abs (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹) =
       (checkReal (𝔹 := 𝔹) |x| : InternalReal.{u, v} 𝔹) := by
   apply (internalRealEquivSpectralFamily.{u, v} 𝔹).injective
+  change
+    toSpectralFamily
+        (abs (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)) =
+      toSpectralFamily
+        (checkReal (𝔹 := 𝔹) |x| : InternalReal.{u, v} 𝔹)
   rw [toSpectralFamily_abs]
   exact spectral_abs_checkReal x
 
