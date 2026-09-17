@@ -52,6 +52,7 @@ import BooleanValuedAnalysis.SetTheory.SpectralAddition
 import BooleanValuedAnalysis.SetTheory.SpectralMaximum
 import BooleanValuedAnalysis.SetTheory.SpectralNegation
 import BooleanValuedAnalysis.SetTheory.SpectralAbsolutePositivity
+import BooleanValuedAnalysis.SetTheory.SpectralAbsoluteEstimate
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -106,6 +107,7 @@ localization to arbitrary Boolean regions. M024b begins the arithmetic side with
 Takeuti's exact spectral addition formula and checked-real calibration, followed
 by the pointwise-meet spectral maximum from Proposition 1.3.7, the
 boundary-sensitive left-limit spectral negation underlying Proposition 1.3.8,
-and named subtraction, absolute value, strict Boolean order, and Takeuti's
-spectral positivity characterization from Proposition 1.3.10.
+named subtraction, absolute value, strict Boolean order, Takeuti's spectral
+positivity characterization from Proposition 1.3.10, and the localized
+absolute-difference estimate underlying Proposition 1.3.9.
 -/
