@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Steven Sabean
 -/
 
+import BooleanValuedAnalysis.Mixing
 import BooleanValuedAnalysis.SetTheory.SpectralAbsoluteEstimate
 import Mathlib.Tactic
 
@@ -52,7 +53,7 @@ private theorem mixProj_inf_coefficient {ι : Type u}
     intro j
     by_cases hji : j = i
     · subst j
-      exact le_rfl
+      simp [inf_assoc, inf_left_comm, inf_comm]
     · have hdis : a j ⊓ a i = ⊥ := hpart.pairwise_disjoint j i hji
       calc
         (a j ⊓ (E j).proj r) ⊓ a i =
