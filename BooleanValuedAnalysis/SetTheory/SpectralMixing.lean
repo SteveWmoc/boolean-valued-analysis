@@ -53,7 +53,7 @@ private theorem mixProj_inf_coefficient {ι : Type u}
     intro j
     by_cases hji : j = i
     · subst j
-      simp [inf_assoc, inf_left_comm, inf_comm]
+      simp [inf_comm]
     · have hdis : a j ⊓ a i = ⊥ := hpart.pairwise_disjoint j i hji
       calc
         (a j ⊓ (E j).proj r) ⊓ a i =
@@ -175,7 +175,6 @@ theorem mix_proj {ι : Type u}
 
 /-- On coefficient `a i`, the mixed projection is exactly the component
 projection. -/
-@[simp]
 theorem mix_proj_inf_coefficient {ι : Type u}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) (i : ι) (r : ℝ) :
