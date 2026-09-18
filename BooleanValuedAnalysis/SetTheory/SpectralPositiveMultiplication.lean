@@ -82,7 +82,7 @@ private def positiveMulKernel (E F : SpectralFamily 𝔹) (s : ℝ) : 𝔹 :=
 
 private theorem positiveMulKernel_le_sup
     (E F : SpectralFamily 𝔹) {s a b : ℝ}
-    (ha : 0 < a) (hb : 0 < b) (hs : s < a * b) :
+    (_ha : 0 < a) (hb : 0 < b) (hs : s < a * b) :
     positiveMulKernel E F s ≤ E.proj a ⊔ F.proj b := by
   unfold positiveMulKernel
   by_cases hs0 : 0 < s
@@ -273,7 +273,7 @@ theorem positiveMul_proj_of_pos
         ⨆ ν : {ν : ℝ // 0 < ν},
           E.proj ν.1 ⊓ F.proj (s.1 / ν.1) := by
   unfold positiveMul positiveMulProj mulRightEnvelope
-  apply le_antisymm
+  apply _root_.le_antisymm
   · apply le_iInf
     intro s
     have hs0 : 0 < s.1 := hr.trans s.2
@@ -336,7 +336,7 @@ theorem spectral_positiveMul_checkReal
       (spectral_strictlyPositive_checkReal_of_pos y hy) hr0]
     simp_rw [toSpectralFamily_checkReal_proj, classicalValue_inf_mul]
     simp_rw [SetTheory.iSup_classicalValue]
-    rw [SetTheory.iInf_classicalValue, toSpectralFamily_checkReal_proj]
+    rw [SetTheory.iInf_classicalValue]
     apply congrArg (SetTheory.classicalValue (𝔹 := 𝔹))
     apply propext
     constructor
@@ -399,6 +399,15 @@ theorem positiveMul_checkReal
         (spectral_strictlyPositive_checkReal_of_pos y hy) =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹) := by
   apply (internalRealEquivSpectralFamily.{u, v} 𝔹).injective
+  change
+    toSpectralFamily
+        (positiveMul
+          (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
+          (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
+          (spectral_strictlyPositive_checkReal_of_pos x hx)
+          (spectral_strictlyPositive_checkReal_of_pos y hy)) =
+      toSpectralFamily
+        (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹)
   rw [toSpectralFamily_positiveMul]
   exact spectral_positiveMul_checkReal x y hx hy
 
