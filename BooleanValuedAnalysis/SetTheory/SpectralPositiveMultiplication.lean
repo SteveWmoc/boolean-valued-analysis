@@ -277,7 +277,12 @@ theorem positiveMul_proj_of_pos
   · apply le_iInf
     intro s
     have hs0 : 0 < s.1 := hr.trans s.2
-    rw [positiveMulKernel, if_pos hs0]
+    calc
+      (⨅ t : {t : ℝ // r < t}, positiveMulKernel E F t.1) ≤
+          positiveMulKernel E F s.1 := iInf_le _ s
+      _ = ⨆ ν : {ν : ℝ // 0 < ν},
+          E.proj ν.1 ⊓ F.proj (s.1 / ν.1) := by
+        rw [positiveMulKernel, if_pos hs0]
   · apply le_iInf
     intro s
     have hs0 : 0 < s.1 := hr.trans s.2
