@@ -62,9 +62,12 @@ zero. -/
 theorem negativeRegion_eq_iSup (E : SpectralFamily 𝔹) :
     negativeRegion E =
       ⨆ s : {s : ℝ // s < 0}, E.proj s.1 := by
-  unfold negativeRegion positiveRegion
+  change ((neg E).proj 0)ᶜ =
+    ⨆ s : {s : ℝ // s < 0}, E.proj s.1
   rw [neg_proj_compl_iSup]
-  simpa only [neg_zero, compl_compl]
+  change ((⨆ s : {s : ℝ // s < 0}, E.proj s.1)ᶜ)ᶜ =
+    ⨆ s : {s : ℝ // s < 0}, E.proj s.1
+  rw [compl_compl]
 
 /-- The negative region lies below the closed spectral projection at zero. -/
 theorem negativeRegion_le_proj_zero (E : SpectralFamily 𝔹) :
@@ -136,11 +139,19 @@ theorem signPartition (E : SpectralFamily 𝔹) :
     IsPartitionOfUnity (signCoeff E) := by
   constructor
   · intro i j hij
-    cases i <;> cases j <;>
-      simp_all [signCoeff,
-        positiveRegion_inf_negativeRegion_eq_bot,
-        positiveRegion_inf_zeroRegion_eq_bot,
-        negativeRegion_inf_zeroRegion_eq_bot, inf_comm]
+    cases i <;> cases j
+    · exact (hij rfl).elim
+    · exact positiveRegion_inf_zeroRegion_eq_bot E
+    · exact positiveRegion_inf_negativeRegion_eq_bot E
+    · rw [inf_comm]
+      exact positiveRegion_inf_zeroRegion_eq_bot E
+    · exact (hij rfl).elim
+    · rw [inf_comm]
+      exact negativeRegion_inf_zeroRegion_eq_bot E
+    · rw [inf_comm]
+      exact positiveRegion_inf_negativeRegion_eq_bot E
+    · exact negativeRegion_inf_zeroRegion_eq_bot E
+    · exact (hij rfl).elim
   · apply top_unique
     calc
       ⊤ = positiveRegion E ⊔ zeroRegion E ⊔ negativeRegion E :=
@@ -334,7 +345,7 @@ theorem positiveFill_strictlyPositive
   cases b with
   | false =>
       rw [toSpectralFamily_checkReal_proj]
-      simp [fillCoeff, SetTheory.classicalValue]
+      norm_num [fillCoeff, SetTheory.classicalValue]
   | true =>
       change p ⊓ (toSpectralFamily x).proj 0 ≤ ⊥
       calc
@@ -363,6 +374,17 @@ theorem positiveFill_top
     positiveFill x (⊤ : 𝔹) = x := by
   apply eq_of_top_le_eqValue
   simpa using positiveFill_region_le_eqValue x (⊤ : 𝔹)
+
+/-- If the selected Boolean region is all of unity, the positive filler is
+the original real. This formulation avoids rewriting a Boolean coefficient
+inside dependent positivity proofs. -/
+theorem positiveFill_eq_of_eq_top
+    (x : InternalReal.{u, v} 𝔹) (p : 𝔹) (hp : p = ⊤) :
+    positiveFill x p = x := by
+  apply eq_of_top_le_eqValue
+  have h := positiveFill_region_le_eqValue x p
+  rw [hp] at h
+  exact h
 
 /-- Product of two factors that are positive on a Boolean region. The checked
 `1` filler makes both factors globally strictly positive before applying the
@@ -519,6 +541,26 @@ theorem takeuti_1_3_12
         eqValue (mul x y) (regionalProduct x y i j) :=
   regionCoeff_le_eqValue_mul x y
 
+private theorem positiveRegionalProduct_checkReal_of_eq_top
+    (a b : ℝ) (ha : 0 < a) (hb : 0 < b)
+    (p : 𝔹)
+    (hpa :
+      p ≤ positiveRegion
+        (checkReal (𝔹 := 𝔹) a : InternalReal.{u, v} 𝔹))
+    (hpb :
+      p ≤ positiveRegion
+        (checkReal (𝔹 := 𝔹) b : InternalReal.{u, v} 𝔹))
+    (hp : p = ⊤) :
+    positiveRegionalProduct
+        (checkReal (𝔹 := 𝔹) a : InternalReal.{u, v} 𝔹)
+        (checkReal (𝔹 := 𝔹) b : InternalReal.{u, v} 𝔹)
+        p hpa hpb =
+      (checkReal (𝔹 := 𝔹) (a * b) : InternalReal.{u, v} 𝔹) := by
+  unfold positiveRegionalProduct
+  rw [positiveFill_eq_of_eq_top _ p hp,
+    positiveFill_eq_of_eq_top _ p hp]
+  simpa using (positiveMul_checkReal (𝔹 := 𝔹) a b ha hb)
+
 private theorem signCoeff_checkReal_positive_eq_top
     (x : ℝ) (hx : 0 < x) :
     signCoeff
@@ -540,10 +582,23 @@ private theorem signCoeff_checkReal_zero_eq_top :
     SpectralFamily.zeroRegion
       (toSpectralFamily
         (checkReal (𝔹 := 𝔹) 0 : InternalReal.{u, v} 𝔹)) = ⊤
+  have hp :
+      SpectralFamily.positiveRegion
+        (toSpectralFamily
+          (checkReal (𝔹 := 𝔹) 0 : InternalReal.{u, v} 𝔹)) = ⊥ := by
+    unfold SpectralFamily.positiveRegion
+    rw [toSpectralFamily_checkReal_proj]
+    simp [SetTheory.classicalValue]
+  have hn :
+      SpectralFamily.negativeRegion
+        (toSpectralFamily
+          (checkReal (𝔹 := 𝔹) 0 : InternalReal.{u, v} 𝔹)) = ⊥ := by
+    unfold SpectralFamily.negativeRegion
+    rw [spectral_neg_checkReal]
+    simpa using hp
   unfold SpectralFamily.zeroRegion
-    SpectralFamily.positiveRegion SpectralFamily.negativeRegion
-  rw [spectral_neg_checkReal]
-  simp [toSpectralFamily_checkReal_proj, SetTheory.classicalValue]
+  rw [hp, hn]
+  simp
 
 private theorem signCoeff_checkReal_negative_eq_top
     (x : ℝ) (hx : x < 0) :
@@ -580,16 +635,17 @@ private theorem regionalProduct_checkReal_pos_pos
         (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
         .positive .positive =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹) := by
-  cases hp
   change
     positiveRegionalProduct
       (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
       (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
-      (⊤ : 𝔹) _ _ =
+      (regionCoeff
+        (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
+        (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
+        .positive .positive) _ _ =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹)
-  unfold positiveRegionalProduct
-  rw [positiveFill_top, positiveFill_top]
-  simpa using (positiveMul_checkReal (𝔹 := 𝔹) x y hx hy)
+  exact positiveRegionalProduct_checkReal_of_eq_top
+    x y hx hy _ _ _ hp
 
 private theorem regionalProduct_checkReal_pos_neg
     (x y : ℝ) (hx : 0 < x) (hy : y < 0)
@@ -603,18 +659,21 @@ private theorem regionalProduct_checkReal_pos_neg
         (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
         .positive .negative =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹) := by
-  cases hp
   change
     neg
       (positiveRegionalProduct
         (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
         (neg (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹))
-        (⊤ : 𝔹) _ _) =
+        (regionCoeff
+          (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
+          (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
+          .positive .negative) _ _) =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹)
-  unfold positiveRegionalProduct
-  rw [positiveFill_top, positiveFill_top, neg_checkReal]
   have hny : 0 < -y := by linarith
-  rw [positiveMul_checkReal x (-y) hx hny, neg_checkReal]
+  rw [neg_checkReal y]
+  rw [positiveRegionalProduct_checkReal_of_eq_top
+    x (-y) hx hny _ _ _ hp]
+  rw [neg_checkReal]
   congr 1
   ring
 
@@ -630,18 +689,21 @@ private theorem regionalProduct_checkReal_neg_pos
         (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
         .negative .positive =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹) := by
-  cases hp
   change
     neg
       (positiveRegionalProduct
         (neg (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹))
         (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
-        (⊤ : 𝔹) _ _) =
+        (regionCoeff
+          (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
+          (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
+          .negative .positive) _ _) =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹)
-  unfold positiveRegionalProduct
-  rw [positiveFill_top, positiveFill_top, neg_checkReal]
   have hnx : 0 < -x := by linarith
-  rw [positiveMul_checkReal (-x) y hnx hy, neg_checkReal]
+  rw [neg_checkReal x]
+  rw [positiveRegionalProduct_checkReal_of_eq_top
+    (-x) y hnx hy _ _ _ hp]
+  rw [neg_checkReal]
   congr 1
   ring
 
@@ -657,18 +719,20 @@ private theorem regionalProduct_checkReal_neg_neg
         (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
         .negative .negative =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹) := by
-  cases hp
   change
     positiveRegionalProduct
       (neg (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹))
       (neg (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹))
-      (⊤ : 𝔹) _ _ =
+      (regionCoeff
+        (checkReal (𝔹 := 𝔹) x : InternalReal.{u, v} 𝔹)
+        (checkReal (𝔹 := 𝔹) y : InternalReal.{u, v} 𝔹)
+        .negative .negative) _ _ =
       (checkReal (𝔹 := 𝔹) (x * y) : InternalReal.{u, v} 𝔹)
-  unfold positiveRegionalProduct
-  rw [positiveFill_top, positiveFill_top, neg_checkReal, neg_checkReal]
   have hnx : 0 < -x := by linarith
   have hny : 0 < -y := by linarith
-  rw [positiveMul_checkReal (-x) (-y) hnx hny]
+  rw [neg_checkReal x, neg_checkReal y]
+  rw [positiveRegionalProduct_checkReal_of_eq_top
+    (-x) (-y) hnx hny _ _ _ hp]
   congr 1
   ring
 
