@@ -55,6 +55,7 @@ import BooleanValuedAnalysis.SetTheory.SpectralAbsolutePositivity
 import BooleanValuedAnalysis.SetTheory.SpectralAbsoluteEstimate
 import BooleanValuedAnalysis.SetTheory.SpectralMixing
 import BooleanValuedAnalysis.SetTheory.SpectralPositiveMultiplication
+import BooleanValuedAnalysis.SetTheory.SpectralMultiplication
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -114,5 +115,6 @@ positivity characterization from Proposition 1.3.10, and the localized
 absolute-difference estimate underlying Proposition 1.3.9. M024c begins with
 partition-of-unity spectral and internal-real mixing, the Hilbert-free content
 of Proposition 1.3.11, followed by Takeuti's strictly-positive spectral
-multiplication kernel from Proposition 1.3.12.
+multiplication kernel and the full nine-sign-region multiplication assembly
+from Proposition 1.3.12.
 -/
