@@ -65,7 +65,6 @@ theorem negativeRegion_eq_iSup (E : SpectralFamily 𝔹) :
   change ((neg E).proj 0)ᶜ =
     ⨆ s : {s : ℝ // s < 0}, E.proj s.1
   rw [neg_proj_compl_iSup]
-  simp only [neg_zero]
   rw [compl_compl]
 
 /-- The negative region lies below the closed spectral projection at zero. -/
@@ -85,7 +84,7 @@ theorem positiveRegion_inf_negativeRegion_eq_bot
     positiveRegion E ⊓ negativeRegion E ≤
         (E.proj 0)ᶜ ⊓ E.proj 0 := by
       exact inf_le_inf le_rfl (negativeRegion_le_proj_zero E)
-    _ = ⊥ := by simp [positiveRegion]
+    _ = ⊥ := by simp
 
 /-- The three spectral sign regions cover the Boolean unit. -/
 theorem signRegions_sup_eq_top (E : SpectralFamily 𝔹) :
