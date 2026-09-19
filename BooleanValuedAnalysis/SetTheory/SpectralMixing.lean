@@ -30,7 +30,7 @@ Proposition 1.3.11.
 
 noncomputable section
 
-universe u v
+universe u v w
 
 namespace BooleanValued
 
@@ -38,11 +38,11 @@ namespace SpectralFamily
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
-private def mixProj {ι : Type u}
+private def mixProj {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹) (r : ℝ) : 𝔹 :=
   ⨆ i, a i ⊓ (E i).proj r
 
-private theorem mixProj_inf_coefficient {ι : Type u}
+private theorem mixProj_inf_coefficient {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) (i : ι) (r : ℝ) :
     mixProj a E r ⊓ a i = (E i).proj r ⊓ a i := by
@@ -67,7 +67,7 @@ private theorem mixProj_inf_coefficient {ι : Type u}
           le_iSup (fun j : ι => a j ⊓ (E j).proj r) i
     · exact inf_le_right
 
-private theorem mixProj_monotone {ι : Type u}
+private theorem mixProj_monotone {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹) :
     Monotone (mixProj a E) := by
   intro r s hrs
@@ -77,7 +77,7 @@ private theorem mixProj_monotone {ι : Type u}
   apply le_iSup_of_le i
   exact inf_le_inf le_rfl ((E i).monotone hrs)
 
-private theorem mixProj_iInf_eq_bot {ι : Type u}
+private theorem mixProj_iInf_eq_bot {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) :
     (⨅ r : ℝ, mixProj a E r) = ⊥ := by
@@ -102,7 +102,7 @@ private theorem mixProj_iInf_eq_bot {ι : Type u}
           _ ≤ (E i).proj r := inf_le_left
   · exact bot_le
 
-private theorem mixProj_iSup_eq_top {ι : Type u}
+private theorem mixProj_iSup_eq_top {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) :
     (⨆ r : ℝ, mixProj a E r) = ⊤ := by
@@ -120,7 +120,7 @@ private theorem mixProj_iSup_eq_top {ι : Type u}
       apply le_iSup_of_le r
       exact le_iSup (fun j : ι => a j ⊓ (E j).proj r) i
 
-private theorem mixProj_rightContinuous {ι : Type u}
+private theorem mixProj_rightContinuous {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) (r : ℝ) :
     mixProj a E r =
@@ -157,7 +157,7 @@ private theorem mixProj_rightContinuous {ι : Type u}
         simpa [inf_comm] using hx
 
 /-- Spectral mixture along a Boolean partition of unity. -/
-def mix {ι : Type u}
+def mix {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) : SpectralFamily 𝔹 where
   proj := mixProj a E
@@ -168,14 +168,14 @@ def mix {ι : Type u}
 
 /-- Exact projection formula for spectral mixing. -/
 @[simp]
-theorem mix_proj {ι : Type u}
+theorem mix_proj {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) (r : ℝ) :
     (mix a E hpart).proj r = ⨆ i, a i ⊓ (E i).proj r := rfl
 
 /-- On coefficient `a i`, the mixed projection is exactly the component
 projection. -/
-theorem mix_proj_inf_coefficient {ι : Type u}
+theorem mix_proj_inf_coefficient {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) (i : ι) (r : ℝ) :
     (mix a E hpart).proj r ⊓ a i = (E i).proj r ⊓ a i :=
@@ -183,7 +183,7 @@ theorem mix_proj_inf_coefficient {ι : Type u}
 
 /-- Localizing a spectral mixture to one coefficient recovers that component
 localized to the same coefficient. -/
-theorem localize_mix_coefficient {ι : Type u}
+theorem localize_mix_coefficient {ι : Type w}
     (a : ι → 𝔹) (E : ι → SpectralFamily 𝔹)
     (hpart : IsPartitionOfUnity a) (i : ι) :
     localize (mix a E hpart) (a i) = localize (E i) (a i) := by
@@ -203,14 +203,14 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 /-- Internal-real mixture transported through the M023 spectral correspondence.
 No representatives of separated Boolean-valued sets are selected. -/
-def mix {ι : Type u}
+def mix {ι : Type w}
     (a : ι → 𝔹) (x : ι → InternalReal.{u, v} 𝔹)
     (hpart : IsPartitionOfUnity a) : InternalReal.{u, v} 𝔹 :=
   SpectralFamily.toInternalReal
     (SpectralFamily.mix a (fun i => toSpectralFamily (x i)) hpart)
 
 @[simp]
-theorem toSpectralFamily_mix {ι : Type u}
+theorem toSpectralFamily_mix {ι : Type w}
     (a : ι → 𝔹) (x : ι → InternalReal.{u, v} 𝔹)
     (hpart : IsPartitionOfUnity a) :
     toSpectralFamily (mix a x hpart) =
@@ -220,7 +220,7 @@ theorem toSpectralFamily_mix {ι : Type u}
 
 /-- Each coefficient forces the internal mixture to equal its component. This
 is the Boolean-valued content used in Takeuti's proof of Proposition 1.3.11. -/
-theorem coefficient_le_eqValue_mix {ι : Type u}
+theorem coefficient_le_eqValue_mix {ι : Type w}
     (a : ι → 𝔹) (x : ι → InternalReal.{u, v} 𝔹)
     (hpart : IsPartitionOfUnity a) (i : ι) :
     a i ≤ eqValue (mix a x hpart) (x i) := by
@@ -231,7 +231,7 @@ theorem coefficient_le_eqValue_mix {ι : Type u}
       a (fun j => toSpectralFamily (x j)) hpart i
 
 /-- Source-shaped Hilbert-free form of Takeuti Proposition 1.3.11. -/
-theorem takeuti_1_3_11 {ι : Type u}
+theorem takeuti_1_3_11 {ι : Type w}
     (a : ι → 𝔹) (x : ι → InternalReal.{u, v} 𝔹)
     (hpart : IsPartitionOfUnity a) :
     ∀ i, a i ≤ eqValue (mix a x hpart) (x i) :=
