@@ -66,6 +66,7 @@ theorem negativeRegion_eq_iSup (E : SpectralFamily 𝔹) :
     ⨆ s : {s : ℝ // s < 0}, E.proj s.1
   rw [neg_proj_compl_iSup]
   rw [compl_compl]
+  rfl
 
 /-- The negative region lies below the closed spectral projection at zero. -/
 theorem negativeRegion_le_proj_zero (E : SpectralFamily 𝔹) :
