@@ -1,6 +1,6 @@
 # M024 — Spectral arithmetic, order, localization, and mixing
 
-**Status:** design / implementation starting
+**Status:** complete
 
 **Depends on:** M001–M023
 
@@ -294,6 +294,37 @@ M024 does **not** include:
 - semigroup or Banach-space projection algebra results;
 - Chapter 2 measure-algebra arithmetic;
 - a full `LinearOrderedField (InternalReal 𝔹)` instance unless the milestone naturally proves every required ordinary Lean equality law.
+
+## Completion record
+
+Completed 2026-09-20.
+
+M024 was implemented across PRs #65–#73:
+
+- #65: Boolean order truth, spectral order, zero family, localization, and the
+  full Boolean localization theorems for order/equality;
+- #66: Takeuti spectral addition and checked-real calibration;
+- #67: spectral maximum;
+- #68: boundary-correct spectral negation;
+- #69: subtraction, absolute value, and positivity;
+- #70: localized absolute-difference estimate for Proposition 1.3.9;
+- #71: partition-of-unity spectral/internal-real mixing and Proposition 1.3.11;
+- #72: the strictly-positive multiplication kernel from Proposition 1.3.12;
+- #73: the full nine-sign-region multiplication assembly and checked-real
+  multiplication calibration.
+
+The completed public layer remains Hilbert-free. It introduces no
+`[Small.{u} 𝔹]`, `Nontrivial 𝔹`, quotient representative selector, global
+arithmetic typeclass instance, or new choice principle. The only standing
+coefficient assumption is `[CompleteBooleanAlgebra 𝔹]`.
+
+The final implementation also generalized the M024c spectral-mixing index to an
+independent universe, so finite sign/index types do not need to live in the
+internal-name universe.
+
+The acceptance and documentation probes for M024a–M024c compile in both the
+pinned Lean/Mathlib environment and the live Tau Ceti architecture audit.
+Operator-facing interpretations remain intentionally deferred to M026.
 
 ## Review prompts
 
