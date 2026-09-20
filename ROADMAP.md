@@ -54,6 +54,11 @@ The repository currently provides:
   construction, reconstruction of internal reals from rational restrictions,
   and a genuine equivalence `InternalReal 𝔹 ≃ SpectralFamily 𝔹`, again without
   a new `Small` or `Nontrivial` assumption.
+- the full Hilbert-free M024 arithmetic/order layer on internal reals and
+  spectral families: Boolean order/equality localization, addition, maximum,
+  boundary-correct negation, absolute value, positivity, localized estimates,
+  partition-of-unity mixing, and multiplication by Takeuti's sign-region
+  decomposition, all without a new `Small` or `Nontrivial` assumption.
 
 These components form the foundation for the milestones below.
 
@@ -605,19 +610,38 @@ packaged equivalence in pinned CI and the live Tau Ceti architecture audit.
 
 Completion record: [`docs/milestones/023-spectral-families.md`](docs/milestones/023-spectral-families.md)
 
-### M024–M035 — Remaining Takeuti Part I implementation sequence
+### M024 — Spectral arithmetic, order, localization, and mixing — complete
 
-M024 develops arithmetic, order, localization, and mixing laws through the
-internal-real/spectral-family equivalence. M025 introduces definite sets and
-typed internal functions. M026–M029 develop the operator, convergence,
-semigroup, Banach-projection, simultaneous-spectrum, and functional-calculus
-layers of Chapter 1. M030 isolates the orthomodular quantum-logic boundary.
-M031–M035 construct the measure algebra and carry out Chapter 2 through the
-projection/measure equivalence.
+Completed 2026-09-20.
 
-**Next milestone:** M024 — spectral arithmetic, order, localization, and mixing laws.
+M024 now supplies the Hilbert-free Boolean/spectral content of Takeuti §1.3
+through Proposition 1.3.12: exact Boolean order truth, reverse spectral order,
+localization and equality on arbitrary Boolean regions, addition, maximum,
+boundary-correct negation, absolute value, positivity, localized absolute
+estimates, partition-of-unity mixing, and multiplication by the nine sign
+regions. The implementation requires only `CompleteBooleanAlgebra 𝔹` and
+introduces no new `Small`, `Nontrivial`, representative-selection, or
+operator-theoretic boundary.
 
-Potential additional application roadmaps should be maintained separately so that foundational dependencies remain visible.
+Completion record:
+[`docs/milestones/024-spectral-arithmetic-order-localization.md`](docs/milestones/024-spectral-arithmetic-order-localization.md)
+
+### M025–M035 — Remaining Takeuti Part I / Chapter 2 implementation sequence
+
+M025 is now specified as the first application-driven typed ascent/descent
+milestone. It implements Takeuti Propositions 1.4.1–1.4.2 using explicit
+definite presentations, Boolean-extensional external maps, internal
+function-graph realization, and the correspondence with top-valued codomain
+members. It deliberately avoids a universal ascent mechanism and keeps any
+representative selection theorem-local.
+
+M026–M029 then develop the operator, convergence, semigroup,
+Banach-projection, simultaneous-spectrum, and functional-calculus layers of
+Chapter 1. M030 isolates the orthomodular quantum-logic boundary. M031–M035
+cover the measure-algebra side of Chapter 2.
+
+M025 design:
+[`docs/milestones/025-definite-sets-typed-functions.md`](docs/milestones/025-definite-sets-typed-functions.md)
 
 ## Review rubric
 
