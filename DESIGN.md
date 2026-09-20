@@ -508,13 +508,22 @@ M005 chose an ordinary Lean quotient of raw names by top-valued Boolean equality
 
 The resulting policy is recorded in D004: raw names remain the recursive layer, while `BVSet.Separated` is the extensional downstream carrier. M006 is responsible for proving that generic formula semantics can be instantiated intrinsically on that carrier and compared exactly with the raw semantics.
 
-### O006 — Typed ascent/descent for functions and structures — resolved in design by M020
+### O006 — Typed ascent/descent for functions and structures — resolved by M020/M025 design
 
 Pure R6 set theory may encode a ground function as a set-theoretic object and then apply `checkSeparated`, but this is not intended to be the final interface for functional analysis. M020 supplies the first concrete consumer: Takeuti §1.4 definite internal sets and functions.
 
 The design decision is therefore application-driven rather than universal. M025 should build typed ascent/descent only for definite domains/codomains and extensional maps, with internal function-graph realization, evaluation correspondence, and the sequence/function specializations needed by §§1.4–1.6. Broader interfaces for homomorphisms, vector spaces, operators, and other structures should be generalized only from later proved use cases.
 
-The representation, size, and quotient-representative details are implementation questions for M025; the question of *what should drive the first typed ascent API* is resolved.
+M025 now fixes the first concrete representation policy in
+[`docs/milestones/025-definite-sets-typed-functions.md`](docs/milestones/025-definite-sets-typed-functions.md):
+explicit small definite presentations, Boolean-extensional maps, a
+source-facing realization relation, theorem-local representative selection
+only if required, and a separately audited size boundary for canonical large
+codomains such as the full internal-real object.
+
+The broader question of *what should drive the first typed ascent API* is
+therefore resolved. O005 remains open for a genuinely general ascent of
+arbitrary external separated families.
 
 ## Open design questions
 
