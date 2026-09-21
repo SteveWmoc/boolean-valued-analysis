@@ -72,6 +72,7 @@ theorem bvEq_pair_pair
   unfold pair
   simp only [bvEq, iInf_ulift_bool, iSup_ulift_bool]
   simp
+  rw [bvEq_symm z x, bvEq_symm z y, bvEq_symm w x, bvEq_symm w y]
 
 /-- The singleton presentation `{x}`, written using the existing pair
 constructor so no second finite-set representation is introduced. -/
@@ -100,8 +101,14 @@ theorem bvEq_pair_singletonPair
     (x y z : BVSet.{u, v} 𝔹) :
     bvEq (pair x y) (singletonPair z) =
       bvEq x z ⊓ bvEq y z := by
-  rw [bvEq_symm]
-  simpa [inf_comm] using bvEq_singletonPair_pair z x y
+  calc
+    bvEq (pair x y) (singletonPair z) =
+        bvEq (singletonPair z) (pair x y) :=
+      bvEq_symm _ _
+    _ = bvEq z x ⊓ bvEq z y :=
+      bvEq_singletonPair_pair z x y
+    _ = bvEq x z ⊓ bvEq y z := by
+      rw [bvEq_symm z x, bvEq_symm z y]
 
 /-- Boolean equality is functorial through the unordered-pair constructor. -/
 theorem inf_bvEq_inf_bvEq_le_bvEq_pair
@@ -129,10 +136,22 @@ theorem inf_bvEq_inf_bvEq_le_bvEq_orderedPair
     bvEq x x' ⊓ bvEq y y' ≤
       bvEq (orderedPair x y) (orderedPair x' y') := by
   unfold orderedPair
-  apply inf_bvEq_inf_bvEq_le_bvEq_pair
-  · simpa using inf_le_left.trans
-      (inf_bvEq_inf_bvEq_le_bvEq_pair x x' x x')
-  · exact inf_bvEq_inf_bvEq_le_bvEq_pair x x' y y'
+  have hs :
+      bvEq x x' ⊓ bvEq y y' ≤
+        bvEq (singletonPair x) (singletonPair x') := by
+    calc
+      bvEq x x' ⊓ bvEq y y' ≤ bvEq x x' := inf_le_left
+      _ = bvEq (singletonPair x) (singletonPair x') :=
+        (bvEq_singletonPair_singletonPair x x').symm
+  have hp :
+      bvEq x x' ⊓ bvEq y y' ≤
+        bvEq (pair x y) (pair x' y') :=
+    inf_bvEq_inf_bvEq_le_bvEq_pair x x' y y'
+  exact
+    (le_inf hs hp).trans
+      (inf_bvEq_inf_bvEq_le_bvEq_pair
+        (singletonPair x) (singletonPair x')
+        (pair x y) (pair x' y'))
 
 private theorem coordinate_cross_le
     (x x' y y' : BVSet.{u, v} 𝔹) :
@@ -155,13 +174,24 @@ private theorem inf_sup_inf_sup_le
     (a b c d : 𝔹)
     (hcross : (a ⊓ b) ⊓ c ≤ d) :
     (a ⊓ (c ⊔ d)) ⊓ (b ⊔ d) ≤ d := by
-  rw [inf_sup_left, sup_inf_right]
-  apply sup_le
-  · rw [inf_sup_left]
-    apply sup_le
-    · simpa [inf_assoc, inf_left_comm, inf_comm] using hcross
-    · exact inf_le_right
-  · exact inf_le_left.trans inf_le_right
+  calc
+    (a ⊓ (c ⊔ d)) ⊓ (b ⊔ d) =
+        ((a ⊓ c) ⊔ (a ⊓ d)) ⊓ (b ⊔ d) := by
+      rw [inf_sup_left]
+    _ = ((a ⊓ c) ⊓ (b ⊔ d)) ⊔
+        ((a ⊓ d) ⊓ (b ⊔ d)) := by
+      rw [sup_inf_right]
+    _ ≤ d := by
+      apply sup_le
+      · calc
+          (a ⊓ c) ⊓ (b ⊔ d) =
+              ((a ⊓ c) ⊓ b) ⊔ ((a ⊓ c) ⊓ d) := by
+            rw [inf_sup_left]
+          _ ≤ d := by
+            apply sup_le
+            · simpa [inf_assoc, inf_left_comm, inf_comm] using hcross
+            · exact inf_le_right
+      · exact inf_le_left.trans inf_le_right
 
 private theorem inf_bvEq_bvEq_pair_le_second
     (x x' y y' : BVSet.{u, v} 𝔹) :
@@ -228,7 +258,7 @@ private theorem le_of_orderedPair_outer_constraints
                 (show
                   (q ⊓ (a ⊓ c)) ⊓ e ≤ a ⊓ e by
                   apply le_inf
-                  · exact inf_le_left.trans hqa
+                  · exact inf_le_left.trans (inf_le_left.trans hqa)
                   · exact inf_le_right).trans he
       · exact
           (show q ⊓ e ≤ a ⊓ e by
@@ -266,19 +296,29 @@ theorem bvEq_orderedPair_le_second
   have hqa : q ≤ a := by
     simpa [q, a] using bvEq_orderedPair_le_first x x' y y'
   have hqc : q ≤ (a ⊓ c) ⊔ e := by
-    unfold q orderedPair
-    rw [bvEq_pair_pair]
-    have h :=
-      inf_le_left.trans inf_le_right
-    simpa [a, c, e] using h
+    calc
+      q ≤
+          bvEq (pair x y) (singletonPair x') ⊔
+            bvEq (pair x y) (pair x' y') := by
+        unfold q orderedPair
+        rw [bvEq_pair_pair]
+        exact inf_le_left.trans inf_le_right
+      _ = (a ⊓ c) ⊔ e := by
+        rw [bvEq_pair_singletonPair]
+        rfl
   have hqb : q ≤ (a ⊓ b) ⊔ e := by
-    unfold q orderedPair
-    rw [bvEq_pair_pair]
-    have h :=
-      inf_le_right.trans inf_le_right
-    rw [bvEq_pair_singletonPair]
-    rw [bvEq_symm (pair x' y') (pair x y)]
-    simpa [a, b, e] using h
+    calc
+      q ≤
+          bvEq (pair x' y') (singletonPair x) ⊔
+            bvEq (pair x' y') (pair x y) := by
+        unfold q orderedPair
+        rw [bvEq_pair_pair]
+        exact inf_le_right.trans inf_le_right
+      _ = (a ⊓ b) ⊔ e := by
+        rw [bvEq_pair_singletonPair]
+        rw [bvEq_symm x' x, bvEq_symm y' x]
+        rw [bvEq_symm (pair x' y') (pair x y)]
+        rfl
   have hcross : (a ⊓ b) ⊓ c ≤ d := by
     simpa [a, b, c, d] using coordinate_cross_le x x' y y'
   have he : a ⊓ e ≤ d := by
