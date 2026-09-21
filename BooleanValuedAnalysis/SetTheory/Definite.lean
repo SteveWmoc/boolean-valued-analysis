@@ -27,7 +27,9 @@ variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 /-- A small displayed family of raw Boolean-valued names, interpreted as a
 Takeuti definite set by assigning coefficient `⊤` to every displayed child. -/
 structure DefinitePresentation (𝔹 : Type v) [CompleteBooleanAlgebra 𝔹] where
+  /-- Small displayed index type, corresponding to Takeuti's displayed domain. -/
   Index : Type u
+  /-- Raw Boolean-valued name displayed at each index. -/
   child : Index → BVSet.{u, v} 𝔹
 
 namespace DefinitePresentation
