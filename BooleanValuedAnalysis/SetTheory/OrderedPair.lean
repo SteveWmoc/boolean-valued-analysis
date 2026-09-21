@@ -174,19 +174,29 @@ private theorem inf_sup_inf_sup_le
     (a b c d : 𝔹)
     (hcross : (a ⊓ b) ⊓ c ≤ d) :
     (a ⊓ (c ⊔ d)) ⊓ (b ⊔ d) ≤ d := by
+  have hdist₁ :
+      a ⊓ (c ⊔ d) = (a ⊓ c) ⊔ (a ⊓ d) :=
+    inf_sup_left
+  have hdist₂ :
+      ((a ⊓ c) ⊔ (a ⊓ d)) ⊓ (b ⊔ d) =
+        ((a ⊓ c) ⊓ (b ⊔ d)) ⊔
+          ((a ⊓ d) ⊓ (b ⊔ d)) :=
+    sup_inf_right
+  have hdist₃ :
+      (a ⊓ c) ⊓ (b ⊔ d) =
+        ((a ⊓ c) ⊓ b) ⊔ ((a ⊓ c) ⊓ d) :=
+    inf_sup_left
   calc
     (a ⊓ (c ⊔ d)) ⊓ (b ⊔ d) =
         ((a ⊓ c) ⊔ (a ⊓ d)) ⊓ (b ⊔ d) := by
-      rw [inf_sup_left]
+      exact congrArg (fun t => t ⊓ (b ⊔ d)) hdist₁
     _ = ((a ⊓ c) ⊓ (b ⊔ d)) ⊔
-        ((a ⊓ d) ⊓ (b ⊔ d)) := by
-      rw [sup_inf_right]
+        ((a ⊓ d) ⊓ (b ⊔ d)) := hdist₂
     _ ≤ d := by
       apply sup_le
       · calc
           (a ⊓ c) ⊓ (b ⊔ d) =
-              ((a ⊓ c) ⊓ b) ⊔ ((a ⊓ c) ⊓ d) := by
-            rw [inf_sup_left]
+              ((a ⊓ c) ⊓ b) ⊔ ((a ⊓ c) ⊓ d) := hdist₃
           _ ≤ d := by
             apply sup_le
             · simpa [inf_assoc, inf_left_comm, inf_comm] using hcross
@@ -305,7 +315,6 @@ theorem bvEq_orderedPair_le_second
         exact inf_le_left.trans inf_le_right
       _ = (a ⊓ c) ⊔ e := by
         rw [bvEq_pair_singletonPair]
-        rfl
   have hqb : q ≤ (a ⊓ b) ⊔ e := by
     calc
       q ≤
@@ -318,7 +327,6 @@ theorem bvEq_orderedPair_le_second
         rw [bvEq_pair_singletonPair]
         rw [bvEq_symm x' x, bvEq_symm y' x]
         rw [bvEq_symm (pair x' y') (pair x y)]
-        rfl
   have hcross : (a ⊓ b) ⊓ c ≤ d := by
     simpa [a, b, c, d] using coordinate_cross_le x x' y y'
   have he : a ⊓ e ≤ d := by
