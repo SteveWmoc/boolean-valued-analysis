@@ -75,7 +75,8 @@ theorem mem_child_raw (u : DefinitePresentation.{u, v} 𝔹) (i : u.Index) :
 theorem mem_displayed_separated
     (u : DefinitePresentation.{u, v} 𝔹) (i : u.Index) :
     BVSet.Separated.mem (u.displayed i) u.separated = ⊤ := by
-  rfl
+  change BVSet.mem (u.child i) u.raw = ⊤
+  exact mem_child_raw u i
 
 /-- Boolean equality between displayed separated values is exactly the raw
 Boolean equality of their displayed names. -/
