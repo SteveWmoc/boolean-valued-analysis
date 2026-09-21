@@ -176,16 +176,16 @@ private theorem inf_sup_inf_sup_le
     (a ⊓ (c ⊔ d)) ⊓ (b ⊔ d) ≤ d := by
   have hdist₁ :
       a ⊓ (c ⊔ d) = (a ⊓ c) ⊔ (a ⊓ d) :=
-    inf_sup_left
+    inf_sup_left a c d
   have hdist₂ :
       ((a ⊓ c) ⊔ (a ⊓ d)) ⊓ (b ⊔ d) =
         ((a ⊓ c) ⊓ (b ⊔ d)) ⊔
           ((a ⊓ d) ⊓ (b ⊔ d)) :=
-    sup_inf_right
+    inf_sup_right (a ⊓ c) (a ⊓ d) (b ⊔ d)
   have hdist₃ :
       (a ⊓ c) ⊓ (b ⊔ d) =
         ((a ⊓ c) ⊓ b) ⊔ ((a ⊓ c) ⊓ d) :=
-    inf_sup_left
+    inf_sup_left (a ⊓ c) b d
   calc
     (a ⊓ (c ⊔ d)) ⊓ (b ⊔ d) =
         ((a ⊓ c) ⊔ (a ⊓ d)) ⊓ (b ⊔ d) := by
