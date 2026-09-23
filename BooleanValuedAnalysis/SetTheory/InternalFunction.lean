@@ -95,21 +95,20 @@ theorem relationIntoValue_graph_eq_top
   apply le_iInf
   intro p
   rw [le_himp_iff, top_inf_eq]
+  change
+    BVSet.mem p φ.toRawMap.graph ≤
+      BVSet.boundedExists u.raw (fun x =>
+        BVSet.boundedExists w.raw (fun y =>
+          BVSet.bvEq p (BVSet.orderedPair x y)))
   rw [ExtensionalRawMap.mem_graph]
   apply iSup_le
   intro i
   unfold BVSet.boundedExists
-  change
-    BVSet.bvEq p (BVSet.orderedPair (u.child i) (w.child (φ.toFun i))) ≤
-      ⨆ i' : u.Index,
-        (⊤ : 𝔹) ⊓
-          (⨆ j : w.Index,
-            (⊤ : 𝔹) ⊓
-              BVSet.bvEq p (BVSet.orderedPair (u.child i') (w.child j)))
+  simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
+    BVSet.mk_child, top_inf_eq]
   apply le_iSup_of_le i
-  rw [top_inf_eq]
   apply le_iSup_of_le (φ.toFun i)
-  simp
+  exact le_rfl
 
 /-- Every displayed source element has its displayed output in the graph, so
 the graph is total from the source definite set into the target definite set. -/
@@ -117,23 +116,16 @@ theorem totalOnValue_graph_eq_top
     {u w : DefinitePresentation.{u, v} 𝔹}
     (φ : ExtensionalDisplayedMap u w) :
     BVSet.totalOnValue φ.graph u.raw w.raw = ⊤ := by
-  apply top_unique
   unfold BVSet.totalOnValue BVSet.boundedForall
-  change
-    (⊤ : 𝔹) ≤
-      ⨅ i : u.Index,
-        BVSet.boundedExists w.raw
-          (fun y => BVSet.applicationValue φ.graph (u.child i) y)
+  simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
+    BVSet.mk_child, top_himp]
+  apply top_unique
   apply le_iInf
   intro i
   unfold BVSet.boundedExists
-  change
-    (⊤ : 𝔹) ≤
-      ⨆ j : w.Index,
-        (⊤ : 𝔹) ⊓
-          BVSet.applicationValue φ.graph (u.child i) (w.child j)
+  simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
+    BVSet.mk_child, top_inf_eq]
   apply le_iSup_of_le (φ.toFun i)
-  rw [top_inf_eq]
   simpa [BVSet.applicationValue] using
     (show
       (⊤ : 𝔹) ≤
