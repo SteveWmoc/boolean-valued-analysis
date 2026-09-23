@@ -59,6 +59,7 @@ import BooleanValuedAnalysis.SetTheory.SpectralMultiplication
 import BooleanValuedAnalysis.SetTheory.Definite
 import BooleanValuedAnalysis.SetTheory.OrderedPair
 import BooleanValuedAnalysis.SetTheory.DefiniteFunction
+import BooleanValuedAnalysis.SetTheory.InternalFunction
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
