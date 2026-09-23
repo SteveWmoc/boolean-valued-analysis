@@ -94,16 +94,22 @@ theorem relationIntoValue_graph_eq_top
   unfold BVSet.relationIntoValue
   apply le_iInf
   intro p
-  apply himp_eq_top_iff.mpr
+  rw [le_himp_iff, top_inf_eq]
   rw [ExtensionalRawMap.mem_graph]
   apply iSup_le
   intro i
   unfold BVSet.boundedExists
+  change
+    BVSet.bvEq p (BVSet.orderedPair (u.child i) (w.child (φ.toFun i))) ≤
+      ⨆ i' : u.Index,
+        (⊤ : 𝔹) ⊓
+          (⨆ j : w.Index,
+            (⊤ : 𝔹) ⊓
+              BVSet.bvEq p (BVSet.orderedPair (u.child i') (w.child j)))
   apply le_iSup_of_le i
-  rw [DefinitePresentation.raw_weight, top_inf_eq]
+  rw [top_inf_eq]
   apply le_iSup_of_le (φ.toFun i)
-  rw [DefinitePresentation.raw_weight, top_inf_eq]
-  exact le_rfl
+  simp
 
 /-- Every displayed source element has its displayed output in the graph, so
 the graph is total from the source definite set into the target definite set. -/
@@ -113,12 +119,21 @@ theorem totalOnValue_graph_eq_top
     BVSet.totalOnValue φ.graph u.raw w.raw = ⊤ := by
   apply top_unique
   unfold BVSet.totalOnValue BVSet.boundedForall
+  change
+    (⊤ : 𝔹) ≤
+      ⨅ i : u.Index,
+        BVSet.boundedExists w.raw
+          (fun y => BVSet.applicationValue φ.graph (u.child i) y)
   apply le_iInf
   intro i
-  rw [DefinitePresentation.raw_weight, top_himp]
   unfold BVSet.boundedExists
+  change
+    (⊤ : 𝔹) ≤
+      ⨆ j : w.Index,
+        (⊤ : 𝔹) ⊓
+          BVSet.applicationValue φ.graph (u.child i) (w.child j)
   apply le_iSup_of_le (φ.toFun i)
-  rw [DefinitePresentation.raw_weight, top_inf_eq]
+  rw [top_inf_eq]
   simpa [BVSet.applicationValue] using
     (show
       (⊤ : 𝔹) ≤
@@ -141,8 +156,9 @@ theorem singleValuedValue_graph_eq_top
   intro y
   apply le_iInf
   intro z
-  apply himp_eq_top_iff.mpr
-  exact φ.toRawMap.graph_functional x y z
+  rw [le_himp_iff, top_inf_eq]
+  simpa [BVSet.applicationValue, graph] using
+    φ.toRawMap.graph_functional x y z
 
 /-- The graph of an extensional map between definite presentations is an
 internal set-theoretic function from the source to the target at truth
