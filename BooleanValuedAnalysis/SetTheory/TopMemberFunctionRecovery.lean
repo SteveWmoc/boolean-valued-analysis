@@ -55,7 +55,7 @@ theorem totalOnValue_eq_top_of_functionFromValue_eq_top
   apply top_unique
   rw [← hf]
   unfold functionFromValue
-  exact inf_le_right.trans inf_le_left
+  exact inf_le_left.trans inf_le_right
 
 /-- A function truth value of `⊤` forces its single-valuedness component to be
 `⊤`. -/
@@ -66,7 +66,7 @@ theorem singleValuedValue_eq_top_of_functionFromValue_eq_top
   apply top_unique
   rw [← hf]
   unfold functionFromValue
-  exact inf_le_right.trans inf_le_right
+  exact inf_le_right
 
 /-- Top-valued single-valuedness gives the pointwise functionality estimate
 used by the recovery construction. -/
@@ -94,7 +94,10 @@ theorem separatedApplicationValue_inf_le_bvEq_of_singleValued_eq_top
       Separated.bvEq y z := by
   refine Quotient.inductionOn₂' y z ?_
   intro y z
-  simpa using
+  change
+    applicationValue f x y ⊓ applicationValue f x z ≤
+      bvEq y z
+  exact
     applicationValue_inf_le_bvEq_of_singleValued_eq_top
       f x y z hf
 
@@ -294,18 +297,22 @@ theorem eq_of_realizes
     (hφ : φ.Realizes f)
     (hψ : ψ.Realizes f) :
     φ = ψ := by
-  apply ExtensionalTopMemberMap.ext
-  funext i
-  apply Subtype.ext
-  apply
-    (BVSet.Separated.eq_iff_bvEq_top
-      (φ.toFun i).1 (ψ.toFun i).1).2
-  apply top_unique
-  have h :=
-    BVSet.separatedApplicationValue_inf_le_bvEq_of_singleValued_eq_top
-      f (u.child i) (φ.toFun i).1 (ψ.toFun i).1
-      (BVSet.singleValuedValue_eq_top_of_functionFromValue_eq_top hf)
-  simpa [hφ i, hψ i] using h
+  have hfun : φ.toFun = ψ.toFun := by
+    funext i
+    apply Subtype.ext
+    apply
+      (BVSet.Separated.eq_iff_bvEq_top
+        (φ.toFun i).1 (ψ.toFun i).1).2
+    apply top_unique
+    have h :=
+      BVSet.separatedApplicationValue_inf_le_bvEq_of_singleValued_eq_top
+        f (u.child i) (φ.toFun i).1 (ψ.toFun i).1
+        (BVSet.singleValuedValue_eq_top_of_functionFromValue_eq_top hf)
+    simpa [hφ i, hψ i] using h
+  cases φ
+  cases ψ
+  cases hfun
+  rfl
 
 /-- Reverse direction of Takeuti Proposition 1.4.2.
 
