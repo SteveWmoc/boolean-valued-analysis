@@ -43,6 +43,7 @@ def separatedApplicationValue
     (fun y => applicationValue f x y)
     (by
       intro y z hyz
+      change TopEq y z at hyz
       apply mem_eq_of_topEq_left
       unfold TopEq at hyz ⊢
       rw [bvEq_orderedPair]
@@ -75,6 +76,8 @@ theorem extensional_bvEq_orderedPair_right
     bvEq_trans p (orderedPair x y) (orderedPair x z)
 
 end BVSet
+
+variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
 /-- An extensional map from the displayed domain of a definite presentation
 into the full top-valued member carrier of another definite presentation.
@@ -109,10 +112,15 @@ theorem relationIntoValue_graph_eq_top_of_mem
   rw [mem_graph]
   apply iSup_le
   intro i
-  unfold BVSet.boundedExists
-  simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
-    BVSet.mk_child, top_inf_eq]
+  change
+    BVSet.bvEq p (BVSet.orderedPair (u.child i) (φ.toFun i)) ≤
+      ⨆ i' : u.Index,
+        (⊤ : 𝔹) ⊓
+          BVSet.boundedExists w.raw
+            (fun y =>
+              BVSet.bvEq p (BVSet.orderedPair (u.child i') y))
   apply le_iSup_of_le i
+  rw [top_inf_eq]
   rw [BVSet.boundedExists_eq_iSup_mem
     (BVSet.extensional_bvEq_orderedPair_right p (u.child i))]
   apply le_iSup_of_le (φ.toFun i)
@@ -136,8 +144,11 @@ theorem totalOnValue_graph_eq_top_of_mem
   rw [BVSet.boundedExists_eq_iSup_mem
     (BVSet.extensional_applicationValue_right φ.graph (u.child i))]
   apply le_iSup_of_le (φ.toFun i)
-  rw [hmem i]
-  simp [BVSet.applicationValue]
+  have hm : BVSet.mem (φ.toFun i) w.raw = ⊤ := hmem i
+  have happ :
+      BVSet.applicationValue φ.graph (u.child i) (φ.toFun i) = ⊤ := by
+    simpa [BVSet.applicationValue] using φ.mem_displayed_output_graph i
+  simpa [DefinitePresentation.raw, hm, happ]
 
 /-- Every raw extensional graph is single-valued at truth value `⊤`. -/
 theorem singleValuedValue_graph_eq_top
