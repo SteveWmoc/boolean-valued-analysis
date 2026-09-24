@@ -61,6 +61,7 @@ import BooleanValuedAnalysis.SetTheory.OrderedPair
 import BooleanValuedAnalysis.SetTheory.DefiniteFunction
 import BooleanValuedAnalysis.SetTheory.InternalFunction
 import BooleanValuedAnalysis.SetTheory.TopMemberFunction
+import BooleanValuedAnalysis.SetTheory.TopMemberFunctionRecovery
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
