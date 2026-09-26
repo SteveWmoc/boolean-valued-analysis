@@ -37,7 +37,7 @@ example
         f
         (BVSet.check (𝔹 := 𝔹) (PSet.ofNat.{u} n))
         (s.toFun n).1 = ⊤ :=
-  h.realizes_check_ofNat n
+  ExtensionalNaturalSequence.realizes_check_ofNat h n
 
 example
     (w : DefinitePresentation.{u, v} 𝔹)
