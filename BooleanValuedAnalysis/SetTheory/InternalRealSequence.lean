@@ -86,10 +86,8 @@ theorem internalReals_displayed_internalRealIndex
     (internalReals (𝔹 := 𝔹)).displayed
         (internalRealIndex (𝔹 := 𝔹) x) =
       x.val := by
-  change
-    BVSet.toSeparated
-        (SpectralFamily.rationalName (InternalReal.toSpectralFamily x)) =
-      x.val
+  unfold displayed
+  rw [internalReals_child_internalRealIndex]
   have h :=
     congrArg InternalReal.val
       (InternalReal.toInternalReal_toSpectralFamily x)
