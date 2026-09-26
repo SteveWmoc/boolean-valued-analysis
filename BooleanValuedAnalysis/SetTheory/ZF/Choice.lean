@@ -83,9 +83,7 @@ theorem choicePiece_disjoint (x y z : BVSet.{u, v} 𝔹) (hyz : y ≠ z) :
 /-- Every ordinary membership value is covered by the first-member pieces. -/
 theorem mem_le_iSup_choicePiece (x y : BVSet.{u, v} 𝔹) :
     mem y x ≤ ⨆ z : BVSet.{u, v} 𝔹, choicePiece x z := by
-  apply WellFounded.induction
-    (IsWellFounded.wf
-      (α := BVSet.{u, v} 𝔹) (r := WellOrderingRel)) y
+  apply WellOrderingRel.isWellOrder.wf.induction y
   intro y ih
   let e := choiceEarlierValue x y
   have he_le :
