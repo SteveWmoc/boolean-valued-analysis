@@ -221,9 +221,13 @@ theorem ofInternalFunction_realizes
         f
         (BVSet.natName (𝔹 := 𝔹) n)
         ((ExtensionalTopMemberMap.ofInternalFunction
+          (u := DefinitePresentation.naturals (𝔹 := 𝔹))
+          (w := w)
           f (by simpa using hf)).toFun (ULift.up n)).1 = ⊤
   exact
     ExtensionalTopMemberMap.ofInternalFunction_realizes
+      (u := DefinitePresentation.naturals (𝔹 := 𝔹))
+      (w := w)
       f (by simpa using hf) (ULift.up n)
 
 /-- A top-valued internal function on `ω` realizes at most one external
