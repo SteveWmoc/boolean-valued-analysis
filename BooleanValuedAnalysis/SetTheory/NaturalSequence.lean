@@ -94,8 +94,8 @@ structure ExtensionalNaturalSequence
   map_extensional :
     ∀ m n,
       BVSet.bvEq
-          (BVSet.natName (𝔹 := 𝔹) m)
-          (BVSet.natName (𝔹 := 𝔹) n) ≤
+          (BVSet.natName (𝔹 := 𝔹) m : BVSet.{u, v} 𝔹)
+          (BVSet.natName (𝔹 := 𝔹) n : BVSet.{u, v} 𝔹) ≤
         BVSet.Separated.bvEq (toFun m).1 (toFun n).1
 
 namespace ExtensionalNaturalSequence
