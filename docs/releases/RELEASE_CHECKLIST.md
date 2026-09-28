@@ -27,9 +27,11 @@ passed both workflows and been merged.
 - [ ] Review release-preparation diff and merge the PR only after both checks
       pass.
 
-If building locally in a Codespace or a full development environment:
+If building locally in a Codespace or a full development environment,
+run the same release metadata preflight as CI:
 
 ```sh
+python3 scripts/check_release_metadata.py
 elan toolchain install leanprover/lean4:v4.34.1
 lake update
 lake exe cache get
