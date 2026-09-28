@@ -8,14 +8,14 @@ authors:
     orcid: "https://orcid.org/0009-0009-9238-610X"
 repository-code: "https://github.com/SteveWmoc/boolean-valued-analysis"
 license: "Apache-2.0"
-version: "0.1.1"
-doi: "10.5281/zenodo.22696493"
-date-released: 2026-09-10
+version: "0.2.0"
+doi: "10.5281/zenodo.22696492"
 abstract: >-
   An experimental Lean 4 formalization of the foundations of Boolean-valued set
-  theory and Boolean-valued analysis, including Boolean-valued semantics, mixing
-  and maximum principles, a separated Boolean-valued universe, ZF/ZFC transfer
-  infrastructure, internal reals, and Boolean spectral families.
+  theory and Boolean-valued analysis, including Boolean-valued semantics, a
+  separated universe, ZF/ZFC transfer, internal Dedekind reals and Boolean
+  spectral families, spectral arithmetic, and Takeuti's definite-set/function
+  correspondence with checked-natural sequence specialization.
 keywords:
   - "Lean 4"
   - "formalized mathematics"
