@@ -126,8 +126,7 @@ end DefinitePresentation
 
 /-- An external sequence of M022 internal reals satisfying Takeuti's Boolean
 extensionality condition on the checked-natural domain. -/
-structure ExtensionalInternalRealSequence
-    [Small.{u} (SpectralFamily 𝔹)] where
+structure ExtensionalInternalRealSequence where
   /-- External internal-real value at `n`. -/
   toFun : ℕ → InternalReal.{u, v} 𝔹
   /-- Boolean extensionality with respect to the checked natural names. -/
@@ -140,6 +139,28 @@ structure ExtensionalInternalRealSequence
 
 namespace ExtensionalInternalRealSequence
 
+/-- Every ordinary sequence of separated internal reals is Boolean-extensional
+on checked naturals: the source equality is the classical Boolean value of
+ordinary natural-number equality.  Constructing the external sequence needs
+no smallness hypothesis. -/
+def ofFun (s : ℕ → InternalReal.{u, v} 𝔹) :
+    ExtensionalInternalRealSequence (𝔹 := 𝔹) where
+  toFun := s
+  map_extensional := by
+    intro m n
+    rw [BVSet.bvEq_natName]
+    by_cases h : m = n
+    · subst n
+      simp [SetTheory.classicalValue]
+    · simp [SetTheory.classicalValue, h]
+
+@[simp]
+theorem ofFun_toFun (s : ℕ → InternalReal.{u, v} 𝔹) (n : ℕ) :
+    (ofFun s).toFun n = s n :=
+  rfl
+
+-- The external sequence is size-free.  Only its canonical internal-real
+-- codomain presentation and the internal graph realization require `Small`.
 variable [Small.{u} (SpectralFamily 𝔹)]
 
 /-- Regard an internal-real sequence as the generic M025d natural sequence into
@@ -217,6 +238,23 @@ theorem takeuti_1_4_internalReal_sequence
               (s.toFun n).val = ⊤ := by
   obtain ⟨f, hf, hreal⟩ := exists_internal_realization s
   exact ⟨f, hf, fun n => realizes_check_ofNat hreal n⟩
+
+/-- Takeuti §1.4 for an arbitrary ordinary sequence of internal reals,
+without requiring the caller to supply a Boolean extensionality proof.
+Only the construction of the full internal-real codomain requires `Small`. -/
+theorem takeuti_1_4_internalReal_sequence_ofFun
+    (s : ℕ → InternalReal.{u, v} 𝔹) :
+    ∃ f : BVSet.{u, v} 𝔹,
+      BVSet.functionFromValue
+          f
+          (BVSet.omega (𝔹 := 𝔹))
+          (DefinitePresentation.internalReals (𝔹 := 𝔹)).raw = ⊤ ∧
+        ∀ n : ℕ,
+          BVSet.separatedApplicationValue
+              f
+              (BVSet.check (𝔹 := 𝔹) (PSet.ofNat.{u} n))
+              (s n).val = ⊤ := by
+  exact takeuti_1_4_internalReal_sequence (ofFun s)
 
 end ExtensionalInternalRealSequence
 
