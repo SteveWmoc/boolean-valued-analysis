@@ -174,6 +174,26 @@ namespace BVSet
 
 variable {𝔹 : Type v} [CompleteBooleanAlgebra 𝔹]
 
+/-- Checked finite ordinals have exact classical Boolean equality.  The
+private ground-code injectivity proof stays inside this module. -/
+@[simp]
+theorem bvEq_check_ofNat (m n : ℕ) :
+    bvEq
+        (check (𝔹 := 𝔹) (PSet.ofNat.{u} m))
+        (check (𝔹 := 𝔹) (PSet.ofNat.{u} n)) =
+      classicalValue (𝔹 := 𝔹) (m = n) := by
+  classical
+  by_cases h : m = n
+  · subst n
+    rw [bvEq_refl]
+    simp [classicalValue]
+  · have hnot :
+        ¬ PSet.Equiv (PSet.ofNat.{u} m) (PSet.ofNat.{u} n) := by
+      intro heq
+      exact h (InternalArithmetic.PSet.eq_of_ofNat_equiv_ofNat m n heq)
+    rw [check_bvEq_bot_of_not_equiv (𝔹 := 𝔹) hnot]
+    simp [classicalValue, h]
+
 /-- Canonical Boolean-valued name of a ground rational. The concrete ground
 coding is an implementation detail of M022. -/
 def ratName (q : ℚ) : BVSet.{u, v} 𝔹 :=
