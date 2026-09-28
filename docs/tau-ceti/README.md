@@ -39,8 +39,8 @@ existing implementation.
 
 Tau Ceti Roadmap and Tau Ceti track Mathlib `master`, while Tau Ceti's committed
 `lake-manifest.json` records the exact Mathlib revision used by a reproducible build. This
-repository pins the matching stable Lean/Mathlib `v4.33.1` release pair for its own
-development and release environment.
+repository pins the matching stable Lean/Mathlib `v4.34.1` release pair for its
+v0.2.0 development and release environment.
 
 The repository's architecture audit does not hard-code a second Tau Ceti pin. At the start of
 each run it snapshots `TauCetiProject/TauCeti` `main`, copies the Lean toolchain from that
