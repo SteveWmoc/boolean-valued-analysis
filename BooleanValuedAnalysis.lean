@@ -124,5 +124,10 @@ absolute-difference estimate underlying Proposition 1.3.9. M024c begins with
 partition-of-unity spectral and internal-real mixing, the Hilbert-free content
 of Proposition 1.3.11, followed by Takeuti's strictly-positive spectral
 multiplication kernel and the full nine-sign-region multiplication assembly
-from Proposition 1.3.12.
+from Proposition 1.3.12. M025 adds definite presentations, general
+Kuratowski-pair function graphs, and the forward/reverse Takeuti §1.4
+correspondence between internal functions and extensional maps into
+top-valued codomain members. Its checked-natural specialization includes the
+ordinary internal-real sequence forward realization, with a local `Small`
+assumption only for the canonical full internal-real codomain.
 -/

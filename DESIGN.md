@@ -413,8 +413,8 @@ syntactic derivability from this exact sentence set implies Boolean truth value
   **Transfer Principle** name.  Their premise is an explicit M018 derivation,
   not semantic consequence.
 - M020 has now supplied the concrete R7 consumer for typed ascent: Takeuti
-  §1.4 definite sets and functions. The implementation remains deferred to
-  M025 rather than generalized speculatively.
+  §1.4 definite sets and functions. M025 has implemented this
+  application-driven API rather than generalizing typed ascent speculatively.
 
 ### Reconsider when
 
@@ -473,7 +473,8 @@ family members agree only on part of the Boolean algebra.
 - ZFC Transfer has the same meaning as ZF Transfer: explicit syntactic
   derivability in the project-owned Hilbert calculus implies Boolean value
   `⊤`; no completeness or semantic-consequence claim is added.
-- Typed ascent remains deferred to M025.
+- Typed ascent is implemented in M025 for Takeuti's definite sets/functions;
+  no universal ascent interface is asserted.
 
 ### Reconsider when
 
@@ -508,13 +509,13 @@ M005 chose an ordinary Lean quotient of raw names by top-valued Boolean equality
 
 The resulting policy is recorded in D004: raw names remain the recursive layer, while `BVSet.Separated` is the extensional downstream carrier. M006 is responsible for proving that generic formula semantics can be instantiated intrinsically on that carrier and compared exactly with the raw semantics.
 
-### O006 — Typed ascent/descent for functions and structures — resolved by M020/M025 design
+### O006 — Typed ascent/descent for functions and structures — resolved by M020/M025 implementation
 
 Pure R6 set theory may encode a ground function as a set-theoretic object and then apply `checkSeparated`, but this is not intended to be the final interface for functional analysis. M020 supplies the first concrete consumer: Takeuti §1.4 definite internal sets and functions.
 
-The design decision is therefore application-driven rather than universal. M025 should build typed ascent/descent only for definite domains/codomains and extensional maps, with internal function-graph realization, evaluation correspondence, and the sequence/function specializations needed by §§1.4–1.6. Broader interfaces for homomorphisms, vector spaces, operators, and other structures should be generalized only from later proved use cases.
+The design decision is therefore application-driven rather than universal. M025 implements typed ascent/descent for definite domains/codomains and extensional maps, with internal function-graph realization, evaluation correspondence, and checked-natural sequence specialization. The reverse correspondence targets top-valued codomain members; real-typed reverse recovery is reserved for an upper-cut closure proof. Broader interfaces for homomorphisms, vector spaces, operators, and other structures should be generalized only from later proved use cases.
 
-M025 now fixes the first concrete representation policy in
+M025 implements the first concrete representation policy in
 [`docs/milestones/025-definite-sets-typed-functions.md`](docs/milestones/025-definite-sets-typed-functions.md):
 explicit small definite presentations, Boolean-extensional maps, a
 source-facing realization relation, theorem-local representative selection
