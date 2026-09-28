@@ -1,13 +1,13 @@
 # Boolean-Valued Analysis
 
 [![CI](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/SteveWmoc/boolean-valued-analysis/actions/workflows/ci.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22696493.svg)](https://doi.org/10.5281/zenodo.22696493)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22696492.svg)](https://doi.org/10.5281/zenodo.22696492)
 
 AI tools are used extensively in the development of this project, including in code, proofs, documentation, and review. The work should be judged on its mathematical and technical merits. If you object in principle to AI-assisted research or software development, we respectfully suggest that this is not the project for you.
 
 An experimental Lean 4 formalization of the foundations of Boolean-valued set theory and Boolean-valued analysis.
 
-> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, the Boolean-valid ZF/ZFC axiom and schema constructions, generic Boolean-valued logical soundness, concrete ZF and ZFC sentence theories with raw/separated theorem-consequence Transfer Principles, and the first Takeuti arithmetic/internal-real/Boolean-spectral-family layer are usable. The APIs may change as applications are developed.
+> **Project status:** active research. The foundational API, structural first-order formula semantics, syntactic set-bounded quantifiers, mixing lemma, maximum principle, separated Boolean-valued universe, intrinsic formula semantics on the separated universe, elementary descent, ordinary ground semantics, Δ₀ standard-name absoluteness, the Boolean-valid ZF/ZFC axiom and schema constructions, generic Boolean-valued logical soundness, concrete ZF and ZFC sentence theories with raw/separated theorem-consequence Transfer Principles, the Takeuti internal-real/Boolean-spectral-family layer, Hilbert-free spectral arithmetic (M024), and the definite-set/function correspondence with checked-natural sequences (M025) are usable. The APIs may change as applications are developed.
 
 ## Mathematical overview
 
@@ -55,9 +55,12 @@ The current development establishes that:
 - Takeuti's Chapter 1 closed upper cut `{q : ℚ | x ≤ q}` gives a checked Boolean-valued rational subset whose profile has infimum `⊥`, supremum `⊤`, and the rational right-continuity equation `P r = ⨅ s : {s // r < s}, P s`;
 - `InternalReal` packages a separated rational subset satisfying those upper-cut conditions at value `⊤`, every classical `x : ℝ` has a checked internal real with exact profile `classicalValue (x ≤ q)`, and a genuine pure-set-theory Δ₀ upper-cut formula is available for Transfer-facing syntax;
 - M023 defines a Hilbert-free `SpectralFamily 𝔹` as an increasing, right-continuous real-indexed resolution of the identity in an arbitrary complete Boolean algebra and extends each internal-real rational profile by Takeuti's rational envelope;
-- restriction of an arbitrary spectral family to rational thresholds reconstructs an internal real, rational-subset support and extensionality recover the separated name from its profile, and the two constructions are inverse as Lean equalities, yielding `internalRealEquivSpectralFamily : InternalReal 𝔹 ≃ SpectralFamily 𝔹` without new `Small` or `Nontrivial` assumptions.
+- restriction of an arbitrary spectral family to rational thresholds reconstructs an internal real, rational-subset support and extensionality recover the separated name from its profile, and the two constructions are inverse as Lean equalities, yielding `internalRealEquivSpectralFamily : InternalReal 𝔹 ≃ SpectralFamily 𝔹` without new `Small` or `Nontrivial` assumptions;
+- M024 transfers Hilbert-free arithmetic to the spectral-family side, including order and localization, addition, maximum, left-limit negation, absolute value, positivity, localized estimates, partition-of-unity mixing, and sign-region multiplication;
+- M025 gives definite presentations, Boolean-extensional maps, functional graph realization, and both directions of Takeuti's Proposition 1.4.2, including unique recovery of an external map into top-valued codomain members;
+- checked-natural sequence specializations support both general directions on `ω`, while ordinary `ℕ → InternalReal` sequences have forward internal realizations under a local `Small` assumption for the complete canonical real codomain.
 
-Thus the project now proves Boolean validity of its explicit ZFC sentence theory under `[Small.{u} 𝔹]` and has entered Takeuti's analytic layer through internal rationals, Dedekind reals, and their Boolean spectral-family correspondence. The Transfer Principles remain explicit syntactic theorem-consequence results; they do not assert logical completeness or semantic consequence.
+Thus the project proves Boolean validity of its explicit ZFC sentence theory under `[Small.{u} 𝔹]` and has entered Takeuti's analytic layer through internal reals, spectral arithmetic, and definite-function correspondence. The Transfer Principles remain explicit syntactic theorem-consequence results; they do not assert logical completeness or semantic consequence. M025 does not yet recover an `InternalReal`-typed sequence from every function with values in the canonical real codomain.
 
 ## Repository layout
 
@@ -88,6 +91,10 @@ Thus the project now proves Boolean validity of its explicit ZFC sentence theory
 | `BooleanValuedAnalysis.SetTheory.SpectralAddition` / `.SpectralMaximum` / `.SpectralNegation` | Takeuti spectral addition, maximum, and boundary-correct negation |
 | `BooleanValuedAnalysis.SetTheory.SpectralAbsolutePositivity` / `.SpectralAbsoluteEstimate` | Subtraction, absolute value, positivity, and localized absolute-difference estimates |
 | `BooleanValuedAnalysis.SetTheory.SpectralMixing` / `.SpectralPositiveMultiplication` / `.SpectralMultiplication` | Partition-of-unity mixing, positive product kernel, and full nine-sign-region multiplication |
+| `BooleanValuedAnalysis.SetTheory.Definite` / `.OrderedPair` | Explicit definite presentations, top-valued displayed membership, and general Kuratowski-pair semantics |
+| `BooleanValuedAnalysis.SetTheory.DefiniteFunction` / `.InternalFunction` | Boolean-extensional displayed maps, raw functional graphs, and Takeuti Proposition 1.4.1 |
+| `BooleanValuedAnalysis.SetTheory.TopMemberFunction` / `.TopMemberFunctionRecovery` | Proposition 1.4.2 forward and reverse correspondence with unique top-member recovery |
+| `BooleanValuedAnalysis.SetTheory.NaturalSequence` / `.InternalRealSequence` | Checked-natural sequence correspondence and ordinary internal-real sequence realization with local codomain smallness |
 | `BooleanValuedAnalysis.SetTheory.ZF.Constructors` | Direct empty/pair/union semantic constructors and Boolean extensionality characterization |
 | `BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms` | Closed ZF extensionality, empty-set, pairing, and union sentences with raw/separated Boolean validity |
 | `BooleanValuedAnalysis.SetTheory.ZF.Separation` | Direct raw Separation constructor, exact membership semantics, formula-specialized witnesses, and separated compatibility |
@@ -114,7 +121,10 @@ Thus the project now proves Boolean validity of its explicit ZFC sentence theory
 
 ## Quick start
 
-The exact Lean and Mathlib versions are pinned by `lean-toolchain`, `lakefile.toml`, and `lake-manifest.json`.
+The exact Lean and Mathlib versions are pinned by `lean-toolchain`,
+`lakefile.toml`, and `lake-manifest.json`. The planned v0.2.0 release pins
+**Lean v4.34.1** and **Mathlib v4.34.1** (commit
+`d13f23b723b8a846827a245b89c10fc7d3f11612`).
 
 ```sh
 git clone https://github.com/SteveWmoc/boolean-valued-analysis.git
@@ -204,11 +214,18 @@ For the project as a whole, cite the Zenodo archive using the concept DOI:
 
 [10.5281/zenodo.22696492](https://doi.org/10.5281/zenodo.22696492)
 
-For reproducibility, cite the DOI for the exact release used. The first Zenodo-archived release, `v0.1.1`, is:
+For reproducibility, cite the DOI for the **exact release** used. The first
+Zenodo-archived release, `v0.1.1`, is:
 
 [10.5281/zenodo.22696493](https://doi.org/10.5281/zenodo.22696493)
 
-Citation metadata is provided in [CITATION.cff](CITATION.cff). GitHub can also generate a formatted citation from the repository page.
+The v0.2.0 version-specific DOI is not known until Zenodo archives its GitHub
+release; do not use the v0.1.1 DOI for v0.2.0. The README badge and
+[CITATION.cff](CITATION.cff) use the stable concept DOI. The proposed v0.2.0
+notes are in [docs/releases/v0.2.0.md](docs/releases/v0.2.0.md), with the
+[release checklist](docs/releases/RELEASE_CHECKLIST.md) and
+[project changelog](CHANGELOG.md). GitHub can generate a formatted citation
+from the repository page.
 
 ## License
 

@@ -9,6 +9,8 @@ The project uses Lean 4 and Mathlib through Lake. The exact versions are pinned 
 ```sh
 git clone https://github.com/SteveWmoc/boolean-valued-analysis.git
 cd boolean-valued-analysis
+python3 scripts/check_release_metadata.py
+lake exe cache get
 lake build
 lake lint
 ```
@@ -18,10 +20,16 @@ Run `lake update` only when intentionally refreshing dependency metadata.
 Before opening a library-facing pull request, the milestone acceptance probes can be checked with:
 
 ```sh
+set -e
 for probe in Audit/M*Acceptance.lean; do lake env lean "$probe"; done
 ```
 
-Lean files under `docs/` are executable documentation probes and are compiled by CI as well.
+Lean files under `docs/` are executable documentation probes and are compiled by
+CI as well. Keep `lean-toolchain`, `lakefile.toml`, and
+`lake-manifest.json` synchronized when intentionally changing dependencies;
+do not run `lake update` as an unrelated housekeeping step. Release
+preparation additionally follows the
+[release checklist](docs/releases/RELEASE_CHECKLIST.md).
 
 ## Pull requests
 
