@@ -1,6 +1,6 @@
 # M025 — Definite sets and typed internal functions
 
-**Status:** design complete; implementation next
+**Status:** complete (M025a–M025d; consolidated acceptance in PR #83)
 
 **Depends on:** M001–M024
 
@@ -299,6 +299,67 @@ and must not leak into the public API.
 
 M025d should stop before convergence. Takeuti Proposition 1.3.13 and the
 Bolzano–Weierstrass interpretation belong to M027.
+
+## Implementation outcome
+
+The public implementation now realizes the intended Hilbert-free content of
+Takeuti Propositions 1.4.1–1.4.2:
+
+- **M025a:** `SetTheory/Definite.lean` gives explicit definite presentations
+  with raw and separated carriers, and `SetTheory/OrderedPair.lean` gives
+  general Kuratowski ordered pairs with exact coordinatewise Boolean equality.
+- **M025b:** `SetTheory/DefiniteFunction.lean` and
+  `SetTheory/InternalFunction.lean` provide Boolean-extensional displayed
+  maps, functional graphs, top-valued displayed evaluation, representative
+  invariance, and `ExtensionalDisplayedMap.takeuti_1_4_1`.
+- **M025c:** `SetTheory/TopMemberFunction.lean` and
+  `SetTheory/TopMemberFunctionRecovery.lean` prove the forward and reverse
+  `ExtensionalTopMemberMap.takeuti_1_4_2` correspondence. The reverse
+  direction recovers a **unique** extensional map into the full
+  `BVSet.Separated.TopMember` carrier. Its recovery uses Boolean mixing, not
+  the selection of one displayed target child.
+- **M025d:** `SetTheory/NaturalSequence.lean` specializes both directions
+  to the checked-natural domain `ω` and proves evaluation at each checked
+  finite ordinal. `SetTheory/InternalRealSequence.lean` builds the
+  canonical spectral-family-indexed real codomain and internalizes any
+  ordinary sequence `ℕ → InternalReal`. Checked-natural equality is
+  classical, so the external sequence needs no separately supplied
+  extensionality witness.
+
+`BooleanValuedAnalysis.lean` exports all these public modules. The existing
+focused `Audit/M025*Acceptance.lean` files exercise individual components;
+`Audit/M025Acceptance.lean` imports the root library and tests the combined
+public statements and their assumption boundaries. Both pinned CI and the
+architecture audit compile acceptance probes.
+
+### Size, representation, and logical boundary
+
+The generic definite-set/function correspondence and ordinary natural-domain
+specialization require only `[CompleteBooleanAlgebra 𝔹]`. The ordinary
+internal-real sequence interface is likewise size-free. Only the
+specialization which collects **all** spectral-family codes into one raw
+internal-real codomain uses the local instance
+`[Small.{u} (SpectralFamily 𝔹)]`.
+
+No global `Small` instance, new `Nontrivial` assumption, universal ascent
+API, public quotient representative selector, or object-language choice axiom
+is added by M025. The proof-local representatives used for forward
+realization are independent at the separated-graph level.
+
+### Follow-on boundary: real-typed reverse recovery
+
+The general and checked-natural reverse correspondences recover values in
+`TopMember v`. In contrast, the real-sequence specialization currently
+proves the **forward** direction for `ℕ → InternalReal`: each internal real
+maps to a top-valued member of the canonical real codomain.
+
+It has **not** been proved that an arbitrary top-valued member of that
+codomain satisfies the upper-cut predicate and can therefore be decoded into
+the existing `InternalReal` type. Consequently, M025 does not assert a
+real-typed reverse correspondence for arbitrary internal functions
+`ω → ℝ^(𝔹)`. Establishing upper-cut closure under Boolean mixing and the
+resulting typed recovery is separate follow-on work if needed by M027.
+No convergence or Bolzano–Weierstrass claim is part of M025.
 
 ## Acceptance tests
 
