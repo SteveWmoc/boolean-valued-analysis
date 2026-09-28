@@ -59,6 +59,13 @@ The repository currently provides:
   boundary-correct negation, absolute value, positivity, localized estimates,
   partition-of-unity mixing, and multiplication by Takeuti's sign-region
   decomposition, all without a new `Small` or `Nontrivial` assumption.
+- the complete M025 definite-set/function layer: explicit definite
+  presentations, general ordered pairs and functional graphs, the forward
+  Proposition 1.4.1 realization, the two-direction Proposition 1.4.2
+  correspondence with unique top-member recovery, and checked-natural
+  sequence specializations. Ordinary `ℕ → InternalReal` sequences internalize
+  under the local `[Small.{u} (SpectralFamily 𝔹)]` hypothesis needed only
+  to collect the full internal-real codomain.
 
 These components form the foundation for the milestones below.
 
@@ -626,21 +633,30 @@ operator-theoretic boundary.
 Completion record:
 [`docs/milestones/024-spectral-arithmetic-order-localization.md`](docs/milestones/024-spectral-arithmetic-order-localization.md)
 
-### M025–M035 — Remaining Takeuti Part I / Chapter 2 implementation sequence
+### M025–M035 — Takeuti Part I / Chapter 2 implementation sequence
 
-M025 is now specified as the first application-driven typed ascent/descent
-milestone. It implements Takeuti Propositions 1.4.1–1.4.2 using explicit
-definite presentations, Boolean-extensional external maps, internal
-function-graph realization, and the correspondence with top-valued codomain
-members. It deliberately avoids a universal ascent mechanism and keeps any
-representative selection theorem-local.
+**M025 is complete.** Its public definite presentations, extensional maps,
+function-graph semantics, and recovery theorem implement the Hilbert-free
+content of Takeuti Propositions 1.4.1–1.4.2. The generic reverse direction
+recovers unique external maps into the full top-valued member carrier;
+checked-natural sequences have both directions as well. The ordinary
+internal-real sequence interface has a forward realization theorem, with the
+size hypothesis localized to collecting the canonical internal-real codomain.
 
-M026–M029 then develop the operator, convergence, semigroup,
+An internal function into that canonical codomain is not yet known to recover
+an `InternalReal`-typed sequence: the upper-cut closure of arbitrary
+top-valued real-codomain members under Boolean mixing remains to be proved
+before such a reverse theorem can be stated. M025 introduces no universal
+ascent mechanism or public quotient representative selector.
+
+M026–M029 develop the operator, convergence, semigroup,
 Banach-projection, simultaneous-spectrum, and functional-calculus layers of
-Chapter 1. M030 isolates the orthomodular quantum-logic boundary. M031–M035
-cover the measure-algebra side of Chapter 2.
+Chapter 1. M027 takes the convergence and Bolzano–Weierstrass interpretations
+and can address the real-typed recovery boundary when required. M030
+isolates the orthomodular quantum-logic boundary. M031–M035 cover the
+measure-algebra side of Chapter 2.
 
-M025 design:
+M025 specification and completion record:
 [`docs/milestones/025-definite-sets-typed-functions.md`](docs/milestones/025-definite-sets-typed-functions.md)
 
 ## Review rubric
