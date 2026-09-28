@@ -194,6 +194,7 @@ theorem realizes_iff_toNaturalSequence
   rfl
 
 /-- Realization may be written using Takeuti's checked finite ordinal `ň`. -/
+omit [Small.{u} (SpectralFamily 𝔹)] in
 theorem realizes_check_ofNat
     {s : ExtensionalInternalRealSequence (𝔹 := 𝔹)}
     {f : BVSet.{u, v} 𝔹}
