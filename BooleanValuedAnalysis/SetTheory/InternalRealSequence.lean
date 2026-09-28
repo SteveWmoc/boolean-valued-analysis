@@ -161,11 +161,11 @@ theorem ofFun_toFun (s : ℕ → InternalReal.{u, v} 𝔹) (n : ℕ) :
 
 -- The external sequence is size-free.  Only its canonical internal-real
 -- codomain presentation and the internal graph realization require `Small`.
-variable [Small.{u} (SpectralFamily 𝔹)]
 
 /-- Regard an internal-real sequence as the generic M025d natural sequence into
 the canonical definite internal-real codomain. -/
 noncomputable def toNaturalSequence
+    [Small.{u} (SpectralFamily 𝔹)]
     (s : ExtensionalInternalRealSequence (𝔹 := 𝔹)) :
     ExtensionalNaturalSequence
       (DefinitePresentation.internalReals (𝔹 := 𝔹)) where
@@ -188,13 +188,13 @@ def Realizes
 /-- The typed internal-real realization relation is exactly the generic natural
 sequence realization after packaging each real as a top-member. -/
 theorem realizes_iff_toNaturalSequence
+    [Small.{u} (SpectralFamily 𝔹)]
     (s : ExtensionalInternalRealSequence (𝔹 := 𝔹))
     (f : BVSet.{u, v} 𝔹) :
     s.Realizes f ↔ s.toNaturalSequence.Realizes f := by
   rfl
 
 /-- Realization may be written using Takeuti's checked finite ordinal `ň`. -/
-omit [Small.{u} (SpectralFamily 𝔹)] in
 theorem realizes_check_ofNat
     {s : ExtensionalInternalRealSequence (𝔹 := 𝔹)}
     {f : BVSet.{u, v} 𝔹}
@@ -206,6 +206,10 @@ theorem realizes_check_ofNat
         (s.toFun n).val = ⊤ := by
   rw [← BVSet.natName_eq_check_ofNat]
   exact h n
+
+-- The remaining theorems form an internal function graph in the canonical
+-- full internal-real codomain and require its local size hypothesis.
+variable [Small.{u} (SpectralFamily 𝔹)]
 
 /-- Takeuti's §1.4 sequence specialization: every extensional external sequence
 of internal reals is realized by an internal function from `ω` into the
