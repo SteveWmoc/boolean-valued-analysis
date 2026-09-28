@@ -75,6 +75,14 @@ theorem natName_eq_check_ofNat (n : ℕ) :
       rw [ih]
       exact succ_check_insert_self _
 
+/-- Finite Boolean-valued natural names have classical, two-valued
+equality.  No `Nontrivial 𝔹` assumption is needed. -/
+@[simp]
+theorem bvEq_natName (m n : ℕ) :
+    bvEq (natName (𝔹 := 𝔹) m) (natName (𝔹 := 𝔹) n) =
+      classicalValue (𝔹 := 𝔹) (m = n) := by
+  simp only [natName_eq_check_ofNat, bvEq_check_ofNat]
+
 /-- Boolean equality form of `natName_eq_check_ofNat`. -/
 @[simp]
 theorem natName_bvEq_check_ofNat (n : ℕ) :
