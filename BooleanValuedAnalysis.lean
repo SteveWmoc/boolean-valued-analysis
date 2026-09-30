@@ -64,6 +64,7 @@ import BooleanValuedAnalysis.SetTheory.TopMemberFunction
 import BooleanValuedAnalysis.SetTheory.TopMemberFunctionRecovery
 import BooleanValuedAnalysis.SetTheory.NaturalSequence
 import BooleanValuedAnalysis.SetTheory.InternalRealSequence
+import BooleanValuedAnalysis.Operator.SpectralResolution
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -130,4 +131,8 @@ correspondence between internal functions and extensional maps into
 top-valued codomain members. Its checked-natural specialization includes the
 ordinary internal-real sequence forward realization, with a local `Small`
 assumption only for the canonical full internal-real codomain.
+M026b adds the first public Hilbert-space layer: faithful complete Boolean
+projection representations, closed-subspace spectral resolutions, and exact
+realization of M023 spectral families with pairwise commuting orthogonal
+threshold projections. No unbounded self-adjoint operator is constructed yet.
 -/

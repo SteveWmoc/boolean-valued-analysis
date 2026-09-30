@@ -651,11 +651,12 @@ ascent mechanism or public quotient representative selector.
 
 M026–M029 develop the operator, convergence, semigroup,
 Banach-projection, simultaneous-spectrum, and functional-calculus layers of
-Chapter 1. **M026 design is now in progress.** Its first slice makes the
-Hilbert-space boundary explicit: an abstract `SpectralFamily 𝔹` is realized
-only after choosing a faithful complete representation of `𝔹` by closed
-Hilbert subspaces/orthogonal projections. The subsequent slices build
-Hilbert spectral resolutions, finite spectral sums, bounded spectral
+Chapter 1. **M026a–M026b are implemented.** The Hilbert-space boundary is now
+explicit and public: an abstract `SpectralFamily 𝔹` is realized only after
+choosing a faithful complete representation of `𝔹` by closed Hilbert
+subspaces/orthogonal projections, producing a right-continuous Hilbert
+spectral resolution with pairwise commuting threshold projections. The
+remaining M026 slices build finite spectral sums, bounded spectral
 integration, and finally the unbounded self-adjoint `LinearPMap` realization
 before transporting M024's operator-facing theorems.
 
