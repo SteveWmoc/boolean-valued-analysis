@@ -108,7 +108,7 @@ def realizeSubspaces
 #check map_iInf
 #check map_iSup
 #check Submodule.starProjection
-#check Submodule.isStarProjection_starProjection
+#check isStarProjection_starProjection
 #check Submodule.starProjection_orthogonal'
 #check Submodule.starProjection_tendsto_closure_iSup
 #check LinearPMap.adjoint
@@ -119,10 +119,10 @@ def realizeSubspaces
 -- eventual unbounded operator target separate.
 example (ρ : ProjectionRepresentation 𝔹 H) (p : 𝔹) :
     IsStarProjection (ρ.projection p) :=
-  Submodule.isStarProjection_starProjection
+  isStarProjection_starProjection
 
 example (E : SpectralResolutionCandidate H) (r : ℝ) :
     IsStarProjection (E.projection r) :=
-  Submodule.isStarProjection_starProjection
+  isStarProjection_starProjection
 
 end BooleanValuedAnalysis.M026Probe
