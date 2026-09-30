@@ -50,7 +50,7 @@ namespace ProjectionRepresentation
 /-- The bounded orthogonal projection associated with a represented Boolean
 value. -/
 def projection (ρ : ProjectionRepresentation 𝔹 H) (p : 𝔹) : H →L[ℂ] H :=
-  (ρ.subspace p).starProjection
+  (ρ.subspace p).toSubmodule.starProjection
 
 /-- The representation is monotone because its complete-lattice map preserves
 binary joins. This deliberately uses only the structure proposed above. -/
@@ -68,9 +68,11 @@ separately. This equation is an M026a acceptance test for the orientation and
 coercions of `map_compl`. -/
 theorem projection_compl (ρ : ProjectionRepresentation 𝔹 H) (p : 𝔹) :
     ρ.projection pᶜ = 1 - ρ.projection p := by
-  change (ρ.subspace pᶜ).starProjection =
-    1 - (ρ.subspace p).starProjection
-  rw [ρ.map_compl p, Submodule.starProjection_orthogonal']
+  change (ρ.subspace pᶜ).toSubmodule.starProjection =
+    1 - (ρ.subspace p).toSubmodule.starProjection
+  rw [ρ.map_compl p]
+  simpa using
+    (Submodule.starProjection_orthogonal' (ρ.subspace p).toSubmodule)
 
 end ProjectionRepresentation
 
@@ -90,7 +92,7 @@ namespace SpectralResolutionCandidate
 
 /-- Every Hilbert-side threshold has its canonical star projection. -/
 def projection (E : SpectralResolutionCandidate H) (r : ℝ) : H →L[ℂ] H :=
-  (E.subspace r).starProjection
+  (E.subspace r).toSubmodule.starProjection
 
 end SpectralResolutionCandidate
 
