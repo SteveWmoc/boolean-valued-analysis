@@ -62,6 +62,16 @@ theorem subspace_mono (ρ : ProjectionRepresentation 𝔹 H) {p q : 𝔹}
     _ = ρ.subspace (p ⊔ q) := (map_sup ρ.subspace p q).symm
     _ = ρ.subspace q := by rw [sup_eq_right.mpr hpq]
 
+/-- The proposed representation boundary really sends Boolean complement to
+operator complement, rather than merely exposing the two ingredients
+separately. This equation is an M026a acceptance test for the orientation and
+coercions of `map_compl`. -/
+theorem projection_compl (ρ : ProjectionRepresentation 𝔹 H) (p : 𝔹) :
+    ρ.projection pᶜ = 1 - ρ.projection p := by
+  change (ρ.subspace pᶜ).starProjection =
+    1 - (ρ.subspace p).starProjection
+  rw [ρ.map_compl p, Submodule.starProjection_orthogonal']
+
 end ProjectionRepresentation
 
 /-- Prototype Hilbert-side resolution. Closed subspaces are primary;
