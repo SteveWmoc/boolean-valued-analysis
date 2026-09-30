@@ -6,6 +6,7 @@ Authors: Steven Sabean
 
 import BooleanValuedAnalysis.SetTheory.SpectralFamily
 import Mathlib.Analysis.InnerProductSpace.Positive
+import Mathlib.Analysis.CStarAlgebra.Projection
 import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 import Mathlib.Order.Hom.CompleteLattice
 
