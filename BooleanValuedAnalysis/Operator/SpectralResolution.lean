@@ -6,7 +6,6 @@ Authors: Steven Sabean
 
 import BooleanValuedAnalysis.SetTheory.SpectralFamily
 import Mathlib.Analysis.InnerProductSpace.Positive
-import Mathlib.Analysis.CStarAlgebra.Projection
 import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 import Mathlib.Order.Hom.CompleteLattice
 
@@ -136,17 +135,50 @@ theorem projection_mono
   rw [Submodule.starProjection_le_starProjection_iff]
   simpa using E.monotone hrs
 
+/-- Nested spectral subspaces have commuting orthogonal projections. -/
+private theorem projection_commute_of_subspace_le
+    (E : SpectralResolution H) {r s : ℝ}
+    (hrs : E.subspace r ≤ E.subspace s) :
+    Commute (E.projection r) (E.projection s) := by
+  rw [commute_iff_eq]
+  ext x
+  change
+    (E.subspace r).toSubmodule.starProjection
+        ((E.subspace s).toSubmodule.starProjection x) =
+      (E.subspace s).toSubmodule.starProjection
+        ((E.subspace r).toSubmodule.starProjection x)
+  have hsr :
+      (E.subspace s).toSubmodule.starProjection
+          ((E.subspace r).toSubmodule.starProjection x) =
+        (E.subspace r).toSubmodule.starProjection x := by
+    apply Submodule.starProjection_eq_self_iff.mpr
+    exact hrs (Submodule.starProjection_apply_mem _ _)
+  have hres :
+      x - (E.subspace s).toSubmodule.starProjection x ∈
+        (E.subspace r).toSubmoduleᗮ := by
+    exact
+      (Submodule.orthogonal_le hrs)
+        (Submodule.sub_starProjection_mem_orthogonal
+          (K := (E.subspace s).toSubmodule) x)
+  have hrs_apply :
+      (E.subspace r).toSubmodule.starProjection
+          ((E.subspace s).toSubmodule.starProjection x) =
+        (E.subspace r).toSubmodule.starProjection x := by
+    have hzero :
+        (E.subspace r).toSubmodule.starProjection
+            (x - (E.subspace s).toSubmodule.starProjection x) = 0 :=
+      Submodule.starProjection_apply_eq_zero_iff.mpr hres
+    rw [map_sub, sub_eq_zero] at hzero
+    exact hzero.symm
+  rw [hrs_apply, hsr]
+
 /-- Any two projections in one spectral resolution commute. -/
 theorem projection_commute
     (E : SpectralResolution H) (r s : ℝ) :
     Commute (E.projection r) (E.projection s) := by
   rcases le_total r s with hrs | hsr
-  · exact
-      (E.projection_isStarProjection r).commute_of_le
-        (E.projection_isStarProjection s) (E.projection_mono hrs)
-  · exact
-      ((E.projection_isStarProjection s).commute_of_le
-        (E.projection_isStarProjection r) (E.projection_mono hsr)).symm
+  · exact E.projection_commute_of_subspace_le (E.monotone hrs)
+  · exact (E.projection_commute_of_subspace_le (E.monotone hsr)).symm
 
 end SpectralResolution
 
