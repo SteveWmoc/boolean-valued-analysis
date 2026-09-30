@@ -651,13 +651,24 @@ ascent mechanism or public quotient representative selector.
 
 M026–M029 develop the operator, convergence, semigroup,
 Banach-projection, simultaneous-spectrum, and functional-calculus layers of
-Chapter 1. M027 takes the convergence and Bolzano–Weierstrass interpretations
-and can address the real-typed recovery boundary when required. M030
-isolates the orthomodular quantum-logic boundary. M031–M035 cover the
-measure-algebra side of Chapter 2.
+Chapter 1. **M026 design is now in progress.** Its first slice makes the
+Hilbert-space boundary explicit: an abstract `SpectralFamily 𝔹` is realized
+only after choosing a faithful complete representation of `𝔹` by closed
+Hilbert subspaces/orthogonal projections. The subsequent slices build
+Hilbert spectral resolutions, finite spectral sums, bounded spectral
+integration, and finally the unbounded self-adjoint `LinearPMap` realization
+before transporting M024's operator-facing theorems.
+
+M027 takes the convergence and Bolzano–Weierstrass interpretations and can
+address the real-typed recovery boundary when required. M030 isolates the
+orthomodular quantum-logic boundary. M031–M035 cover the measure-algebra side
+of Chapter 2.
 
 M025 specification and completion record:
 [`docs/milestones/025-definite-sets-typed-functions.md`](docs/milestones/025-definite-sets-typed-functions.md)
+
+M026 specification:
+[`docs/milestones/026-projection-operator-realization.md`](docs/milestones/026-projection-operator-realization.md)
 
 ## Review rubric
 
