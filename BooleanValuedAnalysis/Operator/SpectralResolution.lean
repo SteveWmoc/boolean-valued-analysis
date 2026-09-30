@@ -167,7 +167,8 @@ private theorem projection_commute_of_subspace_le
     have hzero :
         (E.subspace r).toSubmodule.starProjection
             (x - (E.subspace s).toSubmodule.starProjection x) = 0 :=
-      Submodule.starProjection_apply_eq_zero_iff.mpr hres
+      (Submodule.starProjection_apply_eq_zero_iff
+        (K := (E.subspace r).toSubmodule)).2 hres
     rw [map_sub, sub_eq_zero] at hzero
     exact hzero.symm
   rw [hrs_apply, hsr]
