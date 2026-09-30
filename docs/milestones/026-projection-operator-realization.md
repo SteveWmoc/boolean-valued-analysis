@@ -1,6 +1,6 @@
 # M026 — Projection representation and self-adjoint operator realization
 
-**Status:** design/prototype in progress
+**Status:** M026a complete; M026b implemented
 
 **Depends on:** M001–M025
 
@@ -126,6 +126,18 @@ with exact equation
 Acceptance requires monotonicity, total infimum `⊥`, total supremum `⊤`,
 right-continuity, and pairwise commutation of the corresponding star
 projections.
+
+Public implementation:
+
+- `BooleanValuedAnalysis/Operator/SpectralResolution.lean`;
+- `ProjectionRepresentation` with derived star projections, complement and
+  monotonicity theorems;
+- `SpectralResolution` with monotone pairwise-commuting threshold projections;
+- `SpectralFamily.realize` with exact subspace/projection equations;
+- `Audit/M026bAcceptance.lean`.
+
+M026b deliberately stops before finite spectral sums and any unbounded
+`LinearPMap` construction.
 
 ## M026c — finite spectral sums
 
