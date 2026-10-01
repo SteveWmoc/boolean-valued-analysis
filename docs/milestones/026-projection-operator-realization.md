@@ -1,6 +1,6 @@
 # M026 — Projection representation and self-adjoint operator realization
 
-**Status:** M026a complete; M026b implemented
+**Status:** M026a–M026b complete; M026c in progress
 
 **Depends on:** M001–M025
 
@@ -160,6 +160,17 @@ Required reusable facts include:
 - compatibility under partition refinement.
 
 No integration notation should be introduced merely for appearance.
+
+First M026c slice implemented:
+
+- `BooleanValuedAnalysis/Operator/SpectralIncrement.lean`;
+- half-open increment subspaces `E(a)ᗮ ⊓ E(b)`;
+- their canonical orthogonal star projections and self-adjointness;
+- endpoint decomposition for `a ≤ b`;
+- orthogonality and zero composition for ordered disjoint intervals;
+- `Audit/M026cIncrementAcceptance.lean`.
+
+Finite weighted sums, refinement, and norm estimates remain later M026c slices.
 
 ## M026d — bounded spectral integration
 
