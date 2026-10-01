@@ -65,6 +65,7 @@ import BooleanValuedAnalysis.SetTheory.TopMemberFunctionRecovery
 import BooleanValuedAnalysis.SetTheory.NaturalSequence
 import BooleanValuedAnalysis.SetTheory.InternalRealSequence
 import BooleanValuedAnalysis.Operator.SpectralResolution
+import BooleanValuedAnalysis.Operator.SpectralIncrement
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -135,4 +136,7 @@ M026b adds the first public Hilbert-space layer: faithful complete Boolean
 projection representations, closed-subspace spectral resolutions, and exact
 realization of M023 spectral families with pairwise commuting orthogonal
 threshold projections. No unbounded self-adjoint operator is constructed yet.
+M026c begins the finite spectral-sum layer with half-open spectral interval
+increments, their orthogonal projections, endpoint decomposition, and
+orthogonality/zero-composition for ordered disjoint intervals.
 -/
