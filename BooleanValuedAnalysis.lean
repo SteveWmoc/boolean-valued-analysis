@@ -66,6 +66,7 @@ import BooleanValuedAnalysis.SetTheory.NaturalSequence
 import BooleanValuedAnalysis.SetTheory.InternalRealSequence
 import BooleanValuedAnalysis.Operator.SpectralResolution
 import BooleanValuedAnalysis.Operator.SpectralIncrement
+import BooleanValuedAnalysis.Operator.SpectralStepSum
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -139,4 +140,7 @@ threshold projections. No unbounded self-adjoint operator is constructed yet.
 M026c begins the finite spectral-sum layer with half-open spectral interval
 increments, their orthogonal projections, endpoint decomposition, and
 orthogonality/zero-composition for ordered disjoint intervals.
+The next M026c slice adds real-weighted interval projections and finite
+self-adjoint spectral step sums, with pairwise commutation of distinct
+summands under interval separation.
 -/
