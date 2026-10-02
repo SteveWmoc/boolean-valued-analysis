@@ -172,6 +172,20 @@ First M026c slice implemented:
 
 Finite weighted sums, refinement, and norm estimates remain later M026c slices.
 
+Second M026c slice implemented:
+
+- `BooleanValuedAnalysis/Operator/SpectralStepSum.lean`;
+- real-weighted interval projections;
+- self-adjointness of each weighted interval term;
+- commutation of separated interval projections and weighted terms;
+- finite spectral step sums;
+- self-adjointness of every finite step sum;
+- pairwise commutation of distinct summands under interval separation;
+- `Audit/M026cStepSumAcceptance.lean`.
+
+Partition refinement and Pythagorean/Cauchy norm estimates remain the next
+M026c work.
+
 ## M026d — bounded spectral integration
 
 For a bounded spectral resolution, choose canonical step approximations and
