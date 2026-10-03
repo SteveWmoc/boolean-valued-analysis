@@ -186,6 +186,19 @@ Second M026c slice implemented:
 Partition refinement and Pythagorean/Cauchy norm estimates remain the next
 M026c work.
 
+Third M026c slice implemented:
+
+- `BooleanValuedAnalysis/Operator/SpectralRefinement.lean`;
+- monotonicity of interval subspaces under interval enlargement;
+- monotonicity of the corresponding interval projections;
+- range membership for weighted interval projections;
+- orthogonality of weighted values on separated intervals;
+- the two-term Pythagorean norm identity;
+- `Audit/M026cRefinementAcceptance.lean`.
+
+Exact partition-splitting identities and the finite-family Cauchy estimate
+remain the final M026c control work before bounded spectral integration.
+
 ## M026d — bounded spectral integration
 
 For a bounded spectral resolution, choose canonical step approximations and
