@@ -87,9 +87,12 @@ theorem weightedIntervalProjection_inner_eq_zero_of_separated
     · exact E.intervalSubspace_isOrtho_of_le hbc
     · exact (E.intervalSubspace_isOrtho_of_le
         (a := c) (b := d) (c := a) (d := b) hda).symm
+  rw [Submodule.isOrtho_iff_inner_eq] at hOrtho
   exact
     hOrtho
+      (E.weightedIntervalProjection a b weight₁ x)
       (E.weightedIntervalProjection_apply_mem a b weight₁ x)
+      (E.weightedIntervalProjection c d weight₂ y)
       (E.weightedIntervalProjection_apply_mem c d weight₂ y)
 
 /-- Two separated weighted spectral increments satisfy the pointwise
