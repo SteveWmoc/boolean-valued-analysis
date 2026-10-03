@@ -67,6 +67,7 @@ import BooleanValuedAnalysis.SetTheory.InternalRealSequence
 import BooleanValuedAnalysis.Operator.SpectralResolution
 import BooleanValuedAnalysis.Operator.SpectralIncrement
 import BooleanValuedAnalysis.Operator.SpectralStepSum
+import BooleanValuedAnalysis.Operator.SpectralRefinement
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -143,4 +144,6 @@ orthogonality/zero-composition for ordered disjoint intervals.
 The next M026c slice adds real-weighted interval projections and finite
 self-adjoint spectral step sums, with pairwise commutation of distinct
 summands under interval separation.
+A further M026c control slice adds interval-refinement monotonicity and the
+first orthogonal Pythagorean norm identity for separated weighted increments.
 -/
