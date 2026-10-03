@@ -23,6 +23,8 @@ partition-induction layer.
 
 noncomputable section
 
+open scoped InnerProductSpace
+
 universe w
 
 namespace BooleanValued
@@ -106,6 +108,7 @@ theorem weightedIntervalProjection_norm_add_sq_of_separated
         ‖E.weightedIntervalProjection c d weight₂ y‖ ^ 2 := by
   simpa [pow_two] using
     (norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero
+      (𝕜 := ℂ)
       (E.weightedIntervalProjection a b weight₁ x)
       (E.weightedIntervalProjection c d weight₂ y)
       (E.weightedIntervalProjection_inner_eq_zero_of_separated hsep x y))
