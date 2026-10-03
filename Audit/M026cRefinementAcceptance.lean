@@ -23,6 +23,8 @@ deliberately deferred.
 
 noncomputable section
 
+open scoped InnerProductSpace
+
 universe w
 
 namespace BooleanValued
