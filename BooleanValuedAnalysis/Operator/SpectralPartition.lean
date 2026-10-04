@@ -207,7 +207,11 @@ theorem weightedIntervalProjection_sub_apply_norm_le
       (E.intervalSubspace a b).toSubmodule.norm_starProjection_apply_le x
   have hw :
       ‖(weight₁ : ℂ) - (weight₂ : ℂ)‖ ≤ ε := by
-    simpa [Real.norm_eq_abs] using hweight
+    calc
+      ‖(weight₁ : ℂ) - (weight₂ : ℂ)‖
+          = |weight₁ - weight₂| := by
+              rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+      _ ≤ ε := hweight
   exact mul_le_mul hw hp (norm_nonneg _) hε
 
 /-- Fixed finite-family Cauchy estimate for spectral step sums. If two step
@@ -230,8 +234,8 @@ theorem finiteStepSum_sub_apply_norm_le
   rw [← Finset.sum_sub_distrib]
   calc
     ‖∑ i ∈ s,
-        (E.weightedIntervalProjection (left i) (right i) (weight₁ i)) x -
-          (E.weightedIntervalProjection (left i) (right i) (weight₂ i)) x‖
+        ((E.weightedIntervalProjection (left i) (right i) (weight₁ i)) x -
+          (E.weightedIntervalProjection (left i) (right i) (weight₂ i)) x)‖
         ≤ ∑ i ∈ s,
             ‖(E.weightedIntervalProjection (left i) (right i) (weight₁ i)) x -
               (E.weightedIntervalProjection (left i) (right i) (weight₂ i)) x‖ :=
