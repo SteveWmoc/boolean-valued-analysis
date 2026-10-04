@@ -655,14 +655,12 @@ Chapter 1. **M026a–M026b are implemented.** The Hilbert-space boundary is now
 explicit and public: an abstract `SpectralFamily 𝔹` is realized only after
 choosing a faithful complete representation of `𝔹` by closed Hilbert
 subspaces/orthogonal projections, producing a right-continuous Hilbert
-spectral resolution with pairwise commuting threshold projections. M026c is now well underway: half-open spectral interval increments, finite
-real-weighted self-adjoint spectral step sums, interval-refinement
-monotonicity, and the first Pythagorean norm identity are public. Distinct
-summands commute under interval separation. The remaining M026c control work
-is exact partition splitting together with the finite-family Cauchy estimate
-needed for bounded spectral integration. After that come bounded spectral
-integration and finally the unbounded self-adjoint `LinearPMap` realization
-before transporting M024's operator-facing theorems.
+spectral resolution with pairwise commuting threshold projections. M026c is complete: half-open spectral increments, finite real-weighted
+self-adjoint step sums, refinement monotonicity, exact interval splitting,
+and finite Pythagorean norm identities are public. These provide the control
+layer needed for bounded spectral integration. M026d is next, followed by the
+unbounded self-adjoint `LinearPMap` realization and transport of M024's
+operator-facing theorems.
 
 M027 takes the convergence and Bolzano–Weierstrass interpretations and can
 address the real-typed recovery boundary when required. M030 isolates the
