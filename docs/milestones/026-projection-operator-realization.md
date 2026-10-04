@@ -1,6 +1,6 @@
 # M026 — Projection representation and self-adjoint operator realization
 
-**Status:** M026a–M026b complete; M026c in progress
+**Status:** M026a–M026c complete; M026d next
 
 **Depends on:** M001–M025
 
@@ -198,6 +198,19 @@ Third M026c slice implemented:
 
 Exact partition-splitting identities and the finite-family Cauchy estimate
 remain the final M026c control work before bounded spectral integration.
+
+Final M026c control slice implemented:
+
+- `BooleanValuedAnalysis/Operator/SpectralPartition.lean`;
+- the exact identity `P((a,b]) = E(b) - E(a)` for `a ≤ b`;
+- exact splitting `P((a,c]) + P((c,b]) = P((a,b])`;
+- the corresponding common-weight splitting theorem;
+- a generic finite Pythagorean theorem for pairwise-orthogonal vectors;
+- the specialized finite spectral-step-sum pointwise norm identity;
+- `Audit/M026cPartitionAcceptance.lean`.
+
+M026c is complete within its documented scope. M026d may now build bounded
+spectral integration from these finite approximants and control lemmas.
 
 ## M026d — bounded spectral integration
 
