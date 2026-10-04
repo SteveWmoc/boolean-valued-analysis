@@ -114,7 +114,7 @@ theorem intervalProjection_eq_projection_sub
     have hsum :=
       Submodule.add_mem _
         hResidualRight hResidualLeft
-    convert hsum using 1 <;> abel
+    convert hsum using 1 <;> (abel)
   exact
     Submodule.eq_starProjection_of_mem_orthogonal
       (K := (E.intervalSubspace a b).toSubmodule)
@@ -142,6 +142,7 @@ theorem weightedIntervalProjection_add_weightedIntervalProjection
   rw [← smul_add, E.intervalProjection_add_intervalProjection hac hcb]
 
 /-- Finite Pythagoras for a pairwise-orthogonal family of vectors. -/
+omit [CompleteSpace H] in
 theorem norm_finset_sum_sq_of_pairwise_inner_eq_zero
     {ι : Type u}
     (s : Finset ι) (f : ι → H)
@@ -188,15 +189,20 @@ theorem finiteStepSum_apply_norm_sq
     ‖E.finiteStepSum s left right weight x‖ ^ 2 =
       ∑ i ∈ s,
         ‖E.weightedIntervalProjection (left i) (right i) (weight i) x‖ ^ 2 := by
-  apply
-    norm_finset_sum_sq_of_pairwise_inner_eq_zero
+  have horth :
+      ∀ i ∈ s, ∀ j ∈ s, i ≠ j →
+        ⟪E.weightedIntervalProjection (left i) (right i) (weight i) x,
+          E.weightedIntervalProjection (left j) (right j) (weight j) x⟫_ℂ = 0 := by
+    intro i hi j hj hij
+    exact
+      E.weightedIntervalProjection_inner_eq_zero_of_separated
+        (hsep i hi j hj hij) x x
+  simpa [finiteStepSum] using
+    (norm_finset_sum_sq_of_pairwise_inner_eq_zero
       s
       (fun i =>
         E.weightedIntervalProjection (left i) (right i) (weight i) x)
-  intro i hi j hj hij
-  exact
-    E.weightedIntervalProjection_inner_eq_zero_of_separated
-      (hsep i hi j hj hij) x x
+      horth)
 
 end SpectralResolution
 
