@@ -114,7 +114,15 @@ theorem intervalProjection_eq_projection_sub
     have hsum :=
       Submodule.add_mem _
         hResidualRight hResidualLeft
-    convert hsum using 1 <;> (abel)
+    have heq :
+        x -
+            ((E.subspace b).toSubmodule.starProjection x -
+              (E.subspace a).toSubmodule.starProjection x) =
+          (x - (E.subspace b).toSubmodule.starProjection x) +
+            (E.subspace a).toSubmodule.starProjection x := by
+      abel
+    rw [heq]
+    exact hsum
   exact
     Submodule.eq_starProjection_of_mem_orthogonal
       (K := (E.intervalSubspace a b).toSubmodule)
@@ -141,11 +149,14 @@ theorem weightedIntervalProjection_add_weightedIntervalProjection
   unfold weightedIntervalProjection
   rw [← smul_add, E.intervalProjection_add_intervalProjection hac hcb]
 
+section FinitePythagoras
+
+variable {H₀ : Type w} [NormedAddCommGroup H₀] [InnerProductSpace ℂ H₀]
+
 /-- Finite Pythagoras for a pairwise-orthogonal family of vectors. -/
-omit [CompleteSpace H] in
 theorem norm_finset_sum_sq_of_pairwise_inner_eq_zero
     {ι : Type u}
-    (s : Finset ι) (f : ι → H)
+    (s : Finset ι) (f : ι → H₀)
     (h :
       ∀ i ∈ s, ∀ j ∈ s, i ≠ j →
         ⟪f i, f j⟫_ℂ = 0) :
@@ -174,6 +185,8 @@ theorem norm_finset_sum_sq_of_pairwise_inner_eq_zero
       simpa [pow_two] using
         (norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero
           (𝕜 := ℂ) (f a) (∑ i ∈ s, f i) hinner)
+
+end FinitePythagoras
 
 /-- A finite spectral step sum over pairwise separated intervals satisfies
 the exact pointwise Pythagorean norm identity. -/
