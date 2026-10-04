@@ -52,7 +52,7 @@ example {ι : Type u} (E : SpectralResolution H)
       ∀ i ∈ s, ∀ j ∈ s, i ≠ j →
         ⟪f i, f j⟫_ℂ = 0) :
     ‖∑ i ∈ s, f i‖ ^ 2 = ∑ i ∈ s, ‖f i‖ ^ 2 :=
-  norm_finset_sum_sq_of_pairwise_inner_eq_zero s f h
+  SpectralResolution.norm_finset_sum_sq_of_pairwise_inner_eq_zero s f h
 
 example {ι : Type u} (E : SpectralResolution H)
     (s : Finset ι)
