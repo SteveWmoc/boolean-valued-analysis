@@ -54,6 +54,22 @@ example {ι : Type u} (E : SpectralResolution H)
     ‖∑ i ∈ s, f i‖ ^ 2 = ∑ i ∈ s, ‖f i‖ ^ 2 :=
   SpectralResolution.norm_finset_sum_sq_of_pairwise_inner_eq_zero s f h
 
+example (E : SpectralResolution H) (a b w₁ w₂ ε : ℝ)
+    (hε : 0 ≤ ε) (hw : |w₁ - w₂| ≤ ε) (x : H) :
+    ‖E.weightedIntervalProjection a b w₁ x -
+        E.weightedIntervalProjection a b w₂ x‖ ≤
+      ε * ‖x‖ :=
+  E.weightedIntervalProjection_sub_apply_norm_le a b w₁ w₂ ε hε hw x
+
+example {ι : Type u} (E : SpectralResolution H)
+    (s : Finset ι) (left right w₁ w₂ : ι → ℝ)
+    (ε : ℝ) (hε : 0 ≤ ε)
+    (hw : ∀ i ∈ s, |w₁ i - w₂ i| ≤ ε) (x : H) :
+    ‖(E.finiteStepSum s left right w₁ -
+        E.finiteStepSum s left right w₂) x‖ ≤
+      (s.card : ℝ) * ε * ‖x‖ :=
+  E.finiteStepSum_sub_apply_norm_le s left right w₁ w₂ ε hε hw x
+
 example {ι : Type u} (E : SpectralResolution H)
     (s : Finset ι)
     (left right weight : ι → ℝ)
