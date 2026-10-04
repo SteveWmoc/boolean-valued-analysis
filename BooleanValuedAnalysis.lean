@@ -68,6 +68,7 @@ import BooleanValuedAnalysis.Operator.SpectralResolution
 import BooleanValuedAnalysis.Operator.SpectralIncrement
 import BooleanValuedAnalysis.Operator.SpectralStepSum
 import BooleanValuedAnalysis.Operator.SpectralRefinement
+import BooleanValuedAnalysis.Operator.SpectralPartition
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -146,4 +147,6 @@ self-adjoint spectral step sums, with pairwise commutation of distinct
 summands under interval separation.
 A further M026c control slice adds interval-refinement monotonicity and the
 first orthogonal Pythagorean norm identity for separated weighted increments.
+The final M026c control slice adds exact interval splitting and the finite
+pairwise-orthogonal norm identity for spectral step sums.
 -/
