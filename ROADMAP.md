@@ -657,8 +657,9 @@ choosing a faithful complete representation of `𝔹` by closed Hilbert
 subspaces/orthogonal projections, producing a right-continuous Hilbert
 spectral resolution with pairwise commuting threshold projections. M026c is complete: half-open spectral increments, finite real-weighted
 self-adjoint step sums, refinement monotonicity, exact interval splitting,
-and finite Pythagorean norm identities are public. These provide the control
-layer needed for bounded spectral integration. M026d is next, followed by the
+finite Pythagorean norm identities, and a fixed finite-family Cauchy estimate
+are public. These provide the control layer needed for bounded spectral
+integration. M026d is next, followed by the
 unbounded self-adjoint `LinearPMap` realization and transport of M024's
 operator-facing theorems.
 
