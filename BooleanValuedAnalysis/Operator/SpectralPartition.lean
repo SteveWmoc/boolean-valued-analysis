@@ -188,6 +188,61 @@ theorem norm_finset_sum_sq_of_pairwise_inner_eq_zero
 
 end FinitePythagoras
 
+/-- Changing the real weight on one interval changes its value by at most
+the weight error times the norm of the input. -/
+theorem weightedIntervalProjection_sub_apply_norm_le
+    (E : SpectralResolution H) (a b weight₁ weight₂ ε : ℝ)
+    (hε : 0 ≤ ε) (hweight : |weight₁ - weight₂| ≤ ε) (x : H) :
+    ‖E.weightedIntervalProjection a b weight₁ x -
+        E.weightedIntervalProjection a b weight₂ x‖ ≤
+      ε * ‖x‖ := by
+  change
+    ‖(weight₁ : ℂ) • E.intervalProjection a b x -
+        (weight₂ : ℂ) • E.intervalProjection a b x‖ ≤
+      ε * ‖x‖
+  rw [← sub_smul, norm_smul]
+  have hp :
+      ‖E.intervalProjection a b x‖ ≤ ‖x‖ := by
+    simpa [intervalProjection] using
+      (E.intervalSubspace a b).toSubmodule.norm_starProjection_apply_le x
+  have hw :
+      ‖(weight₁ : ℂ) - (weight₂ : ℂ)‖ ≤ ε := by
+    simpa [Real.norm_eq_abs] using hweight
+  exact mul_le_mul hw hp (norm_nonneg _) hε
+
+/-- Fixed finite-family Cauchy estimate for spectral step sums. If two step
+sums use the same intervals and all weights differ by at most `ε`, their
+pointwise difference is bounded by `s.card * ε * ‖x‖`. This is the finite
+perturbation estimate needed to turn coefficientwise Cauchy control into
+operator-value Cauchy control on a fixed finite partition. -/
+theorem finiteStepSum_sub_apply_norm_le
+    {ι : Type u}
+    (E : SpectralResolution H)
+    (s : Finset ι)
+    (left right weight₁ weight₂ : ι → ℝ)
+    (ε : ℝ) (hε : 0 ≤ ε)
+    (hweight : ∀ i ∈ s, |weight₁ i - weight₂ i| ≤ ε)
+    (x : H) :
+    ‖(E.finiteStepSum s left right weight₁ -
+        E.finiteStepSum s left right weight₂) x‖ ≤
+      (s.card : ℝ) * ε * ‖x‖ := by
+  simp only [finiteStepSum, sub_apply, sum_apply]
+  rw [← Finset.sum_sub_distrib]
+  calc
+    ‖∑ i ∈ s,
+        (E.weightedIntervalProjection (left i) (right i) (weight₁ i)) x -
+          (E.weightedIntervalProjection (left i) (right i) (weight₂ i)) x‖
+        ≤ ∑ i ∈ s,
+            ‖(E.weightedIntervalProjection (left i) (right i) (weight₁ i)) x -
+              (E.weightedIntervalProjection (left i) (right i) (weight₂ i)) x‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ i ∈ s, ε * ‖x‖ := by
+      refine Finset.sum_le_sum fun i hi => ?_
+      exact E.weightedIntervalProjection_sub_apply_norm_le
+        (left i) (right i) (weight₁ i) (weight₂ i) ε hε (hweight i hi) x
+    _ = (s.card : ℝ) * ε * ‖x‖ := by
+      simp [mul_assoc]
+
 /-- A finite spectral step sum over pairwise separated intervals satisfies
 the exact pointwise Pythagorean norm identity. -/
 theorem finiteStepSum_apply_norm_sq
