@@ -207,9 +207,13 @@ Final M026c control slice implemented:
 - the corresponding common-weight splitting theorem;
 - a generic finite Pythagorean theorem for pairwise-orthogonal vectors;
 - the specialized finite spectral-step-sum pointwise norm identity;
+- a fixed finite-family Cauchy/perturbation estimate for common intervals;
 - `Audit/M026cPartitionAcceptance.lean`.
 
-M026c is complete within its documented scope. M026d may now build bounded
+The Cauchy estimate states that a uniform coefficient error `ε` on a fixed
+finite family changes the step sum at `x` by at most
+`s.card * ε * ‖x‖`. Together with exact refinement and Pythagorean control,
+this completes M026c within its documented scope. M026d may now build bounded
 spectral integration from these finite approximants and control lemmas.
 
 ## M026d — bounded spectral integration
