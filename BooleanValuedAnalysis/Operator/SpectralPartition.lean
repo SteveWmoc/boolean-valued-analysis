@@ -189,7 +189,7 @@ theorem finiteStepSum_apply_norm_sq
       ∑ i ∈ s,
         ‖E.weightedIntervalProjection (left i) (right i) (weight i) x‖ ^ 2 := by
   apply
-    E.norm_finset_sum_sq_of_pairwise_inner_eq_zero
+    norm_finset_sum_sq_of_pairwise_inner_eq_zero
       s
       (fun i =>
         E.weightedIntervalProjection (left i) (right i) (weight i) x)
