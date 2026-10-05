@@ -659,9 +659,11 @@ spectral resolution with pairwise commuting threshold projections. M026c is comp
 self-adjoint step sums, refinement monotonicity, exact interval splitting,
 finite Pythagorean norm identities, and a fixed finite-family Cauchy estimate
 are public. These provide the control layer needed for bounded spectral
-integration. M026d is next, followed by the
-unbounded self-adjoint `LinearPMap` realization and transport of M024's
-operator-facing theorems.
+integration. M026d is now underway with explicit symmetric support witnesses
+for bounded resolutions, deliberately avoiding any hidden choice of a preferred
+bound. Canonical dyadic step approximants come next, followed by the unbounded
+self-adjoint `LinearPMap` realization and transport of M024's operator-facing
+theorems.
 
 M027 takes the convergence and Bolzano–Weierstrass interpretations and can
 address the real-typed recovery boundary when required. M030 isolates the

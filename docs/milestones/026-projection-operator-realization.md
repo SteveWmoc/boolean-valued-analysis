@@ -1,6 +1,6 @@
 # M026 — Projection representation and self-adjoint operator realization
 
-**Status:** M026a–M026c complete; M026d next
+**Status:** M026a–M026c complete; M026d in progress
 
 **Depends on:** M001–M025
 
@@ -226,6 +226,20 @@ from the constructed bounded operator. Independence of the chosen
 approximating partitions must be explicit.
 
 This is the bounded spectral-theorem brick used later by truncation.
+
+First M026d slice implemented:
+
+- `BooleanValuedAnalysis/Operator/BoundedSpectralResolution.lean`;
+- explicit symmetric support witnesses `E.BoundedBy R` with `0 ≤ R`,
+  `E(-R)=⊥`, and `E(R)=⊤`;
+- existential `E.IsBounded` without choosing a preferred witness;
+- monotonicity under enlarging the radius;
+- constant-bottom/constant-top behavior outside the support;
+- zero/identity endpoint projections;
+- identity projection on the full support interval `(-R,R]`;
+- `Audit/M026dBoundedSupportAcceptance.lean`.
+
+Canonical dyadic partitions and their step approximants are the next M026d slice.
 
 ## M026e — unbounded realization
 
