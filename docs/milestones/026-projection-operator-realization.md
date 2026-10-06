@@ -253,7 +253,21 @@ Second M026d slice implemented:
 - commutation of distinct dyadic summands;
 - `Audit/M026dDyadicApproximationAcceptance.lean`.
 
+Third M026d slice implemented:
+
+- `BooleanValuedAnalysis/Operator/DyadicSpectralRefinement.lean`;
+- exact cell-count doubling from level `n` to `n+1`;
+- exact embedding of coarse grid points as even refined grid points;
+- valid even/odd child indices for every coarse cell;
+- exact splitting of each parent interval projection into its two children;
+- exact splitting of each parent weighted interval term when both children
+  retain the parent's weight;
+- `Audit/M026dDyadicRefinementAcceptance.lean`.
+
 Convergence and independence-of-approximation arguments remain later M026d work.
+The next slice can compare the actual refined right-endpoint weights with the
+duplicated coarse weights and extract the first quantitative level-difference
+estimate.
 
 ## M026e — unbounded realization
 
