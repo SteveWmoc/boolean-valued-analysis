@@ -87,10 +87,10 @@ theorem dyadicPoint_mono
     (div_le_div_iff_of_pos_right hpow).2 hcast
   have hscale : 0 ≤ (2 : ℝ) * R := by
     exact mul_nonneg (by norm_num) hR
-  exact
-    add_le_add_left
+  simpa [dyadicPoint, add_comm] using
+    (add_le_add_left
       (mul_le_mul_of_nonneg_left hfrac hscale)
-      (-R)
+      (-R))
 
 /-- Distinct dyadic cells are separated in one of the two possible orders. -/
 theorem BoundedBy.dyadicCells_separated
