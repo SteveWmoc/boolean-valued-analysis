@@ -241,6 +241,20 @@ First M026d slice implemented:
 
 Canonical dyadic partitions and their step approximants are the next M026d slice.
 
+Second M026d slice implemented:
+
+- `BooleanValuedAnalysis/Operator/DyadicSpectralApproximation.lean`;
+- canonical level-`n` grid with `2^n` cells on `[-R,R]`;
+- exact left/right endpoint calibration;
+- monotonicity of grid points for nonnegative radius;
+- pairwise separation of distinct dyadic cells;
+- canonical right-endpoint weighted step approximants;
+- self-adjointness of every dyadic approximant;
+- commutation of distinct dyadic summands;
+- `Audit/M026dDyadicApproximationAcceptance.lean`.
+
+Convergence and independence-of-approximation arguments remain later M026d work.
+
 ## M026e — unbounded realization
 
 For a general spectral resolution, truncate at increasing bounded intervals

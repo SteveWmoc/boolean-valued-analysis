@@ -661,9 +661,12 @@ finite Pythagorean norm identities, and a fixed finite-family Cauchy estimate
 are public. These provide the control layer needed for bounded spectral
 integration. M026d is now underway with explicit symmetric support witnesses
 for bounded resolutions, deliberately avoiding any hidden choice of a preferred
-bound. Canonical dyadic step approximants come next, followed by the unbounded
-self-adjoint `LinearPMap` realization and transport of M024's operator-facing
-theorems.
+bound. The canonical right-endpoint dyadic grid and its finite self-adjoint
+spectral step approximants are now public, with exact endpoint calibration and
+pairwise separation/commutation of distinct cells. Convergence and
+independence-of-approximation are the remaining bounded-integration work before
+the unbounded self-adjoint `LinearPMap` realization and transport of M024's
+operator-facing theorems.
 
 M027 takes the convergence and Bolzano–Weierstrass interpretations and can
 address the real-typed recovery boundary when required. M030 isolates the

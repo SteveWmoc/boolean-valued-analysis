@@ -70,6 +70,7 @@ import BooleanValuedAnalysis.Operator.SpectralStepSum
 import BooleanValuedAnalysis.Operator.SpectralRefinement
 import BooleanValuedAnalysis.Operator.SpectralPartition
 import BooleanValuedAnalysis.Operator.BoundedSpectralResolution
+import BooleanValuedAnalysis.Operator.DyadicSpectralApproximation
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -152,4 +153,6 @@ The final M026c control slice adds exact interval splitting and the finite
 pairwise-orthogonal norm identity for spectral step sums.
 M026d begins by making bounded spectral support explicit through a chosen
 nonnegative radius, with no hidden choice of a preferred bound.
+The next M026d slice adds the canonical right-endpoint dyadic grid and its
+finite self-adjoint spectral step approximants.
 -/
