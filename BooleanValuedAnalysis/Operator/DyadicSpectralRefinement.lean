@@ -53,7 +53,6 @@ theorem dyadicPoint_succ_even (R : ℝ) (n k : ℕ) :
   push_cast
   rw [pow_succ]
   field_simp [hpow]
-  ring
 
 /-- The right endpoint of the pair of level-`n+1` children agrees with the
 right endpoint of the parent level-`n` cell. -/
