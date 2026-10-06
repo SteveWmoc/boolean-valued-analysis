@@ -72,6 +72,7 @@ theorem dyadicPoint_succ_sub (R : ℝ) (n k : ℕ) :
     dyadicPoint R n (k + 1) - dyadicPoint R n k =
       (2 * R) / ((2 : ℝ) ^ n) := by
   unfold dyadicPoint
+  push_cast
   ring
 
 /-- For nonnegative radius, dyadic grid points are monotone in the index. -/
@@ -84,9 +85,11 @@ theorem dyadicPoint_mono
       (k : ℝ) / ((2 : ℝ) ^ n) ≤
         (l : ℝ) / ((2 : ℝ) ^ n) :=
     (div_le_div_iff_of_pos_right hpow).2 hcast
+  have hscale : 0 ≤ (2 : ℝ) * R := by
+    exact mul_nonneg (by norm_num) hR
   exact
     add_le_add_left
-      (mul_le_mul_of_nonneg_left hfrac (mul_nonneg (by norm_num) hR))
+      (mul_le_mul_of_nonneg_left hfrac hscale)
       (-R)
 
 /-- Distinct dyadic cells are separated in one of the two possible orders. -/
