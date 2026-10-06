@@ -71,6 +71,7 @@ import BooleanValuedAnalysis.Operator.SpectralRefinement
 import BooleanValuedAnalysis.Operator.SpectralPartition
 import BooleanValuedAnalysis.Operator.BoundedSpectralResolution
 import BooleanValuedAnalysis.Operator.DyadicSpectralApproximation
+import BooleanValuedAnalysis.Operator.DyadicSpectralRefinement
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
@@ -155,4 +156,6 @@ M026d begins by making bounded spectral support explicit through a chosen
 nonnegative radius, with no hidden choice of a preferred bound.
 The next M026d slice adds the canonical right-endpoint dyadic grid and its
 finite self-adjoint spectral step approximants.
+A further M026d slice proves exact level-to-level dyadic refinement for
+interval projections and common-weight spectral terms.
 -/

@@ -663,10 +663,12 @@ integration. M026d is now underway with explicit symmetric support witnesses
 for bounded resolutions, deliberately avoiding any hidden choice of a preferred
 bound. The canonical right-endpoint dyadic grid and its finite self-adjoint
 spectral step approximants are now public, with exact endpoint calibration and
-pairwise separation/commutation of distinct cells. Convergence and
-independence-of-approximation are the remaining bounded-integration work before
-the unbounded self-adjoint `LinearPMap` realization and transport of M024's
-operator-facing theorems.
+pairwise separation/commutation of distinct cells. Exact level-to-level dyadic
+refinement is also public: every coarse interval and common-weight term splits
+into its two children at the next level. Quantitative level-difference control,
+convergence, and independence-of-approximation remain before the unbounded
+self-adjoint `LinearPMap` realization and transport of M024's operator-facing
+theorems.
 
 M027 takes the convergence and Bolzano–Weierstrass interpretations and can
 address the real-typed recovery boundary when required. M030 isolates the
