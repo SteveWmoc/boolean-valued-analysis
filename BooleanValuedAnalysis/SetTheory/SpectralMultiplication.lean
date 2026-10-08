@@ -205,13 +205,13 @@ theorem localize_zeroRegion (E : SpectralFamily 𝔹) :
   apply SpectralFamily.ext
   intro r
   by_cases hr : 0 ≤ r
-  · rw [localize_proj, if_pos hr, zero_proj, if_pos hr]
+  · rw [localize_proj, ite_eq_left hr, zero_proj, ite_eq_left hr]
     have hz : zeroRegion E ≤ E.proj r :=
       (zeroRegion_le_proj_zero E).trans (E.monotone hr)
     rw [inf_eq_right.mpr hz]
     simp
   · have hr0 : r < 0 := lt_of_not_ge hr
-    rw [localize_proj, if_neg hr, zero_proj, if_neg hr]
+    rw [localize_proj, ite_eq_right hr, zero_proj, ite_eq_right hr]
     apply bot_unique
     have hneg : E.proj r ≤ negativeRegion E :=
       proj_le_negativeRegion E hr0
