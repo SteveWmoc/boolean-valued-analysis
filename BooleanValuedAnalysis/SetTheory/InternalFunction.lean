@@ -104,7 +104,8 @@ theorem relationIntoValue_graph_eq_top
   apply iSup_le
   intro i
   unfold BVSet.boundedExists
-  simp only [BVSet.mk_index, BVSet.mk_weight, BVSet.mk_child, top_inf_eq]
+  simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
+    BVSet.mk_child, top_inf_eq]
   apply le_iSup_of_le i
   apply le_iSup_of_le (φ.toFun i)
   exact le_rfl
