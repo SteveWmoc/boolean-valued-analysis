@@ -150,7 +150,7 @@ theorem totalOnValue_graph_eq_top_of_mem
     simpa [DefinitePresentation.raw, BVSet.mem] using hm
   have happ :
       BVSet.applicationValue φ.graph (u.child i) (φ.toFun i) = ⊤ := by
-    simp [BVSet.applicationValue] using φ.mem_displayed_output_graph i
+    simp [BVSet.applicationValue]
   simp [DefinitePresentation.raw, hm', happ]
 
 /-- Every raw extensional graph is single-valued at truth value `⊤`. -/
