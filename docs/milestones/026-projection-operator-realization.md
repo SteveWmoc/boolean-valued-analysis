@@ -265,9 +265,17 @@ Third M026d slice implemented:
 - `Audit/M026dDyadicRefinementAcceptance.lean`.
 
 Convergence and independence-of-approximation arguments remain later M026d work.
-The next slice can compare the actual refined right-endpoint weights with the
-duplicated coarse weights and extract the first quantitative level-difference
-estimate.
+Fourth M026d slice implemented:
+
+- exact signed and absolute left-child weight errors;
+- an exact local operator difference identity: the right child cancels and
+  the left child contributes minus the refined mesh times its projection;
+- a local pointwise perturbation bound by the refined mesh times `‖x‖`;
+- extended `Audit/M026dDyadicRefinementAcceptance.lean`.
+
+The next slice must sum these local errors using orthogonality to obtain a
+cell-count-independent estimate for the full adjacent-level approximants.
+The local bound alone does not yet establish convergence.
 
 ## M026e — unbounded realization
 
