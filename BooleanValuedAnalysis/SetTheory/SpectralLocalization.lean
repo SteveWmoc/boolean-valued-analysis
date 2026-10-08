@@ -87,12 +87,8 @@ private theorem localizeProj_iSup_eq_top (E : SpectralFamily 𝔹) (p : 𝔹) :
         apply iSup_le
         intro r
         apply le_iSup_of_le r
-        by_cases hr : 0 ≤ r
-        · rw [localizeProj, ite_eq_left hr]
-          simp [inf_comm] using
-            (le_sup_left : E.proj r ⊓ p ≤ (E.proj r ⊓ p) ⊔ pᶜ)
-        · rw [localizeProj, ite_eq_right hr]
-          exact le_of_eq (inf_comm p (E.proj r))
+        by_cases hr : 0 ≤ r <;>
+          simp [localizeProj, hr, inf_comm]
   have hpc : pᶜ ≤ ⨆ r : ℝ, localizeProj E p r := by
     calc
       pᶜ ≤ localizeProj E p 0 := by
