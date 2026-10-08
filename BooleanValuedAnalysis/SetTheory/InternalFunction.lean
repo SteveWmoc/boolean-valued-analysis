@@ -104,8 +104,7 @@ theorem relationIntoValue_graph_eq_top
   apply iSup_le
   intro i
   unfold BVSet.boundedExists
-  simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
-    BVSet.mk_child, top_inf_eq]
+  simp only [BVSet.mk_index, BVSet.mk_weight, BVSet.mk_child, top_inf_eq]
   apply le_iSup_of_le i
   apply le_iSup_of_le (φ.toFun i)
   exact le_rfl
@@ -126,13 +125,13 @@ theorem totalOnValue_graph_eq_top
   simp only [DefinitePresentation.raw, BVSet.mk_index, BVSet.mk_weight,
     BVSet.mk_child, top_inf_eq]
   apply le_iSup_of_le (φ.toFun i)
-  simpa [BVSet.applicationValue] using
+  simp [BVSet.applicationValue] using
     (show
       (⊤ : 𝔹) ≤
         BVSet.mem
           (BVSet.orderedPair (u.child i) (w.child (φ.toFun i)))
-          φ.graph by
-      rw [mem_displayed_graph φ i])
+          φ.graph from
+      le_of_eq (mem_displayed_graph φ i).symm)
 
 /-- Extensionality of the external displayed map makes its raw graph
 single-valued at Boolean truth value `⊤`. -/
@@ -175,7 +174,7 @@ theorem applicationValue_displayed_eq_top
         φ.graph
         (u.child i)
         (w.child (φ.toFun i)) = ⊤ := by
-  simpa [BVSet.applicationValue] using mem_displayed_graph φ i
+  simp [BVSet.applicationValue] using mem_displayed_graph φ i
 
 /-- Takeuti Proposition 1.4.1, in the explicit definite-presentation API.
 
