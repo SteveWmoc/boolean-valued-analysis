@@ -190,9 +190,9 @@ theorem localize_mix_coefficient {ι : Type w}
   apply SpectralFamily.ext
   intro r
   by_cases hr : 0 ≤ r
-  · rw [localize_proj, if_pos hr, localize_proj, if_pos hr,
+  · rw [localize_proj, ite_eq_left hr, localize_proj, ite_eq_left hr,
       mix_proj_inf_coefficient]
-  · rw [localize_proj, if_neg hr, localize_proj, if_neg hr,
+  · rw [localize_proj, ite_eq_right hr, localize_proj, ite_eq_right hr,
       mix_proj_inf_coefficient]
 
 end SpectralFamily

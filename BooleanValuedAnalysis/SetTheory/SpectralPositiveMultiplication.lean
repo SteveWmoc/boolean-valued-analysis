@@ -86,7 +86,7 @@ private theorem positiveMulKernel_le_sup
     positiveMulKernel E F s ≤ E.proj a ⊔ F.proj b := by
   unfold positiveMulKernel
   by_cases hs0 : 0 < s
-  · rw [if_pos hs0]
+  · rw [ite_eq_left hs0]
     apply iSup_le
     intro ν
     by_cases hνa : ν.1 ≤ a
@@ -99,7 +99,7 @@ private theorem positiveMulKernel_le_sup
           _ < b * ν.1 := mul_lt_mul_of_pos_left haν hb
       have hdiv : s / ν.1 < b := (div_lt_iff₀ ν.2).2 hsbn
       exact (inf_le_right.trans (F.monotone hdiv.le)).trans le_sup_right
-  · rw [if_neg hs0]
+  · rw [ite_eq_right hs0]
     exact bot_le
 
 private def positiveMulProj (E F : SpectralFamily 𝔹) (r : ℝ) : 𝔹 :=
@@ -177,7 +177,7 @@ private theorem positiveMulProj_eq_bot_of_nonpos
           exact iInf_le _
             (show {t : ℝ // r < t} from ⟨s, hrs⟩)
         _ = ⊥ := by
-          rw [positiveMulKernel, if_neg hs0]
+          rw [positiveMulKernel, ite_eq_right hs0]
     · exact bot_le
 
 private theorem positive_iSup_eq_top
@@ -201,7 +201,7 @@ private theorem inf_le_positiveMulProj
   apply le_iInf
   intro s
   have hs0 : 0 < s.1 := (mul_pos a.2 b.2).trans s.2
-  rw [positiveMulKernel, if_pos hs0]
+  rw [positiveMulKernel, ite_eq_left hs0]
   apply le_iSup_of_le a
   apply inf_le_inf le_rfl
   apply F.monotone
@@ -282,7 +282,7 @@ theorem positiveMul_proj_of_pos
           positiveMulKernel E F s.1 := iInf_le _ s
       _ = ⨆ ν : {ν : ℝ // 0 < ν},
           E.proj ν.1 ⊓ F.proj (s.1 / ν.1) := by
-        rw [positiveMulKernel, if_pos hs0]
+        rw [positiveMulKernel, ite_eq_left hs0]
   · apply le_iInf
     intro s
     have hs0 : 0 < s.1 := hr.trans s.2
@@ -294,7 +294,7 @@ theorem positiveMul_proj_of_pos
             E.proj ν.1 ⊓ F.proj (s.1 / ν.1) :=
         iInf_le _ s
       _ = positiveMulKernel E F s.1 := by
-        rw [positiveMulKernel, if_pos hs0]
+        rw [positiveMulKernel, ite_eq_left hs0]
       _ ≤ positiveMulKernel E F s.1 := le_rfl
 
 end SpectralFamily

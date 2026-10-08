@@ -36,20 +36,20 @@ private theorem localizeProj_monotone (E : SpectralFamily 𝔹) (p : 𝔹) :
   intro r s hrs
   by_cases hr : 0 ≤ r
   · have hs : 0 ≤ s := hr.trans hrs
-    rw [localizeProj, if_pos hr, localizeProj, if_pos hs]
+    rw [localizeProj, ite_eq_left hr, localizeProj, ite_eq_left hs]
     exact sup_le_sup (inf_le_inf (E.monotone hrs) le_rfl) le_rfl
   · by_cases hs : 0 ≤ s
-    · rw [localizeProj, if_neg hr, localizeProj, if_pos hs]
+    · rw [localizeProj, ite_eq_right hr, localizeProj, ite_eq_left hs]
       exact (inf_le_inf (E.monotone hrs) le_rfl).trans le_sup_left
-    · rw [localizeProj, if_neg hr, localizeProj, if_neg hs]
+    · rw [localizeProj, ite_eq_right hr, localizeProj, ite_eq_right hs]
       exact inf_le_inf (E.monotone hrs) le_rfl
 
 private theorem localizeProj_inf (E : SpectralFamily 𝔹) (p : 𝔹) (r : ℝ) :
     localizeProj E p r ⊓ p = E.proj r ⊓ p := by
   by_cases hr : 0 ≤ r
-  · rw [localizeProj, if_pos hr, inf_sup_right]
-    simp [inf_assoc]
-  · rw [localizeProj, if_neg hr, inf_assoc, inf_idem]
+  · rw [localizeProj, ite_eq_left hr, inf_sup_right]
+    simp
+  · rw [localizeProj, ite_eq_right hr, inf_assoc, inf_idem]
 
 private theorem localizeProj_iInf_eq_bot (E : SpectralFamily 𝔹) (p : 𝔹) :
     (⨅ r : ℝ, localizeProj E p r) = ⊥ := by
@@ -70,7 +70,7 @@ private theorem localizeProj_iInf_eq_bot (E : SpectralFamily 𝔹) (p : 𝔹) :
       linarith
     calc
       (⨅ s : ℝ, localizeProj E p s) ≤ localizeProj E p t := iInf_le _ t
-      _ = E.proj t ⊓ p := by rw [localizeProj, if_neg ht0]
+      _ = E.proj t ⊓ p := by rw [localizeProj, ite_eq_right ht0]
       _ ≤ E.proj t := inf_le_left
       _ ≤ E.proj r := E.monotone htr
   · exact bot_le
@@ -87,16 +87,12 @@ private theorem localizeProj_iSup_eq_top (E : SpectralFamily 𝔹) (p : 𝔹) :
         apply iSup_le
         intro r
         apply le_iSup_of_le r
-        by_cases hr : 0 ≤ r
-        · rw [localizeProj, if_pos hr]
-          simpa [inf_comm] using
-            (le_sup_left : E.proj r ⊓ p ≤ (E.proj r ⊓ p) ⊔ pᶜ)
-        · rw [localizeProj, if_neg hr]
-          exact le_of_eq (inf_comm p (E.proj r))
+        by_cases hr : 0 ≤ r <;>
+          simp [localizeProj, hr, inf_comm]
   have hpc : pᶜ ≤ ⨆ r : ℝ, localizeProj E p r := by
     calc
       pᶜ ≤ localizeProj E p 0 := by
-        rw [localizeProj, if_pos le_rfl]
+        rw [localizeProj, ite_eq_left le_rfl]
         exact le_sup_right
       _ ≤ ⨆ r : ℝ, localizeProj E p r :=
         le_iSup (fun r : ℝ => localizeProj E p r) 0
@@ -113,7 +109,7 @@ private theorem localizeProj_rightContinuous
     intro s
     exact localizeProj_monotone E p s.2.le
   · by_cases hr : 0 ≤ r
-    · rw [localizeProj, if_pos hr]
+    · rw [localizeProj, ite_eq_left hr]
       let x : 𝔹 := ⨅ s : {s : ℝ // r < s}, localizeProj E p s.1
       change x ≤ (E.proj r ⊓ p) ⊔ pᶜ
       have hx : x ⊓ p ≤ E.proj r ⊓ p := by
@@ -134,7 +130,7 @@ private theorem localizeProj_rightContinuous
         _ ≤ (E.proj r ⊓ p) ⊔ pᶜ :=
           sup_le_sup hx inf_le_right
     · have hr0 : r < 0 := lt_of_not_ge hr
-      rw [localizeProj, if_neg hr]
+      rw [localizeProj, ite_eq_right hr]
       let x : 𝔹 := ⨅ s : {s : ℝ // r < s}, localizeProj E p s.1
       change x ≤ E.proj r ⊓ p
       apply le_inf
@@ -157,7 +153,7 @@ private theorem localizeProj_rightContinuous
               (fun s : {s : ℝ // r < s} => localizeProj E p s.1)
               (show {s : ℝ // r < s} from ⟨m, hrm⟩)
           _ = E.proj m ⊓ p := by
-            rw [localizeProj, if_neg (not_le.mpr hm0)]
+            rw [localizeProj, ite_eq_right (not_le.mpr hm0)]
           _ ≤ E.proj m := inf_le_left
           _ ≤ E.proj t.1 := E.monotone hmt.le
       · let m : ℝ := (r + 0) / 2
@@ -173,7 +169,7 @@ private theorem localizeProj_rightContinuous
               (fun s : {s : ℝ // r < s} => localizeProj E p s.1)
               (show {s : ℝ // r < s} from ⟨m, hrm⟩)
           _ = E.proj m ⊓ p := by
-            rw [localizeProj, if_neg (not_le.mpr hm0)]
+            rw [localizeProj, ite_eq_right (not_le.mpr hm0)]
           _ ≤ p := inf_le_right
 
 /-- Takeuti localization of a spectral family to a Boolean region `p`. -/
@@ -220,14 +216,14 @@ def zero : SpectralFamily 𝔹 where
   rightContinuous := by
     intro r
     by_cases hr : 0 ≤ r
-    · rw [if_pos hr]
+    · rw [ite_eq_left hr]
       apply _root_.le_antisymm
       · apply le_iInf
         intro s
         simp [hr.trans s.2.le]
       · exact le_top
     · have hr0 : r < 0 := lt_of_not_ge hr
-      rw [if_neg hr]
+      rw [ite_eq_right hr]
       apply _root_.le_antisymm
       · exact bot_le
       · let m : ℝ := (r + 0) / 2
@@ -276,9 +272,9 @@ theorem localize_LE_iff (E F : SpectralFamily 𝔹) (p : 𝔹) :
       _ = E.proj r ⊓ p := localize_proj_inf E p r
   · intro h r
     by_cases hr : 0 ≤ r
-    · rw [localize_proj, if_pos hr, localize_proj, if_pos hr]
+    · rw [localize_proj, ite_eq_left hr, localize_proj, ite_eq_left hr]
       exact sup_le_sup (h r) le_rfl
-    · rw [localize_proj, if_neg hr, localize_proj, if_neg hr]
+    · rw [localize_proj, ite_eq_right hr, localize_proj, ite_eq_right hr]
       exact h r
 
 end SpectralFamily

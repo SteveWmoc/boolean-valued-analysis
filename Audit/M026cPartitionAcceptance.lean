@@ -46,7 +46,7 @@ example (E : SpectralResolution H) {a c b weight : ℝ}
       E.weightedIntervalProjection a b weight :=
   E.weightedIntervalProjection_add_weightedIntervalProjection hac hcb
 
-example {ι : Type u} (E : SpectralResolution H)
+example {ι : Type u}
     (s : Finset ι) (f : ι → H)
     (h :
       ∀ i ∈ s, ∀ j ∈ s, i ≠ j →

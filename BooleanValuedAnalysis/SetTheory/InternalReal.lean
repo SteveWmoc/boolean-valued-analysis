@@ -154,7 +154,7 @@ private theorem himp_eq_top_iff_le (a b : 𝔹) :
     a ⇨ b = ⊤ ↔ a ≤ b := by
   constructor
   · intro h
-    have htop : ⊤ ≤ a ⇨ b := by simpa [h]
+    have htop : ⊤ ≤ a ⇨ b := by simp [h]
     have hle : ⊤ ⊓ a ≤ b := (le_himp_iff).1 htop
     simpa using hle
   · intro h

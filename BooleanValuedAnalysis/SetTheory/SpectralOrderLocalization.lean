@@ -99,7 +99,7 @@ private theorem himp_eq_top_iff_le (a b : 𝔹) :
     a ⇨ b = ⊤ ↔ a ≤ b := by
   constructor
   · intro h
-    have htop : ⊤ ≤ a ⇨ b := by simpa [h]
+    have htop : ⊤ ≤ a ⇨ b := by simp [h]
     have hle : ⊤ ⊓ a ≤ b := (le_himp_iff).1 htop
     simpa using hle
   · intro h
@@ -174,7 +174,7 @@ theorem leValue_eq_top_iff_spectralLE
       simpa using h (q : ℝ)
     have himpTop : profile v q ⇨ profile u q = ⊤ :=
       (himp_eq_top_iff_le _ _).2 hq
-    simpa [himpTop]
+    simp [himpTop]
 
 end InternalReal
 

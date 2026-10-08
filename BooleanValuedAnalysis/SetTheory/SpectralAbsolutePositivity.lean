@@ -58,10 +58,10 @@ theorem zero_LE_abs (E : SpectralFamily 𝔹) :
     LE zero (abs E) := by
   intro r
   by_cases hr : 0 ≤ r
-  · rw [zero_proj, if_pos hr]
+  · rw [zero_proj, ite_eq_left hr]
     exact le_top
   · have hr0 : r < 0 := lt_of_not_ge hr
-    rw [zero_proj, if_neg hr, abs_proj]
+    rw [zero_proj, ite_eq_right hr, abs_proj]
     have hneg : (neg E).proj r ≤ (E.proj r)ᶜ := by
       rw [neg_proj]
       exact iInf_le _
@@ -93,10 +93,10 @@ theorem strictlyPositive_zero_LE {E : SpectralFamily 𝔹}
     (h : IsStrictlyPositive E) : LE zero E := by
   intro r
   by_cases hr : 0 ≤ r
-  · rw [zero_proj, if_pos hr]
+  · rw [zero_proj, ite_eq_left hr]
     exact le_top
   · have hr0 : r < 0 := lt_of_not_ge hr
-    rw [zero_proj, if_neg hr, h r hr0.le]
+    rw [zero_proj, ite_eq_right hr, h r hr0.le]
 
 end SpectralFamily
 
@@ -164,8 +164,8 @@ theorem leValue_zero_right_eq_proj_zero (u : InternalReal.{u, v} 𝔹) :
           profile u 0 = (toSpectralFamily u).proj 0 := hproj.symm
           _ ≤ (toSpectralFamily u).proj (q : ℝ) :=
             (toSpectralFamily u).monotone hq
-          _ = profile u q := by
-            simpa using toSpectralFamily_proj_rat u q
+          _ = profile u q :=
+            toSpectralFamily_proj_rat u q
       simpa [SetTheory.classicalValue, hq] using hmono
     · simp [SetTheory.classicalValue, hq]
 

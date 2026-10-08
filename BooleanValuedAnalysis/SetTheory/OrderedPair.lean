@@ -94,7 +94,7 @@ theorem bvEq_singletonPair_pair
       bvEq x y ⊓ bvEq x z := by
   rw [singletonPair, bvEq_pair_pair]
   rw [bvEq_symm y x, bvEq_symm z x]
-  simp [inf_assoc, inf_left_comm, inf_comm]
+  simp
 
 @[simp]
 theorem bvEq_pair_singletonPair

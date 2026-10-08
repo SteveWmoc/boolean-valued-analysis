@@ -95,7 +95,7 @@ theorem LE_localize_checkReal_iff_proj
     by_cases hεr : ε ≤ r
     · have hr0 : 0 ≤ r := hε.trans hεr
       have hpE : p ≤ E.proj r := h r hεr
-      rw [localize_proj, if_pos hr0]
+      rw [localize_proj, ite_eq_left hr0]
       simp [SetTheory.classicalValue, hεr, inf_eq_right.mpr hpE]
     · simp [SetTheory.classicalValue, hεr]
 
