@@ -68,4 +68,23 @@ example (E : SpectralResolution H) {R : ℝ}
         (SpectralResolution.dyadicPoint R n (k + 1)) :=
   hR.weightedDyadicInterval_refines E n k
 
+example {R : ℝ} (hR : 0 ≤ R) (n k : ℕ) :
+    |SpectralResolution.dyadicPoint R (n + 1) (2 * k + 1) -
+        SpectralResolution.dyadicPoint R n (k + 1)| =
+      (2 * R) / ((2 : ℝ) ^ (n + 1)) :=
+  SpectralResolution.abs_dyadicPoint_succ_odd_sub_parent hR n k
+
+example (E : SpectralResolution H) {R : ℝ}
+    (hR : E.BoundedBy R) (n k : ℕ) (x : H) :
+    ‖E.weightedIntervalProjection
+          (SpectralResolution.dyadicPoint R (n + 1) (2 * k))
+          (SpectralResolution.dyadicPoint R (n + 1) (2 * k + 1))
+          (SpectralResolution.dyadicPoint R (n + 1) (2 * k + 1)) x -
+        E.weightedIntervalProjection
+          (SpectralResolution.dyadicPoint R (n + 1) (2 * k))
+          (SpectralResolution.dyadicPoint R (n + 1) (2 * k + 1))
+          (SpectralResolution.dyadicPoint R n (k + 1)) x‖ ≤
+      ((2 * R) / ((2 : ℝ) ^ (n + 1))) * ‖x‖ :=
+  hR.weightedDyadicLeftChild_sub_apply_norm_le E n k x
+
 end BooleanValued

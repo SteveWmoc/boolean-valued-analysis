@@ -60,6 +60,24 @@ theorem dyadicPoint_succ_even_succ (R : ℝ) (n k : ℕ) :
     dyadicPoint R (n + 1) (2 * (k + 1)) = dyadicPoint R n (k + 1) :=
   dyadicPoint_succ_even R n (k + 1)
 
+/-- The refined left-child weight is half a coarse mesh below the parent weight. -/
+theorem dyadicPoint_succ_odd_sub_parent (R : ℝ) (n k : ℕ) :
+    dyadicPoint R (n + 1) (2 * k + 1) - dyadicPoint R n (k + 1) =
+      -((2 * R) / ((2 : ℝ) ^ (n + 1))) := by
+  rw [← dyadicPoint_succ_even_succ R n k]
+  have hindex : 2 * (k + 1) = (2 * k + 1) + 1 := by omega
+  rw [hindex]
+  have h := dyadicPoint_succ_sub R (n + 1) (2 * k + 1)
+  linarith
+
+/-- The absolute left-child weight error is exactly the refined mesh width. -/
+theorem abs_dyadicPoint_succ_odd_sub_parent
+    {R : ℝ} (hR : 0 ≤ R) (n k : ℕ) :
+    |dyadicPoint R (n + 1) (2 * k + 1) - dyadicPoint R n (k + 1)| =
+      (2 * R) / ((2 : ℝ) ^ (n + 1)) := by
+  rw [dyadicPoint_succ_odd_sub_parent, abs_neg, abs_of_nonneg]
+  positivity
+
 /-- A level-`n` cell index gives a valid even child index at level `n+1`. -/
 theorem dyadic_even_mem_succ_range
     (n : ℕ) {k : ℕ}
@@ -130,6 +148,54 @@ theorem BoundedBy.weightedDyadicInterval_refines
     exact dyadicPoint_mono hR.nonneg (n + 1) (by omega)
   rw [E.weightedIntervalProjection_add_weightedIntervalProjection hleft hright]
   rw [dyadicPoint_succ_even, dyadicPoint_succ_even_succ]
+
+/-- Refining the right-endpoint weights changes only the left-child term.
+This exact operator identity isolates the local error before summing cells. -/
+theorem BoundedBy.weightedDyadicInterval_refinement_sub
+    (E : SpectralResolution H) {R : ℝ}
+    (hR : E.BoundedBy R) (n k : ℕ) :
+    (E.weightedIntervalProjection
+          (dyadicPoint R (n + 1) (2 * k))
+          (dyadicPoint R (n + 1) (2 * k + 1))
+          (dyadicPoint R (n + 1) (2 * k + 1)) +
+        E.weightedIntervalProjection
+          (dyadicPoint R (n + 1) (2 * k + 1))
+          (dyadicPoint R (n + 1) (2 * (k + 1)))
+          (dyadicPoint R (n + 1) (2 * (k + 1)))) -
+      E.weightedIntervalProjection
+        (dyadicPoint R n k) (dyadicPoint R n (k + 1))
+        (dyadicPoint R n (k + 1)) =
+      (-(((2 * R) / ((2 : ℝ) ^ (n + 1))) : ℂ)) •
+        E.intervalProjection
+          (dyadicPoint R (n + 1) (2 * k))
+          (dyadicPoint R (n + 1) (2 * k + 1)) := by
+  rw [dyadicPoint_succ_even_succ,
+    ← hR.weightedDyadicInterval_refines E n k]
+  have hcancel : ∀ A B C : H →L[ℂ] H, (A + C) - (B + C) = A - B := by
+    intros
+    abel
+  rw [hcancel]
+  unfold weightedIntervalProjection
+  rw [← sub_smul, ← Complex.ofReal_sub, dyadicPoint_succ_odd_sub_parent]
+  simp only [Complex.ofReal_neg]
+
+/-- The local left-child perturbation is bounded by the refined mesh width
+ times the input norm. No finite-cell-count factor enters this local estimate. -/
+theorem BoundedBy.weightedDyadicLeftChild_sub_apply_norm_le
+    (E : SpectralResolution H) {R : ℝ}
+    (hR : E.BoundedBy R) (n k : ℕ) (x : H) :
+    ‖E.weightedIntervalProjection
+          (dyadicPoint R (n + 1) (2 * k))
+          (dyadicPoint R (n + 1) (2 * k + 1))
+          (dyadicPoint R (n + 1) (2 * k + 1)) x -
+        E.weightedIntervalProjection
+          (dyadicPoint R (n + 1) (2 * k))
+          (dyadicPoint R (n + 1) (2 * k + 1))
+          (dyadicPoint R n (k + 1)) x‖ ≤
+      ((2 * R) / ((2 : ℝ) ^ (n + 1))) * ‖x‖ := by
+  apply E.weightedIntervalProjection_sub_apply_norm_le
+  · exact div_nonneg (mul_nonneg (by norm_num) hR.nonneg) (by positivity)
+  · exact le_of_eq (abs_dyadicPoint_succ_odd_sub_parent hR.nonneg n k)
 
 end SpectralResolution
 
