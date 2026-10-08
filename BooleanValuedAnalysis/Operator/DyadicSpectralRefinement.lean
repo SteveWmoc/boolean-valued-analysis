@@ -178,6 +178,7 @@ theorem BoundedBy.weightedDyadicInterval_refinement_sub
   unfold weightedIntervalProjection
   rw [← sub_smul, ← Complex.ofReal_sub, dyadicPoint_succ_odd_sub_parent]
   push_cast
+  rfl
 
 /-- The local left-child perturbation is bounded by the refined mesh width
  times the input norm. No finite-cell-count factor enters this local estimate. -/
