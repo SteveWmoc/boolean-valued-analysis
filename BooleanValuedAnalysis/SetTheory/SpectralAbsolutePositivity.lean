@@ -165,7 +165,7 @@ theorem leValue_zero_right_eq_proj_zero (u : InternalReal.{u, v} 𝔹) :
           _ ≤ (toSpectralFamily u).proj (q : ℝ) :=
             (toSpectralFamily u).monotone hq
           _ = profile u q := by
-            simpa using toSpectralFamily_proj_rat u q
+            simp using toSpectralFamily_proj_rat u q
       simpa [SetTheory.classicalValue, hq] using hmono
     · simp [SetTheory.classicalValue, hq]
 
