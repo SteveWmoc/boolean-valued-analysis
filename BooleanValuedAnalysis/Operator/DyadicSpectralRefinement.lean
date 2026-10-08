@@ -169,15 +169,15 @@ theorem BoundedBy.weightedDyadicInterval_refinement_sub
         E.intervalProjection
           (dyadicPoint R (n + 1) (2 * k))
           (dyadicPoint R (n + 1) (2 * k + 1)) := by
-  rw [dyadicPoint_succ_even_succ,
-    ← hR.weightedDyadicInterval_refines E n k]
+  rw [← hR.weightedDyadicInterval_refines E n k]
+  simp only [dyadicPoint_succ_even_succ]
   have hcancel : ∀ A B C : H →L[ℂ] H, (A + C) - (B + C) = A - B := by
     intros
     abel
   rw [hcancel]
   unfold weightedIntervalProjection
   rw [← sub_smul, ← Complex.ofReal_sub, dyadicPoint_succ_odd_sub_parent]
-  simp only [Complex.ofReal_neg]
+  push_cast
 
 /-- The local left-child perturbation is bounded by the refined mesh width
  times the input norm. No finite-cell-count factor enters this local estimate. -/
