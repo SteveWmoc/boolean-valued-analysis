@@ -122,7 +122,7 @@ theorem spectral_maximum_checkReal (x y : ℝ) :
   rw [toSpectralFamily_checkReal_proj]
   classical
   by_cases hx : x ≤ r <;> by_cases hy : y ≤ r <;>
-    simp [SetTheory.classicalValue, hx, hy, max_le_iff]
+    simp [SetTheory.classicalValue, hx, hy]
 
 /-- Named internal-real maximum transported through the M023 spectral
 correspondence. No lattice instance is installed yet. -/
