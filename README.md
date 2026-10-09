@@ -126,6 +126,10 @@ The exact Lean and Mathlib versions are pinned by `lean-toolchain`,
 **Lean v4.34.1** and **Mathlib v4.34.1** (commit
 `d13f23b723b8a846827a245b89c10fc7d3f11612`).
 
+For a task-oriented introduction to imports, Boolean-valued notation, raw and
+separated names, formula semantics, and the module map, see the [API user
+guide](docs/API_GUIDE.md).
+
 ```sh
 git clone https://github.com/SteveWmoc/boolean-valued-analysis.git
 cd boolean-valued-analysis
