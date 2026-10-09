@@ -140,17 +140,17 @@ Other useful semantic entry points:
 
 | If you want to… | Start with… |
 | --- | --- |
-| Prove equality/membership laws or work with extensional predicates | `Equality`, `Extensional`, `Semantics` |
-| Use weighted bounded quantifiers, canonical names, or mixtures | `Bounded`, `Canonical`, `Mixing` |
-| Maximize an extensional predicate or realize existential truth | `Maximum` |
-| Work with the separated universe or descent | `Separated`, `Descent`, `SetTheory.SeparatedSemantics` |
-| Construct ZF sets or prove axiom/schema validity | `SetTheory.ZF.*` |
-| Use the packaged ZF/ZFC theories and transfer results | `SetTheory.ZF.Transfer`, `SetTheory.ZFC.Transfer` |
-| Work with internal rationals/reals | `SetTheory.InternalArithmetic`, `SetTheory.InternalReal` |
-| Use abstract Boolean spectral families and Takeuti arithmetic | `SetTheory.Spectral*` |
-| Represent Boolean values as Hilbert-space subspaces/projections | `Operator.SpectralResolution` |
-| Work with interval increments, finite spectral sums, or dyadic steps | `Operator.SpectralIncrement`, `SpectralStepSum`, `SpectralRefinement`, `SpectralPartition`, and `DyadicSpectral*` |
-| Represent definite functions or sequences internally | `SetTheory.Definite*`, `InternalFunction`, `TopMemberFunction*`, and `*Sequence` |
+| Prove equality/membership laws or work with extensional predicates | `BooleanValuedAnalysis.Equality`, `BooleanValuedAnalysis.Extensional`, `BooleanValuedAnalysis.Semantics` |
+| Use weighted bounded quantifiers, canonical names, or mixtures | `BooleanValuedAnalysis.Bounded`, `BooleanValuedAnalysis.Canonical`, `BooleanValuedAnalysis.Mixing` |
+| Maximize an extensional predicate or realize existential truth | `BooleanValuedAnalysis.Maximum` |
+| Work with the separated universe or descent | `BooleanValuedAnalysis.Separated`, `BooleanValuedAnalysis.Descent`, `BooleanValuedAnalysis.SetTheory.SeparatedSemantics` |
+| Construct ZF sets or prove axiom/schema validity | `BooleanValuedAnalysis.SetTheory.ZF.Constructors`, `BooleanValuedAnalysis.SetTheory.ZF.BasicAxioms`, `BooleanValuedAnalysis.SetTheory.ZF.Foundation`, `BooleanValuedAnalysis.SetTheory.ZF.Infinity`, `BooleanValuedAnalysis.SetTheory.ZF.Powerset`, `BooleanValuedAnalysis.SetTheory.ZF.PowersetAxiom`, `BooleanValuedAnalysis.SetTheory.ZF.Separation`, `BooleanValuedAnalysis.SetTheory.ZF.SeparationSchema`, `BooleanValuedAnalysis.SetTheory.ZF.Collection`, `BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema`, `BooleanValuedAnalysis.SetTheory.ZF.Replacement`, `BooleanValuedAnalysis.SetTheory.ZF.ReplacementSchema`, `BooleanValuedAnalysis.SetTheory.ZF.Choice`, `BooleanValuedAnalysis.SetTheory.ZF.ChoiceAxiom` |
+| Use the packaged ZF/ZFC theories and transfer results | `BooleanValuedAnalysis.SetTheory.ZF.Transfer`, `BooleanValuedAnalysis.SetTheory.ZFC.Transfer` |
+| Work with internal rationals/reals | `BooleanValuedAnalysis.SetTheory.InternalArithmetic`, `BooleanValuedAnalysis.SetTheory.InternalReal` |
+| Use abstract Boolean spectral families and Takeuti arithmetic | `BooleanValuedAnalysis.SetTheory.SpectralFamily`, `BooleanValuedAnalysis.SetTheory.SpectralFamilyCorrespondence`, `BooleanValuedAnalysis.SetTheory.SpectralLocalization`, `BooleanValuedAnalysis.SetTheory.SpectralOrderLocalization`, `BooleanValuedAnalysis.SetTheory.SpectralMaximum`, `BooleanValuedAnalysis.SetTheory.SpectralMixing`, `BooleanValuedAnalysis.SetTheory.SpectralAddition`, `BooleanValuedAnalysis.SetTheory.SpectralNegation`, `BooleanValuedAnalysis.SetTheory.SpectralMultiplication`, `BooleanValuedAnalysis.SetTheory.SpectralPositiveMultiplication`, `BooleanValuedAnalysis.SetTheory.SpectralAbsoluteEstimate`, `BooleanValuedAnalysis.SetTheory.SpectralAbsolutePositivity` |
+| Represent Boolean values as Hilbert-space subspaces/projections | `BooleanValuedAnalysis.Operator.SpectralResolution` |
+| Work with interval increments, finite spectral sums, or dyadic steps | `BooleanValuedAnalysis.Operator.SpectralIncrement`, `BooleanValuedAnalysis.Operator.SpectralStepSum`, `BooleanValuedAnalysis.Operator.SpectralRefinement`, `BooleanValuedAnalysis.Operator.SpectralPartition`, `BooleanValuedAnalysis.Operator.BoundedSpectralResolution`, `BooleanValuedAnalysis.Operator.DyadicSpectralApproximation`, `BooleanValuedAnalysis.Operator.DyadicSpectralDifference`, `BooleanValuedAnalysis.Operator.DyadicSpectralRefinement` |
+| Represent definite functions or sequences internally | `BooleanValuedAnalysis.SetTheory.Definite`, `BooleanValuedAnalysis.SetTheory.DefiniteFunction`, `BooleanValuedAnalysis.SetTheory.InternalFunction`, `BooleanValuedAnalysis.SetTheory.TopMemberFunction`, `BooleanValuedAnalysis.SetTheory.TopMemberFunctionRecovery`, `BooleanValuedAnalysis.SetTheory.InternalRealSequence`, `BooleanValuedAnalysis.SetTheory.NaturalSequence` |
 
 The umbrella module imports all of these. The table names the focused imports;
 module headers and docstrings provide the declaration-level contracts.
