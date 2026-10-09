@@ -56,6 +56,7 @@ theorem BoundedBy.dyadicApproximant_sub_eq_leftChildStepSum
   rw [dyadicCellCount_succ, sum_range_pairs, ← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro k _hk
+  dsimp only
   have hindex : 2 * k + 1 + 1 = 2 * (k + 1) := by omega
   rw [hindex]
   simpa [weightedIntervalProjection] using
