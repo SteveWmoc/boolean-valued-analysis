@@ -415,3 +415,14 @@ M026 does **not** include:
    calculus?
 6. Does any proposed theorem accidentally assume boundedness by using
    `ContinuousLinearMap` where a `LinearPMap` is required?
+
+## Full dyadic difference identity (M026d continuation)
+
+`Operator/DyadicSpectralDifference.lean` pairs the refined even/odd cells
+and identifies the full adjacent-level difference as a constant-weight step
+sum on the left children. Those children are pairwise separated; the full
+error therefore satisfies an exact finite Pythagorean identity.
+`Audit/M026dDyadicDifferenceAcceptance.lean` checks both public equations.
+
+The cell-count-independent norm bound still requires control of the total
+projection energy by `‖x‖²`. No convergence theorem is claimed here.
