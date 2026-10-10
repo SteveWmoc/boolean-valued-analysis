@@ -28,9 +28,8 @@ variable {H : Type w} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 /-- The real inner product of a projected vector with its input is the
 squared norm of the projected vector. -/
 theorem re_inner_intervalProjection (E : SpectralResolution H) (a b : ℝ) (x : H) :
-    (⟪E.intervalProjection a b x, x⟫_ℂ).re = ‖E.intervalProjection a b x‖ ^ 2 := by
-  simpa [intervalProjection, Submodule.starProjection_apply] using
-    (E.intervalSubspace a b).toSubmodule.re_inner_starProjection_eq_normSq x
+    RCLike.re ⟪E.intervalProjection a b x, x⟫_ℂ = ‖E.intervalProjection a b x‖ ^ 2 := by
+  exact (E.intervalSubspace a b).toSubmodule.re_inner_starProjection_eq_normSq x
 
 /-- The total energy in finitely many separated spectral intervals is at
 most the energy of the input vector. No cardinality factor is needed. -/
@@ -47,8 +46,10 @@ theorem sum_intervalProjection_apply_norm_sq_le
       E.weightedIntervalProjection_inner_eq_zero_of_separated
         (weight₁ := 1) (weight₂ := 1) (hsep i hi j hj hij) x x
   have hpyth := norm_finset_sum_sq_of_pairwise_inner_eq_zero s f horth
-  have hinner : (⟪∑ i ∈ s, f i, x⟫_ℂ).re = ∑ i ∈ s, ‖f i‖ ^ 2 := by
-    rw [sum_inner, Complex.sum_re]
+  have hinner : RCLike.re ⟪∑ i ∈ s, f i, x⟫_ℂ = ∑ i ∈ s, ‖f i‖ ^ 2 := by
+    rw [sum_inner]
+    change (RCLike.reCLM : ℂ →L[ℝ] ℝ) (∑ i ∈ s, ⟪f i, x⟫_ℂ) = _
+    rw [map_sum]
     apply Finset.sum_congr rfl
     intro i _hi
     exact E.re_inner_intervalProjection (left i) (right i) x
@@ -77,7 +78,7 @@ theorem finiteStepSum_const_apply_norm_le
   have hsq : ‖E.finiteStepSum s left right (fun _ => weight) x‖ ^ 2 =
       |weight| ^ 2 * ∑ i ∈ s, ‖E.intervalProjection (left i) (right i) x‖ ^ 2 := by
     rw [E.finiteStepSum_apply_norm_sq s left right (fun _ => weight) hsep x]
-    simp only [weightedIntervalProjection, ContinuousLinearMap.smul_apply,
+    simp only [weightedIntervalProjection, smul_apply,
       norm_smul, Complex.norm_real, Real.norm_eq_abs, mul_pow]
     rw [Finset.mul_sum]
   apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (abs_nonneg _) (norm_nonneg _))).mp

@@ -424,8 +424,8 @@ sum on the left children. Those children are pairwise separated; the full
 error therefore satisfies an exact finite Pythagorean identity.
 `Audit/M026dDyadicDifferenceAcceptance.lean` checks both public equations.
 
-The cell-count-independent norm bound still requires control of the total
-projection energy by `‖x‖²`. No convergence theorem is claimed here.
+The projection-energy continuation below supplies the cell-count-independent
+norm bound. No convergence theorem is claimed here.
 
 ## Projection energy and adjacent-level norm control
 
