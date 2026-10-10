@@ -61,7 +61,9 @@ theorem sum_intervalProjection_apply_norm_sq_le
       exact norm_nonneg x
     · have hp : 0 < ‖∑ i ∈ s, f i‖ := lt_of_le_of_ne (norm_nonneg _) (Ne.symm hz)
       rw [pow_two] at hcs
-      exact (mul_le_mul_left hp).mp hcs
+      by_contra h
+      have hprod := mul_pos hp (sub_pos.mpr (lt_of_not_ge h))
+      nlinarith
   calc
     (∑ i ∈ s, ‖E.intervalProjection (left i) (right i) x‖ ^ 2)
         = ‖∑ i ∈ s, f i‖ ^ 2 := hpyth.symm
