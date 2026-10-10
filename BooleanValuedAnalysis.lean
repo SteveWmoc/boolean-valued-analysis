@@ -69,6 +69,7 @@ import BooleanValuedAnalysis.Operator.SpectralIncrement
 import BooleanValuedAnalysis.Operator.SpectralStepSum
 import BooleanValuedAnalysis.Operator.SpectralRefinement
 import BooleanValuedAnalysis.Operator.SpectralPartition
+import BooleanValuedAnalysis.Operator.SpectralEnergy
 import BooleanValuedAnalysis.Operator.BoundedSpectralResolution
 import BooleanValuedAnalysis.Operator.DyadicSpectralApproximation
 import BooleanValuedAnalysis.Operator.DyadicSpectralRefinement

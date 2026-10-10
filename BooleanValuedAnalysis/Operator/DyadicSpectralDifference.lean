@@ -5,6 +5,7 @@ Authors: Steven Sabean
 -/
 
 import BooleanValuedAnalysis.Operator.DyadicSpectralRefinement
+import BooleanValuedAnalysis.Operator.SpectralEnergy
 
 /-!
 # Full dyadic refinement differences
@@ -15,7 +16,8 @@ mesh width. Pairing even and odd cells transports the local refinement
 identity to the full operators. The error cells are pairwise separated, so
 the existing finite Pythagorean theorem applies to the full difference.
 
-A cell-count-independent norm bound and convergence remain subsequent work.
+The adjacent-level norm bound is independent of the cell count. Convergence
+remains subsequent work.
 -/
 
 noncomputable section
@@ -97,6 +99,34 @@ theorem BoundedBy.dyadicApproximant_sub_apply_norm_sq
     (fun k => dyadicPoint R (n + 1) (2 * k + 1))
     (fun _ => -((2 * R) / ((2 : ℝ) ^ (n + 1))))
     (hR.dyadicLeftChildren_separated E n) x
+
+/-- Refining a bounded dyadic approximant changes its value by at most the
+refined mesh width times the input norm, with no cell-count factor. -/
+theorem BoundedBy.dyadicApproximant_sub_apply_norm_le
+    (E : SpectralResolution H) {R : ℝ} (hR : E.BoundedBy R) (n : ℕ) (x : H) :
+    ‖(E.dyadicApproximant R (n + 1) - E.dyadicApproximant R n) x‖ ≤
+      ((2 * R) / ((2 : ℝ) ^ (n + 1))) * ‖x‖ := by
+  rw [hR.dyadicApproximant_sub_eq_leftChildStepSum E n]
+  have hm : 0 ≤ (2 * R) / ((2 : ℝ) ^ (n + 1)) := by
+    exact div_nonneg (mul_nonneg (by norm_num) hR.nonneg) (by positivity)
+  simpa only [abs_neg, abs_of_nonneg hm] using
+    E.finiteStepSum_const_apply_norm_le
+      (Finset.range (dyadicCellCount n))
+      (fun k => dyadicPoint R (n + 1) (2 * k))
+      (fun k => dyadicPoint R (n + 1) (2 * k + 1))
+      (-((2 * R) / ((2 : ℝ) ^ (n + 1))))
+      (hR.dyadicLeftChildren_separated E n) x
+
+/-- Adjacent dyadic approximants differ in operator norm by at most the
+refined mesh width. -/
+theorem BoundedBy.dyadicApproximant_sub_norm_le
+    (E : SpectralResolution H) {R : ℝ} (hR : E.BoundedBy R) (n : ℕ) :
+    ‖E.dyadicApproximant R (n + 1) - E.dyadicApproximant R n‖ ≤
+      (2 * R) / ((2 : ℝ) ^ (n + 1)) := by
+  apply ContinuousLinearMap.opNorm_le_bound
+  · exact div_nonneg (mul_nonneg (by norm_num) hR.nonneg) (by positivity)
+  · intro x
+    exact hR.dyadicApproximant_sub_apply_norm_le E n x
 
 end SpectralResolution
 
