@@ -424,5 +424,18 @@ sum on the left children. Those children are pairwise separated; the full
 error therefore satisfies an exact finite Pythagorean identity.
 `Audit/M026dDyadicDifferenceAcceptance.lean` checks both public equations.
 
-The cell-count-independent norm bound still requires control of the total
-projection energy by `‖x‖²`. No convergence theorem is claimed here.
+The projection-energy continuation below supplies the cell-count-independent
+norm bound. No convergence theorem is claimed here.
+
+## Projection energy and adjacent-level norm control
+
+`Operator/SpectralEnergy.lean` bounds the sum of squared projection norms
+for any finite separated interval family by `‖x‖²`. Its proof combines
+finite Pythagoras with Cauchy–Schwarz and the orthogonal-projection inner
+product identity. Constant-weight step sums consequently have the bound
+`|weight| * ‖x‖`, without a cell-count factor.
+
+The full dyadic difference now has pointwise and operator-norm bounds
+`2R / 2^(n+1)`. `Audit/M026dDyadicEnergyAcceptance.lean` checks the generic
+energy theorem and both dyadic estimates. Summing the geometric tail to
+prove Cauchy convergence remains subsequent work.
