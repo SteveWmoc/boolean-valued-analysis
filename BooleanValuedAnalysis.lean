@@ -75,6 +75,7 @@ import BooleanValuedAnalysis.Operator.DyadicSpectralApproximation
 import BooleanValuedAnalysis.Operator.DyadicSpectralRefinement
 import BooleanValuedAnalysis.Operator.DyadicSpectralDifference
 import BooleanValuedAnalysis.Operator.DyadicSpectralCauchy
+import BooleanValuedAnalysis.Operator.DyadicSpectralLimit
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
 import BooleanValuedAnalysis.SetTheory.ZF.CollectionSchema
