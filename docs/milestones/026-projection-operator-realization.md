@@ -437,5 +437,18 @@ product identity. Constant-weight step sums consequently have the bound
 
 The full dyadic difference now has pointwise and operator-norm bounds
 `2R / 2^(n+1)`. `Audit/M026dDyadicEnergyAcceptance.lean` checks the generic
-energy theorem and both dyadic estimates. Summing the geometric tail to
-prove Cauchy convergence remains subsequent work.
+energy theorem and both dyadic estimates. The continuation below sums the geometric tail to prove the Cauchy property.
+
+
+## Dyadic operator-norm Cauchy control
+
+`Operator/DyadicSpectralCauchy.lean` telescopes the adjacent-level bound to
+
+`‖A_(n+k) - A_n‖ ≤ 2R / 2^n - 2R / 2^(n+k)`.
+
+In particular, every later level lies within the level-`n` mesh of `A_n`.
+The canonical dyadic approximants are Cauchy in operator norm, including
+the degenerate radius `R = 0`. `Audit/M026dDyadicCauchyAcceptance.lean`
+checks the finite tail estimate, ordered-level bound, and Cauchy theorem.
+Constructing the bounded self-adjoint limit, recovering its spectral family,
+and proving independence of approximation remain later M026d work.
