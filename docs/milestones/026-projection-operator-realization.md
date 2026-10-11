@@ -450,5 +450,21 @@ In particular, every later level lies within the level-`n` mesh of `A_n`.
 The canonical dyadic approximants are Cauchy in operator norm, including
 the degenerate radius `R = 0`. `Audit/M026dDyadicCauchyAcceptance.lean`
 checks the finite tail estimate, ordered-level bound, and Cauchy theorem.
-Constructing the bounded self-adjoint limit, recovering its spectral family,
-and proving independence of approximation remain later M026d work.
+The continuation below constructs the bounded self-adjoint limit. Recovery
+of its spectral family and independence of approximation remain later work.
+
+
+## Bounded dyadic limit operator
+
+`Operator/DyadicSpectralLimit.lean` defines `BoundedBy.dyadicLimit` using
+completeness of the space of bounded operators. Its public API proves
+operator-norm convergence, uniqueness of the limit, self-adjointness, and
+the mesh error estimate
+
+`‖dyadicLimit - A_n‖ ≤ 2R / 2^n`.
+
+The corresponding vector error is bounded by the mesh times the input norm.
+`Audit/M026dDyadicLimitAcceptance.lean` checks all five conclusions.
+The construction retains the explicit radius witness. Spectral recovery,
+radius independence, and independence of approximation remain later M026d
+work; this slice does not yet establish the full spectral correspondence.
