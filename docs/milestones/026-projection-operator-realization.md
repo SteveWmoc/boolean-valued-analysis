@@ -484,3 +484,20 @@ spectral-radius witness as the construction, and no additional assumptions.
 `Audit/M026dDyadicNormAcceptance.lean` checks the generic step-sum bounds
 and the approximant, limit, and vector specializations. Spectral recovery
 and independence of radius and approximation remain later work.
+
+
+## Uniform coefficient perturbation stability
+
+`Operator/SpectralPerturbation.lean` proves that two step sums on the same
+separated intervals differ in operator norm by at most a uniform bound
+`ε` on their coefficient differences. Unlike the earlier fixed-family
+perturbation estimate, this bound has no cell-count factor.
+
+`dyadicWeightedApproximant` permits arbitrary real weights on the canonical
+dyadic grid. If the weights differ from the right endpoints by at most
+`ε_n`, its distance to the limit is at most `ε_n + 2R / 2^n`. If `ε_n → 0`,
+these weighted approximants converge in operator norm to `dyadicLimit`.
+`Audit/M026dDyadicPerturbationAcceptance.lean` checks the generic estimate,
+limit error bound, and convergence theorem. This is independence of
+vanishing coefficient perturbations on the same grid; arbitrary partitions,
+radius independence, and spectral recovery remain later work.
