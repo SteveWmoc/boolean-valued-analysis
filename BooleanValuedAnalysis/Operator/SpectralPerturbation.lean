@@ -77,7 +77,10 @@ theorem BoundedBy.dyadicWeightedApproximant_sub_limit_norm_le
       ε + (2 * R) / ((2 : ℝ) ^ n) := by
   calc
     _ ≤ ‖E.dyadicWeightedApproximant R n weight - E.dyadicApproximant R n‖ +
-        ‖E.dyadicApproximant R n - hR.dyadicLimit E‖ := norm_sub_le _ _ _
+        ‖E.dyadicApproximant R n - hR.dyadicLimit E‖ := by
+          simpa only [dist_eq_norm] using
+            dist_triangle (E.dyadicWeightedApproximant R n weight)
+              (E.dyadicApproximant R n) (hR.dyadicLimit E)
     _ ≤ _ := add_le_add (hR.dyadicWeightedApproximant_sub_norm_le E n weight hε hw)
       (by simpa only [norm_sub_rev] using hR.dyadicLimit_sub_norm_le E n)
 
