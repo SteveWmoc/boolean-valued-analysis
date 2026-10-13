@@ -468,3 +468,19 @@ The corresponding vector error is bounded by the mesh times the input norm.
 The construction retains the explicit radius witness. Spectral recovery,
 radius independence, and independence of approximation remain later M026d
 work; this slice does not yet establish the full spectral correspondence.
+
+
+## Sharp radius control
+
+`SpectralEnergy.finiteStepSum_apply_norm_le` and `finiteStepSum_norm_le`
+extend the constant-weight estimate to varying real weights bounded in
+absolute value by `C`. The operator norm is at most `C`, without a factor
+depending on the number of separated cells.
+
+`Operator/DyadicSpectralNorm.lean` bounds every right-endpoint weight by
+`R`, hence proves `‖A_n‖ ≤ R` and `‖dyadicLimit‖ ≤ R`. The limit therefore
+satisfies `‖dyadicLimit x‖ ≤ R * ‖x‖`. These bounds require the same explicit
+spectral-radius witness as the construction, and no additional assumptions.
+`Audit/M026dDyadicNormAcceptance.lean` checks the generic step-sum bounds
+and the approximant, limit, and vector specializations. Spectral recovery
+and independence of radius and approximation remain later work.

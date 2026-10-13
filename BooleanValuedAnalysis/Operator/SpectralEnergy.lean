@@ -88,4 +88,43 @@ theorem finiteStepSum_const_apply_norm_le
   exact mul_le_mul_of_nonneg_left
     (E.sum_intervalProjection_apply_norm_sq_le s left right hsep x) (sq_nonneg _)
 
+/-- Uniformly bounded real weights give a step-sum bound independent of
+both the number of cells and the particular coefficients. -/
+theorem finiteStepSum_apply_norm_le
+    {ι : Type u} (E : SpectralResolution H) (s : Finset ι)
+    (left right weight : ι → ℝ) {C : ℝ} (hC : 0 ≤ C)
+    (hsep : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → right i ≤ left j ∨ right j ≤ left i)
+    (hweight : ∀ i ∈ s, |weight i| ≤ C) (x : H) :
+    ‖E.finiteStepSum s left right weight x‖ ≤ C * ‖x‖ := by
+  have hsq : ‖E.finiteStepSum s left right weight x‖ ^ 2 ≤ C ^ 2 * ‖x‖ ^ 2 := by
+    rw [E.finiteStepSum_apply_norm_sq s left right weight hsep x]
+    simp only [weightedIntervalProjection, smul_apply,
+      norm_smul, Complex.norm_real, Real.norm_eq_abs, mul_pow]
+    calc
+      _ ≤ ∑ i ∈ s, C ^ 2 * ‖E.intervalProjection (left i) (right i) x‖ ^ 2 := by
+        apply Finset.sum_le_sum
+        intro i hi
+        exact mul_le_mul_of_nonneg_right
+          ((sq_le_sq₀ (abs_nonneg _) hC).2 (hweight i hi)) (sq_nonneg _)
+      _ = C ^ 2 * ∑ i ∈ s, ‖E.intervalProjection (left i) (right i) x‖ ^ 2 :=
+        by rw [Finset.mul_sum]
+      _ ≤ C ^ 2 * ‖x‖ ^ 2 :=
+        mul_le_mul_of_nonneg_left
+          (E.sum_intervalProjection_apply_norm_sq_le s left right hsep x) (sq_nonneg _)
+  exact (sq_le_sq₀ (norm_nonneg _) (mul_nonneg hC (norm_nonneg _))).mp
+    (by simpa only [mul_pow] using hsq)
+
+/-- A uniformly bounded spectral step sum has operator norm at most the
+coefficient bound. -/
+theorem finiteStepSum_norm_le
+    {ι : Type u} (E : SpectralResolution H) (s : Finset ι)
+    (left right weight : ι → ℝ) {C : ℝ} (hC : 0 ≤ C)
+    (hsep : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → right i ≤ left j ∨ right j ≤ left i)
+    (hweight : ∀ i ∈ s, |weight i| ≤ C) :
+    ‖E.finiteStepSum s left right weight‖ ≤ C := by
+  apply ContinuousLinearMap.opNorm_le_bound
+  · exact hC
+  · intro x
+    exact E.finiteStepSum_apply_norm_le s left right weight hC hsep hweight x
+
 end BooleanValued.SpectralResolution
