@@ -518,3 +518,19 @@ approximants, limit commutation, its pointwise identity, subspace invariance,
 and interval commutation. This establishes compatibility with the supplied
 spectral family; full spectral recovery and radius independence remain
 subsequent M026d work.
+
+
+## Exact dyadic resolution of the identity
+
+`Operator/DyadicSpectralIdentity.lean` proves telescoping of spectral
+increments along any monotone finite grid, allowing repeated points. For
+the bounded dyadic grid the sum of the cell projections is exactly `1`,
+and the sum of their squared vector norms equals `‖x‖²`. Thus the cells
+exhaust the vector energy, strengthening the earlier energy inequality.
+
+Constant dyadic coefficients `c` give `(c : ℂ) • 1`; adding `c` to every
+coefficient adds that scalar identity to the weighted approximant.
+`Audit/M026dDyadicIdentityAcceptance.lean` checks the general grid identity,
+dyadic normalization, exact energy, and both coefficient laws. These are
+normalization tools for later local spectral estimates. Spectral recovery
+and radius independence remain subsequent work.
