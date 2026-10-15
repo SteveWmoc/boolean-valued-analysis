@@ -501,3 +501,20 @@ these weighted approximants converge in operator norm to `dyadicLimit`.
 limit error bound, and convergence theorem. This is independence of
 vanishing coefficient perturbations on the same grid; arbitrary partitions,
 radius independence, and spectral recovery remain later work.
+
+
+## Spectral commutation and invariant subspaces
+
+`Operator/SpectralCommutation.lean` proves that ordered interval projections
+and their real-weighted finite sums commute with every threshold projection
+of the same spectral resolution. Pairwise separation is unnecessary here.
+The dyadic approximants inherit this relation, and closedness of commutation
+in operator norm passes it to `dyadicLimit`.
+
+The limit therefore preserves each threshold spectral subspace and commutes
+with every ordered interval increment.
+`Audit/M026dSpectralCommutationAcceptance.lean` checks finite sums, dyadic
+approximants, limit commutation, its pointwise identity, subspace invariance,
+and interval commutation. This establishes compatibility with the supplied
+spectral family; full spectral recovery and radius independence remain
+subsequent M026d work.
