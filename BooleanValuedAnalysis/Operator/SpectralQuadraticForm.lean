@@ -36,7 +36,8 @@ theorem re_inner_weightedIntervalProjection
   calc
     _ = weight * RCLike.re ⟪E.intervalProjection a b x, x⟫_ℂ := by
       change Complex.re ⟪(weight : ℂ) • E.intervalProjection a b x, x⟫_ℂ = _
-      simp [inner_smul_left, Complex.mul_re]
+      rw [inner_smul_left]
+      simp
     _ = _ := by rw [E.re_inner_intervalProjection]
 
 /-- Spectral step-sum quadratic forms are coefficient-weighted energy sums.
