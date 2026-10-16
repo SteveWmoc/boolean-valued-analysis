@@ -534,3 +534,19 @@ coefficient adds that scalar identity to the weighted approximant.
 dyadic normalization, exact energy, and both coefficient laws. These are
 normalization tools for later local spectral estimates. Spectral recovery
 and radius independence remain subsequent work.
+
+
+## Quadratic forms, positivity, and coefficient order
+
+`Operator/SpectralQuadraticForm.lean` identifies a finite spectral step sum's
+real quadratic form with the sum of its coefficients times the projected
+vector energies. Nonnegative coefficients give positive operators, and
+coefficientwise order gives a positive operator difference. These statements
+require neither interval ordering nor pairwise separation.
+
+For dyadic coefficients in `[a,b]`, exact energy normalization gives
+`a * ‖x‖² ≤ re ⟪B_n x,x⟫ ≤ b * ‖x‖²`, without sign restrictions on `a,b`.
+`Audit/M026dQuadraticFormAcceptance.lean` checks the quadratic identity,
+positivity, positive differences, and the two-sided dyadic bound. Local
+spectral estimates, full spectral recovery, and radius independence remain
+subsequent work.
