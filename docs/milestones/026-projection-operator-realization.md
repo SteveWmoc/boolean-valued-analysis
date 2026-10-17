@@ -566,3 +566,19 @@ times `‖x‖²`.
 the quadratic brackets, and positivity of both operator differences. These
 are order bounds on the supplied grid. Local spectral estimates, spectral
 recovery, and radius independence remain subsequent M026d work.
+
+
+## Increasing left-endpoint convergence
+
+`Operator/DyadicSpectralLeftLimit.lean` proves that left-endpoint dyadic
+quadratic forms increase under refinement, and that each successive operator
+difference is positive. The left sums converge in operator norm to the same
+`dyadicLimit` as the decreasing right sums. Uniform coefficient perturbation
+gives the explicit bound `‖leftSum_n - dyadicLimit‖ ≤ 2 * (2R / 2^n)`.
+This twice-mesh estimate is a convergence bound; sharpness is not asserted.
+
+`Audit/M026dDyadicLeftLimitAcceptance.lean` checks the norm estimate,
+convergence, monotonicity, and positive successive differences. Combined
+with the preceding order brackets, this supplies increasing lower and
+decreasing upper quadratic-form approximations to the same operator.
+Local spectral estimates, recovery, and radius independence remain later work.

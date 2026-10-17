@@ -81,6 +81,7 @@ import BooleanValuedAnalysis.Operator.DyadicSpectralCauchy
 import BooleanValuedAnalysis.Operator.DyadicSpectralLimit
 import BooleanValuedAnalysis.Operator.DyadicSpectralNorm
 import BooleanValuedAnalysis.Operator.DyadicSpectralOrder
+import BooleanValuedAnalysis.Operator.DyadicSpectralLeftLimit
 import BooleanValuedAnalysis.Operator.DyadicSpectralIdentity
 import BooleanValuedAnalysis.SetTheory.ZF.Foundation
 import BooleanValuedAnalysis.SetTheory.ZF.Collection
