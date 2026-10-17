@@ -47,6 +47,8 @@ theorem BoundedBy.dyadicApproximant_re_inner_antitone
   change (RCLike.reCLM : ℂ →L[ℝ] ℝ)
     ⟪(E.dyadicApproximant R (n + 1) - E.dyadicApproximant R n) x, x⟫_ℂ ≤ 0 at hd
   rw [sub_apply, inner_sub_left, map_sub] at hd
+  change RCLike.re ⟪E.dyadicApproximant R (n + 1) x, x⟫_ℂ -
+    RCLike.re ⟪E.dyadicApproximant R n x, x⟫_ℂ ≤ 0 at hd
   linarith
 
 /-- Quadratic forms converge along with the operator-norm approximants. -/
@@ -104,6 +106,9 @@ theorem BoundedBy.dyadicLimit_re_inner_bracket
   change (RCLike.reCLM : ℂ →L[ℝ] ℝ)
     ⟪(E.dyadicApproximant R n - hR.dyadicLimit E) x, x⟫_ℂ ≤ _ at hc'
   rw [sub_apply, inner_sub_left, map_sub] at hc'
+  change RCLike.re ⟪E.dyadicApproximant R n x, x⟫_ℂ -
+    RCLike.re ⟪hR.dyadicLimit E x, x⟫_ℂ ≤
+      ((2 * R) / ((2 : ℝ) ^ n)) * ‖x‖ ^ 2 at hc'
   have hgap := hR.dyadicApproximant_re_inner_sub_left E n x
   exact ⟨by linarith, hR.dyadicLimit_re_inner_le E n x⟩
 
