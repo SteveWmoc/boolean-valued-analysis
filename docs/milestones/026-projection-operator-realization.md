@@ -550,3 +550,19 @@ For dyadic coefficients in `[a,b]`, exact energy normalization gives
 positivity, positive differences, and the two-sided dyadic bound. Local
 spectral estimates, full spectral recovery, and radius independence remain
 subsequent work.
+
+
+## Dyadic order brackets
+
+`Operator/DyadicSpectralOrder.lean` defines left-endpoint dyadic sums and
+proves that the canonical right-endpoint quadratic forms decrease under
+refinement. Operator-norm convergence passes these forms to the limit.
+The limit lies between the left- and right-endpoint sums: both
+`dyadicLimit - leftSum` and `rightSum - dyadicLimit` are positive operators.
+The quadratic-form gap between the endpoint sums is exactly the level mesh
+times `‖x‖²`.
+
+`Audit/M026dDyadicOrderAcceptance.lean` checks monotonicity, the exact gap,
+the quadratic brackets, and positivity of both operator differences. These
+are order bounds on the supplied grid. Local spectral estimates, spectral
+recovery, and radius independence remain subsequent M026d work.
