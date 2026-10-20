@@ -582,3 +582,19 @@ convergence, monotonicity, and positive successive differences. Combined
 with the preceding order brackets, this supplies increasing lower and
 decreasing upper quadratic-form approximations to the same operator.
 Local spectral estimates, recovery, and radius independence remain later work.
+
+
+## Uniqueness from all dyadic order brackets
+
+`Operator/DyadicSpectralUniqueness.lean` proves that a self-adjoint operator
+whose real quadratic form lies between every left/right dyadic pair is
+`dyadicLimit`. This formulation explicitly needs self-adjointness.
+For positive operator differences, self-adjointness follows from the bracket
+itself, so the operator version has no separate symmetry hypothesis.
+
+The public API includes the operator-bracket equivalence and an `∃!` theorem:
+there is exactly one bounded operator in all the dyadic order brackets.
+`Audit/M026dDyadicUniquenessAcceptance.lean` checks both uniqueness forms,
+the equivalence, and existence-and-uniqueness. This characterizes the operator
+on the fixed grid and explicit radius. Radius independence and spectral
+recovery remain subsequent M026d work.
