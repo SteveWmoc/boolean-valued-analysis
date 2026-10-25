@@ -40,7 +40,8 @@ theorem intervalProjection_apply_eq_zero_of_mem_subspace
     have hy' : y ∈ (E.subspace a).toSubmoduleᗮ := by simpa using hy.1
     exact Submodule.orthogonal_le hle hy'
   change (E.intervalSubspace a b).toSubmodule.starProjection x = 0
-  apply Submodule.starProjection_apply_eq_zero_iff.mpr
+  apply (Submodule.starProjection_apply_eq_zero_iff
+    (K := (E.intervalSubspace a b).toSubmodule)).2
   exact horth.symm hx
 
 /-- A vector orthogonal to a threshold subspace has no component in an
@@ -51,7 +52,8 @@ theorem intervalProjection_apply_eq_zero_of_mem_orthogonal
   have hle : (E.intervalSubspace a b).toSubmodule ≤ (E.subspace r).toSubmodule :=
     fun _ hy => E.monotone hbr hy.2
   change (E.intervalSubspace a b).toSubmodule.starProjection x = 0
-  apply Submodule.starProjection_apply_eq_zero_iff.mpr
+  apply (Submodule.starProjection_apply_eq_zero_iff
+    (K := (E.intervalSubspace a b).toSubmodule)).2
   exact Submodule.orthogonal_le hle hx
 
 /-- On the threshold subspace, every left-endpoint sum has quadratic form
