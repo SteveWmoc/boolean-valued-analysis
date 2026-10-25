@@ -70,6 +70,7 @@ import BooleanValuedAnalysis.Operator.SpectralStepSum
 import BooleanValuedAnalysis.Operator.SpectralRefinement
 import BooleanValuedAnalysis.Operator.SpectralPartition
 import BooleanValuedAnalysis.Operator.SpectralEnergy
+import BooleanValuedAnalysis.Operator.LocalSpectralBounds
 import BooleanValuedAnalysis.Operator.SpectralQuadraticForm
 import BooleanValuedAnalysis.Operator.SpectralCommutation
 import BooleanValuedAnalysis.Operator.SpectralPerturbation

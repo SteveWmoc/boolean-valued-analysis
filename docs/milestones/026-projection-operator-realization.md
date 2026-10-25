@@ -598,3 +598,19 @@ there is exactly one bounded operator in all the dyadic order brackets.
 the equivalence, and existence-and-uniqueness. This characterizes the operator
 on the fixed grid and explicit radius. Radius independence and spectral
 recovery remain subsequent M026d work.
+
+
+## Local bounds on threshold spectral subspaces
+
+`Operator/LocalSpectralBounds.lean` proves that the constructed limit has
+quadratic form at most `r * ‖x‖²` on `E.subspace r`, and at least
+`r * ‖x‖²` on its orthogonal complement, for every real threshold `r`.
+No assumption that `r` belongs to the bounding interval is required.
+
+The proof first shows that incompatible interval components vanish. Exact
+energy normalization then bounds left sums on the threshold subspace and
+right sums on its orthogonal complement. Their quadratic-form limits give
+the two local bounds. `Audit/M026dLocalSpectralBoundsAcceptance.lean` checks
+the finite and limit statements. These connect the operator's quadratic
+form to the supplied spectral family; full spectral recovery and radius
+independence remain subsequent M026d work.
