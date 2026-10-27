@@ -614,3 +614,20 @@ the two local bounds. `Audit/M026dLocalSpectralBoundsAcceptance.lean` checks
 the finite and limit statements. These connect the operator's quadratic
 form to the supplied spectral family; full spectral recovery and radius
 independence remain subsequent M026d work.
+
+
+## Interval bounds and exact action at spectral jumps
+
+`Operator/SpectralJump.lean` combines the local threshold bounds into
+`a * ‖x‖² ≤ re ⟪T x,x⟫ ≤ b * ‖x‖²` on the interval subspace `(a,b]`.
+For a vector in `E(r)` orthogonal to every `E(s)` with `s < r`, only cells
+containing `r` contribute. Truncating the inactive coefficients gives
+`‖A_n x - (r : ℂ) • x‖ ≤ (2R / 2^n) * ‖x‖`. Convergence then yields the
+exact equation `T x = (r : ℂ) • x`. Zero is allowed; nonzero vectors with
+this support condition are eigenvectors. No existence of a nonzero jump
+vector is asserted.
+
+`Audit/M026dSpectralJumpAcceptance.lean` checks interval bounds, the finite
+jump error estimate, and exact scalar action. This proves the jump-to-
+eigenvector direction; the converse, full spectral recovery, and radius
+independence remain subsequent M026d work.
