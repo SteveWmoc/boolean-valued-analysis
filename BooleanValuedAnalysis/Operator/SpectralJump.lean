@@ -61,9 +61,9 @@ theorem BoundedBy.dyadicApproximant_sub_smul_norm_le_of_jump
       have hhigh := hk.2
       have hmesh := dyadicPoint_succ_sub R n k
       dsimp only [weight]
-      rw [if_pos hk, abs_of_nonneg (sub_nonneg.mpr hhigh)]
+      rw [ite_eq_left hk, abs_of_nonneg (sub_nonneg.mpr hhigh)]
       linarith
-    · simp only [weight, if_neg hk, abs_zero]
+    · simp only [weight, ite_eq_right hk, abs_zero]
       exact hm
   have hzero : ∀ k, ¬ active k →
       E.intervalProjection (dyadicPoint R n k) (dyadicPoint R n (k + 1)) x = 0 := by
@@ -87,7 +87,7 @@ theorem BoundedBy.dyadicApproximant_sub_smul_norm_le_of_jump
     apply Finset.sum_congr rfl
     intro k _hk
     by_cases hk : active k
-    · simp only [weight, if_pos hk]
+    · simp only [weight, ite_eq_left hk]
     · simp only [weightedIntervalProjection, smul_apply, hzero k hk, smul_zero]
   rw [heq]
   exact E.finiteStepSum_apply_norm_le _ _ _ weight hm
@@ -105,7 +105,9 @@ theorem BoundedBy.dyadicLimit_apply_eq_smul_of_jump
       (𝓝 (hR.dyadicLimit E x)) :=
     ((ContinuousLinearMap.apply ℂ H x).continuous.tendsto _).comp
       (hR.tendsto_dyadicApproximant E)
-  have herr := (happ.sub tendsto_const_nhds).norm
+  have herr : Tendsto (fun n => ‖E.dyadicApproximant R n x - (r : ℂ) • x‖)
+      atTop (𝓝 ‖hR.dyadicLimit E x - (r : ℂ) • x‖) :=
+    (happ.sub_const ((r : ℂ) • x)).norm
   have hmesh : Tendsto (fun n : ℕ => ((2 * R) / ((2 : ℝ) ^ n)) * ‖x‖)
       atTop (𝓝 0) := by
     simpa only [zero_mul] using (tendsto_dyadicMesh_zero R).mul_const ‖x‖
