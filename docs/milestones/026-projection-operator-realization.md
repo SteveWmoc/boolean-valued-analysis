@@ -631,3 +631,18 @@ vector is asserted.
 jump error estimate, and exact scalar action. This proves the jump-to-
 eigenvector direction; the converse, full spectral recovery, and radius
 independence remain subsequent M026d work.
+
+
+## Closed jump subspaces and jump projections
+
+`Operator/SpectralJumpProjection.lean` packages the single-threshold support
+condition as the closed subspace `jumpSubspace r` and its orthogonal
+`jumpProjection r`. Distinct jump subspaces are orthogonal, and their
+projections compose to zero; these geometric facts require no boundedness.
+
+For a bounded resolution the preceding jump-vector theorem now gives the
+operator identity `T ∘L jumpProjection r = (r : ℂ) • jumpProjection r`.
+The acceptance probe checks orthogonality, zero composition, vector action,
+and the operator identity. Zero jumps are allowed. No converse eigenvector
+characterization, spanning assertion, full spectral recovery, or radius
+independence is claimed by this slice.
