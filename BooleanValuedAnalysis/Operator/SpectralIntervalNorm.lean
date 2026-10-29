@@ -106,7 +106,7 @@ theorem BoundedBy.dyadicLimit_sub_right_smul_norm_le
     {a b : ℝ} (hab : a ≤ b) {x : H} (hx : x ∈ E.intervalSubspace a b) :
     ‖hR.dyadicLimit E x - (b : ℂ) • x‖ ≤ (b - a) * ‖x‖ := by
   have hmax : max |a - b| |b - b| = b - a := by
-    rw [sub_self, abs_zero, abs_of_nonpos (sub_nonpos.mpr hab)]
+    rw [sub_self, abs_zero, abs_of_nonpos (sub_nonpos.mpr hab), neg_sub]
     exact max_eq_left (by linarith)
   simpa only [hmax] using
     hR.dyadicLimit_sub_smul_norm_le_of_mem_intervalSubspace E hx b
