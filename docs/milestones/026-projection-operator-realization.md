@@ -646,3 +646,19 @@ The acceptance probe checks orthogonality, zero composition, vector action,
 and the operator identity. Zero jumps are allowed. No converse eigenvector
 characterization, spanning assertion, full spectral recovery, or radius
 independence is claimed by this slice.
+
+
+## Exact recovery of jump subspaces from eigenvector equations
+
+`Operator/SpectralEigenvector.lean` proves the converse jump theorem. If
+`T x = (r : ℂ) • x`, threshold projections below `r` annihilate `x`,
+and every threshold subspace strictly above `r` contains `x`.
+Commutation preserves the eigenvector equation on the projected and
+orthogonal components; the local quadratic bounds force the incompatible
+component to vanish. Right continuity supplies membership at `r` itself.
+
+Thus `x ∈ jumpSubspace r ↔ T x = (r : ℂ) • x`, including zero.
+`Audit/M026dSpectralEigenvectorAcceptance.lean` checks both strict-threshold
+statements, boundary membership, and the exact equivalence. This identifies
+the point spectral subspaces. It does not assert that eigenvectors span the
+space; full spectral recovery and radius independence remain subsequent work.
