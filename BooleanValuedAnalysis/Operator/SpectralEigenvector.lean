@@ -5,6 +5,7 @@ Authors: Steven Sabean
 -/
 
 import BooleanValuedAnalysis.Operator.SpectralJumpProjection
+import BooleanValuedAnalysis.Operator.SpectralCommutation
 
 /-!
 # Eigenvectors are precisely spectral jump vectors
@@ -26,7 +27,7 @@ variable {H : Type w} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 private theorem re_inner_real_smul (r : ℝ) (x : H) :
     RCLike.re ⟪(r : ℂ) • x, x⟫_ℂ = r * ‖x‖ ^ 2 := by
   rw [inner_smul_left, inner_self_eq_norm_sq_to_K]
-  simp
+  simp [← Complex.ofReal_pow]
 
 /-- An eigenvector has zero threshold projection strictly below its eigenvalue. -/
 theorem BoundedBy.projection_apply_eq_zero_of_eigenvector
@@ -45,7 +46,10 @@ theorem BoundedBy.projection_apply_eq_zero_of_eigenvector
     have hp : 0 < r - s := sub_pos.mpr hs
     have hprod : (r - s) * ‖E.projection s x‖ ^ 2 ≤ (r - s) * 0 := by
       nlinarith only [hb]
-    exact le_antisymm ((mul_le_mul_left hp).mp hprod) (sq_nonneg _)
+    by_contra hn
+    have hnpos : 0 < _ := lt_of_le_of_ne (sq_nonneg _) (Ne.symm hn)
+    have hpos := mul_pos hp hnpos
+    nlinarith only [hprod, hpos]
   exact norm_eq_zero.mp (sq_eq_zero_iff.mp hn)
 
 /-- An eigenvector lies in every threshold subspace strictly above its eigenvalue. -/
@@ -64,7 +68,10 @@ theorem BoundedBy.eigenvector_mem_subspace_of_lt
     have hp : 0 < s - r := sub_pos.mpr hs
     have hprod : (s - r) * ‖x - E.projection s x‖ ^ 2 ≤ (s - r) * 0 := by
       nlinarith only [hb]
-    exact le_antisymm ((mul_le_mul_left hp).mp hprod) (sq_nonneg _)
+    by_contra hn
+    have hnpos : 0 < _ := lt_of_le_of_ne (sq_nonneg _) (Ne.symm hn)
+    have hpos := mul_pos hp hnpos
+    nlinarith only [hprod, hpos]
   have hz : x - E.projection s x = 0 := norm_eq_zero.mp (sq_eq_zero_iff.mp hn)
   apply Submodule.starProjection_eq_self_iff.mp
   exact (sub_eq_zero.mp hz).symm
