@@ -662,3 +662,18 @@ Thus `x ∈ jumpSubspace r ↔ T x = (r : ℂ) • x`, including zero.
 statements, boundary membership, and the exact equivalence. This identifies
 the point spectral subspaces. It does not assert that eigenvectors span the
 space; full spectral recovery and radius independence remain subsequent work.
+
+
+## Norm localization on spectral intervals
+
+`Operator/SpectralIntervalNorm.lean` strengthens interval quadratic bounds to
+the vector estimate `‖T x - (c : ℂ) • x‖ ≤ max |a-c| |b-c| * ‖x‖`
+for `x ∈ intervalSubspace a b`. The finite dyadic estimate has one additional
+mesh in the coefficient bound. Incompatible cells vanish; the separated-cell
+norm bound controls the remaining coefficients. Passing to the limit removes
+the mesh. Endpoints need not lie inside the chosen support radius.
+
+For ordered endpoints, choosing `c = b` bounds the residual by
+`(b-a) * ‖x‖`. Three acceptance probes check the finite estimate, limit
+estimate, and right-endpoint specialization. Full spectral recovery,
+arbitrary-partition convergence, and radius independence remain later work.
