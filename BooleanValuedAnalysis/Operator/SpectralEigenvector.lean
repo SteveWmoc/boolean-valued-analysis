@@ -42,7 +42,10 @@ theorem BoundedBy.projection_apply_eq_zero_of_eigenvector
     s * ‖E.projection s x‖ ^ 2 at hb
   rw [he, re_inner_real_smul] at hb
   have hn : ‖E.projection s x‖ ^ 2 = 0 := by
-    nlinarith [sq_nonneg ‖E.projection s x‖]
+    have hp : 0 < r - s := sub_pos.mpr hs
+    have hprod : (r - s) * ‖E.projection s x‖ ^ 2 ≤ (r - s) * 0 := by
+      nlinarith only [hb]
+    exact le_antisymm ((mul_le_mul_left hp).mp hprod) (sq_nonneg _)
   exact norm_eq_zero.mp (sq_eq_zero_iff.mp hn)
 
 /-- An eigenvector lies in every threshold subspace strictly above its eigenvalue. -/
@@ -58,7 +61,10 @@ theorem BoundedBy.eigenvector_mem_subspace_of_lt
   have hb := hR.le_dyadicLimit_re_inner_of_mem_orthogonal E ho
   rw [he, re_inner_real_smul] at hb
   have hn : ‖x - E.projection s x‖ ^ 2 = 0 := by
-    nlinarith [sq_nonneg ‖x - E.projection s x‖]
+    have hp : 0 < s - r := sub_pos.mpr hs
+    have hprod : (s - r) * ‖x - E.projection s x‖ ^ 2 ≤ (s - r) * 0 := by
+      nlinarith only [hb]
+    exact le_antisymm ((mul_le_mul_left hp).mp hprod) (sq_nonneg _)
   have hz : x - E.projection s x = 0 := norm_eq_zero.mp (sq_eq_zero_iff.mp hn)
   apply Submodule.starProjection_eq_self_iff.mp
   exact (sub_eq_zero.mp hz).symm
