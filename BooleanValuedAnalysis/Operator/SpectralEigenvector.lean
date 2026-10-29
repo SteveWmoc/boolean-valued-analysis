@@ -24,6 +24,7 @@ namespace BooleanValued.SpectralResolution
 variable {H : Type w} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 
+omit [CompleteSpace H] in
 private theorem re_inner_real_smul (r : ℝ) (x : H) :
     RCLike.re ⟪(r : ℂ) • x, x⟫_ℂ = r * ‖x‖ ^ 2 := by
   rw [inner_smul_left, inner_self_eq_norm_sq_to_K]
