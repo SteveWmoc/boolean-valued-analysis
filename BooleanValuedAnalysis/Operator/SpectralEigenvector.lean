@@ -47,7 +47,8 @@ theorem BoundedBy.projection_apply_eq_zero_of_eigenvector
     have hprod : (r - s) * ‖E.projection s x‖ ^ 2 ≤ (r - s) * 0 := by
       nlinarith only [hb]
     by_contra hn
-    have hnpos : 0 < _ := lt_of_le_of_ne (sq_nonneg _) (Ne.symm hn)
+    have hnpos : 0 < ‖E.projection s x‖ ^ 2 :=
+      lt_of_le_of_ne (sq_nonneg _) hn
     have hpos := mul_pos hp hnpos
     nlinarith only [hprod, hpos]
   exact norm_eq_zero.mp (sq_eq_zero_iff.mp hn)
@@ -69,7 +70,8 @@ theorem BoundedBy.eigenvector_mem_subspace_of_lt
     have hprod : (s - r) * ‖x - E.projection s x‖ ^ 2 ≤ (s - r) * 0 := by
       nlinarith only [hb]
     by_contra hn
-    have hnpos : 0 < _ := lt_of_le_of_ne (sq_nonneg _) (Ne.symm hn)
+    have hnpos : 0 < ‖x - E.projection s x‖ ^ 2 :=
+      lt_of_le_of_ne (sq_nonneg _) hn
     have hpos := mul_pos hp hnpos
     nlinarith only [hprod, hpos]
   have hz : x - E.projection s x = 0 := norm_eq_zero.mp (sq_eq_zero_iff.mp hn)
