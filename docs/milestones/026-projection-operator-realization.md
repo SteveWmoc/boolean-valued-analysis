@@ -677,3 +677,20 @@ For ordered endpoints, choosing `c = b` bounds the residual by
 `(b-a) * ‖x‖`. Three acceptance probes check the finite estimate, limit
 estimate, and right-endpoint specialization. Full spectral recovery,
 arbitrary-partition convergence, and radius independence remain later work.
+
+
+## Compressed interval residuals and midpoint control
+
+`Operator/SpectralIntervalCompression.lean` turns the interval vector
+estimate into the operator bound
+`‖T ∘L P_(a,b] - (c : ℂ) • P_(a,b]‖ ≤ max |a-c| |b-c|`.
+Projection contractivity removes the input norm. For ordered endpoints,
+the midpoint coefficient gives the bound `(b-a)/2`.
+
+The limit preserves each ordered interval subspace, and subtracting a scalar
+multiple of the input preserves it too. This range information retains the
+orthogonal geometry needed to combine errors on separated intervals.
+Four acceptance probes check interval invariance, residual membership,
+the general compressed norm bound, and midpoint control. No optimality
+claim is made for a particular resolution. Global partition error estimates,
+radius independence, and full spectral recovery remain later M026d work.
