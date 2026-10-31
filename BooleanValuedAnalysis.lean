@@ -76,6 +76,7 @@ import BooleanValuedAnalysis.Operator.SpectralJumpProjection
 import BooleanValuedAnalysis.Operator.SpectralEigenvector
 import BooleanValuedAnalysis.Operator.SpectralIntervalNorm
 import BooleanValuedAnalysis.Operator.SpectralIntervalCompression
+import BooleanValuedAnalysis.Operator.SpectralPartitionError
 import BooleanValuedAnalysis.Operator.SpectralQuadraticForm
 import BooleanValuedAnalysis.Operator.SpectralCommutation
 import BooleanValuedAnalysis.Operator.SpectralPerturbation
