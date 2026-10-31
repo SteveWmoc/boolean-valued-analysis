@@ -56,7 +56,7 @@ theorem BoundedBy.dyadicLimit_comp_intervalProjection_sub_smul_norm_le
   have hC : 0 ≤ max |a - c| |b - c| := (abs_nonneg _).trans (le_max_left _ _)
   refine ContinuousLinearMap.opNorm_le_bound _ hC ?_
   intro x
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.comp_apply, smul_apply]
+  simp only [sub_apply, ContinuousLinearMap.comp_apply, smul_apply]
   have hx : E.intervalProjection a b x ∈ E.intervalSubspace a b :=
     Submodule.starProjection_apply_mem (E.intervalSubspace a b).toSubmodule x
   calc
