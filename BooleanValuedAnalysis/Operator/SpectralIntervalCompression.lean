@@ -54,7 +54,7 @@ theorem BoundedBy.dyadicLimit_comp_intervalProjection_sub_smul_norm_le
     ‖hR.dyadicLimit E ∘L E.intervalProjection a b -
       (c : ℂ) • E.intervalProjection a b‖ ≤ max |a - c| |b - c| := by
   have hC : 0 ≤ max |a - c| |b - c| := (abs_nonneg _).trans (le_max_left _ _)
-  apply ContinuousLinearMap.opNorm_le_bound hC
+  refine ContinuousLinearMap.opNorm_le_bound _ hC ?_
   intro x
   simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.comp_apply, smul_apply]
   have hx : E.intervalProjection a b x ∈ E.intervalSubspace a b :=
