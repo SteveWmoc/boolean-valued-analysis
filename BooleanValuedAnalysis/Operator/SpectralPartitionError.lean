@@ -116,6 +116,10 @@ theorem BoundedBy.sub_finiteStepSum_norm_le_of_sum_eq_one
   have h := hR.comp_sum_intervalProjection_sub_finiteStepSum_norm_le E
     s left right weight hordered hsep hδ hweight
   rw [hcover] at h
-  simpa using h
+  have hid : hR.dyadicLimit E ∘L (1 : H →L[ℂ] H) = hR.dyadicLimit E := by
+    ext x
+    rfl
+  rw [hid] at h
+  exact h
 
 end BooleanValued.SpectralResolution
