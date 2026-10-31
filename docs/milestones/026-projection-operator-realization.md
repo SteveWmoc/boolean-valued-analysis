@@ -694,3 +694,20 @@ Four acceptance probes check interval invariance, residual membership,
 the general compressed norm bound, and midpoint control. No optimality
 claim is made for a particular resolution. Global partition error estimates,
 radius independence, and full spectral recovery remain later M026d work.
+
+
+## Global finite-cell residual bounds
+
+`Operator/SpectralPartitionError.lean` combines interval residuals over
+finite separated ordered cells. Their ranges remain orthogonal, giving an
+exact Pythagorean identity. If every coefficient is within `δ` of both
+cell endpoints, the residual sum at `x` has norm at most `δ * ‖x‖`,
+independently of the number of cells.
+
+The corresponding operator estimate controls the difference between the
+limit compressed to the covered cells and their step sum. If the cell
+projections sum to `1`, it gives the global bound `‖T - stepSum‖ ≤ δ`.
+Four acceptance probes check the energy identity, vector bound, covered
+operator bound, and identity-cover specialization. This is the finite
+error estimate for general partition convergence; a convergence theorem,
+radius independence, and full spectral recovery remain later work.
