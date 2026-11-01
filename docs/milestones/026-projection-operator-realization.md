@@ -711,3 +711,23 @@ Four acceptance probes check the energy identity, vector bound, covered
 operator bound, and identity-cover specialization. This is the finite
 error estimate for general partition convergence; a convergence theorem,
 radius independence, and full spectral recovery remain later work.
+
+
+## Convergence independent of finite partition choice
+
+`Operator/SpectralPartitionConvergence.lean` proves operator-norm
+convergence for sequences of finite separated ordered cell families whose
+projections exhaust the identity. The cells, coefficients, and cell count
+may vary at every stage; no nestedness or dyadic structure is required.
+
+Uniform endpoint-coefficient errors tending to zero imply convergence to
+the bounded dyadic limit. For tags inside their cells, any nonnegative
+upper bounds on cell widths tending to zero suffice. The finite tagged
+error is at most the width bound. Uniqueness of norm limits identifies any
+operator obtained from such tagged sums with the canonical bounded limit.
+
+Four acceptance probes check the finite tagged bound, endpoint-error
+convergence, tagged convergence, and limit identification. All statements
+retain the explicit radius witness. This establishes independence of the
+eligible finite partition sequence; independence of the radius and full
+spectral recovery remain subsequent M026d work.
